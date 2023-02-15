@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 2060457381
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: itemssprites
+      Dependencies: {}

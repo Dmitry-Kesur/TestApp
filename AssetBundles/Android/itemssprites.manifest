@@ -1,0 +1,26 @@
+ManifestFileVersion: 0
+CRC: 816467669
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 883c4d626d80c1fdf74ca9195a63e58c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4df8c69f2c8a6ad9e3cbf82bb83e4dc3
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Sprites/6.png
+- Assets/Sprites/17.png
+- Assets/Sprites/7.png
+- Assets/Sprites/8.png
+- Assets/Sprites/14.png
+- Assets/Sprites/3.png
+- Assets/Sprites/11.png
+- Assets/Sprites/10.png
+Dependencies: []
