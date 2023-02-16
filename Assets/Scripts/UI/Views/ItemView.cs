@@ -20,17 +20,14 @@ namespace UI
         public void Init(ItemModel itemModel)
         {
             _itemModel = itemModel;
-            itemIcon.sprite = itemModel.GetSprite();
+            SetSprite(itemModel.GetActiveSprite());
 
             itemButton.onClick.AddListener(OnItemClickHandler);
         }
-
-        private void OnItemClickHandler()
+        
+        public void SetSprite(Sprite sprite)
         {
-            itemButton.onClick.RemoveListener(OnItemClickHandler);
-            
-            OnClickItemAction?.Invoke();
-            _itemModel.OnCatchItem();
+            itemIcon.sprite = sprite;
         }
 
         public void StartRotation()
@@ -67,6 +64,14 @@ namespace UI
         public Tween MoveToPosition(Vector2 position)
         {
             return transform.DOMove(position, 5.5f);
+        }
+        
+        private void OnItemClickHandler()
+        {
+            itemButton.onClick.RemoveListener(OnItemClickHandler);
+            
+            OnClickItemAction?.Invoke();
+            _itemModel.OnCatchItem();
         }
     }
 }

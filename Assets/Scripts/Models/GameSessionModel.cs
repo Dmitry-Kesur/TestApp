@@ -19,7 +19,7 @@
 
         public int failItemsAmount => _failItemsAmount;
         
-        public ItemModel GetItem() => _gameHandler.itemsHandler.GetSelectedItem();
+        public ItemModel GetGameItem() => _gameHandler.itemsHandler.GetGameItem();
 
         public void SettingsButtonClick()
         {

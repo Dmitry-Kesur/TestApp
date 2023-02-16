@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
@@ -7,16 +8,23 @@ namespace DefaultNamespace
     public class ItemModel
     {
         public Action<int> OnCatchItemAction;
-        private readonly int _id;
+        private int _activeSpriteIndex;
         private readonly int _rewardScoreAmount;
-        private bool _isSelected;
-        private readonly Sprite _sprite;
+        private Dictionary<int, Sprite> _sprites;
+        private Sprite _activeSprite;
 
-        public ItemModel(int id, Sprite sprite)
+        public ItemModel(Dictionary<int, Sprite> sprites, int activeSpriteIndex)
         {
-            _id = id;
+            _sprites = sprites;
             _rewardScoreAmount = 2;
-            _sprite = sprite;
+
+            ChangeActiveSprite(activeSpriteIndex);
+        }
+
+        public void ChangeActiveSprite(int spriteIndex)
+        {
+            _activeSpriteIndex = spriteIndex;
+            _activeSprite = _sprites[_activeSpriteIndex];
         }
 
         public ItemView RenderItem()
@@ -25,16 +33,14 @@ namespace DefaultNamespace
             instance.Init(this);
             return instance;
         }
+        
+        public int activeSpriteIndex => _activeSpriteIndex;
 
-        public int id => _id;
+        public int spritesCount => _sprites.Count;
+        
+        public Sprite GetSpriteByIndex(int index) => _sprites[index];
 
-        public bool isSelected
-        {
-            get => _isSelected;
-            set => _isSelected = value;
-        }
-
-        public Sprite GetSprite() => _sprite;
+        public Sprite GetActiveSprite() => _activeSprite;
 
         public void OnCatchItem()
         {

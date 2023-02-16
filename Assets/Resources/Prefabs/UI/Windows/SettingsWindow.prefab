@@ -257,7 +257,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0068b88e0ee14dfcb9975ef3f8442818, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectButton: {fileID: 430665343243944666}
   returnButton: {fileID: 1226079249526556728}
   itemsSelector: {fileID: 9191067382213768907}
 --- !u!1001 &5476426482423015953
@@ -265,7 +264,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 983915755100960570}
+    m_TransformParent: {fileID: 5041826192015013177}
     m_Modifications:
     - target: {fileID: 1677526158684649713, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_text
@@ -297,7 +296,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_AnchorMax.x
@@ -341,15 +340,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -357,7 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 725
+      value: -455.49988
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -429,7 +428,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5939718705188067857, guid: bce0228a15b036f4f8f637ac1f65dce0, type: 3}
       propertyPath: m_AnchorMax.x
@@ -541,7 +540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2012290244921737661, guid: 522b5dc2f93edb14090653f53a90a65d, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2012290244921737661, guid: 522b5dc2f93edb14090653f53a90a65d, type: 3}
       propertyPath: m_AnchorMax.x
@@ -627,12 +626,21 @@ PrefabInstance:
       propertyPath: arrowRight
       value: 
       objectReference: {fileID: 6051005534645550160}
+    - target: {fileID: 2420691894936535631, guid: 522b5dc2f93edb14090653f53a90a65d, type: 3}
+      propertyPath: selectButton
+      value: 
+      objectReference: {fileID: 430665343243944666}
     - target: {fileID: 3461636110149019056, guid: 522b5dc2f93edb14090653f53a90a65d, type: 3}
       propertyPath: m_Name
       value: ItemsSelector
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 522b5dc2f93edb14090653f53a90a65d, type: 3}
+--- !u!224 &5041826192015013177 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2012290244921737661, guid: 522b5dc2f93edb14090653f53a90a65d, type: 3}
+  m_PrefabInstance: {fileID: 6779392320423588996}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &9191067382213768907 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2420691894936535631, guid: 522b5dc2f93edb14090653f53a90a65d, type: 3}

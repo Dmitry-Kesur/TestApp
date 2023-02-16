@@ -11,10 +11,10 @@ namespace DefaultNamespace
         public MenuWindowModel(GameHandler gameHandler)
         {
             _gameHandler = gameHandler;
-            _gameScoreModel = _gameHandler.scoreModel;
+            _gameScoreModel = _gameHandler.gameDataController.GetGameScoreModel();
         }
 
-        public int gameScore => _gameScoreModel.GameScore;
+        public int gameScore => _gameScoreModel.gameScore;
 
         public float gameScoreMultiplier => _gameScoreModel.scoreMultiplier;
         

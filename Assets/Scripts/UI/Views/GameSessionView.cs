@@ -66,7 +66,7 @@ namespace UI
 
         private void StartSpawnItems()
         {
-            var itemModel = _gameSessionModel.GetItem();
+            var itemModel = _gameSessionModel.GetGameItem();
             _spawnCoroutine = StartCoroutine(SpawnItem(itemModel));
         }
 

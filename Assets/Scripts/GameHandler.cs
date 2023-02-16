@@ -7,7 +7,6 @@ namespace DefaultNamespace
         private readonly StateMachine _stateMachine;
         private readonly InterfaceModel _interfaceModel;
         private readonly ItemsHandler _itemsHandler;
-        private readonly GameScoreModel _scoreModel;
         private readonly GameDataController _gameDataController;
         
         public GameHandler(DataOperationService dataOperationService)
@@ -16,18 +15,13 @@ namespace DefaultNamespace
             _interfaceModel = new InterfaceModel();
             _itemsHandler = new ItemsHandler(this);
             _gameDataController = new GameDataController(dataOperationService);
-
-            _scoreModel = new GameScoreModel(_gameDataController.GetGameScore())
-            {
-                SaveGameScoreAction = _gameDataController.SaveGameScore
-            };
         }
 
         public async void Init()
         {
             InitStates();
 
-            await _scoreModel.InitScoreMultiplier();
+            await _gameDataController.InitScoreMultiplier();
             
             _itemsHandler.Init();
 
@@ -47,6 +41,6 @@ namespace DefaultNamespace
 
         public ItemsHandler itemsHandler => _itemsHandler;
 
-        public GameScoreModel scoreModel => _scoreModel;
+        public GameDataController gameDataController => _gameDataController;
     }
 }

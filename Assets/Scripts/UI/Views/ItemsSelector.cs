@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using DefaultNamespace;
+﻿using DefaultNamespace;
 using DefaultNamespace.UI;
 using DG.Tweening;
+using UI.Buttons;
 using UnityEngine;
 
 namespace UI
@@ -11,18 +11,36 @@ namespace UI
         [SerializeField] private Arrow arrowLeft;
         [SerializeField] private Arrow arrowRight;
         [SerializeField] private RectTransform itemContainer;
+        [SerializeField] private BaseButton selectButton;
 
-        private ItemView _currentItem;
-        private List<ItemModel> _items;
         private int _currentIndex;
+        private int _spritesCount;
+        
+        private ItemView _previewItem;
+        private ItemModel _itemModel;
 
-        public void Init(List<ItemModel> items)
+        public void Init(ItemModel itemModel)
         {
-            _items = items;
+            _itemModel = itemModel;
+            _currentIndex = _itemModel.activeSpriteIndex;
+            _spritesCount = _itemModel.spritesCount;
+            
             arrowLeft.OnArrowClickAction = OnLeftArrowClick;
             arrowRight.OnArrowClickAction = OnRightArrowClick;
 
+            selectButton.button.onClick?.AddListener(OnSelectButtonClickHandler);
+
+            selectButton.SetButtonText("Select");
+
             DrawActiveItem();
+        }
+
+        private void OnSelectButtonClickHandler()
+        {
+            if (_currentIndex == _itemModel.activeSpriteIndex) return;
+
+            _itemModel.ChangeActiveSprite(_currentIndex);
+            AnimateSelectedItem();
         }
 
         private void OnLeftArrowClick()
@@ -41,46 +59,41 @@ namespace UI
 
             if (newIndex < 0)
             {
-                newIndex = _items.Count - 1;
+                newIndex = _spritesCount - 1;
             }
 
-            if (newIndex >= _items.Count)
+            if (newIndex >= _spritesCount)
             {
                 newIndex = 0;
             }
 
             _currentIndex = newIndex;
-
-            RemoveCurrentItem();
-
-            var itemModel = _items.Find(model => model.id == _currentIndex);
-            _currentItem = itemModel.RenderItem();
-            _currentItem.transform.SetParent(itemContainer, false);
-        }
-
-        private void RemoveCurrentItem()
-        {
-            Destroy(_currentItem.gameObject);
-            _currentItem = null;
+            
+            var sprite = _itemModel.GetSpriteByIndex(_currentIndex);
+            _previewItem.SetSprite(sprite);
         }
 
         private void DrawActiveItem()
         {
-            var itemModel = _items.Find(model => model.isSelected);
-            _currentIndex = itemModel.id;
-
-            _currentItem = itemModel.RenderItem();
-            _currentItem.transform.SetParent(itemContainer, false);
+            if (_previewItem == null)
+            {
+                _previewItem = _itemModel.RenderItem();    
+            }
+            
+            _previewItem.transform.SetParent(itemContainer, false);
         }
 
-        public int selectedItemId => _currentIndex;
-
-        public void AnimateSelectedItem()
+        private void AnimateSelectedItem()
         {
-            _currentItem.transform.DOScale(new Vector3(1.4f, 1.4f), 0.5f).OnComplete(() =>
+            _previewItem.transform.DOScale(new Vector3(1.4f, 1.4f), 0.5f).OnComplete(() =>
             {
-                _currentItem.transform.DOScale(new Vector3(1f, 1f), 0.5f);
+                _previewItem.transform.DOScale(new Vector3(1f, 1f), 0.5f);
             });
+        }
+
+        public void Clear()
+        {
+            selectButton.button.onClick?.RemoveListener(OnSelectButtonClickHandler);
         }
     }
 }
