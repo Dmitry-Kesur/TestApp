@@ -10,7 +10,6 @@ namespace UI
 {
     public class GameSessionView : BaseView
     {
-        [SerializeField] private List<Vector3> itemSpawnPoints;
         [SerializeField] private RectTransform itemsContainerTransform;
         [SerializeField] private RectTransform catchAreaTransform;
         [SerializeField] private RectTransform failAreaTransform;
@@ -18,13 +17,9 @@ namespace UI
         [SerializeField] private TextMeshProUGUI caughtItemsText;
         [SerializeField] private TextMeshProUGUI failItemsText;
         [SerializeField] private SessionResultView sessionResultView;
-
-        private const float maxSpawnDelay = 0.4f;
-        private const int maxFailItems = 3;
-        private const float defaultSpawnDelay = 2.2f;
+        
         private float _spawnDelay;
-        private int _caughtItemsAmount;
-        private int _failItemsAmount;
+        private const float spawnDecreaseAmount = 0.03f;
         private List<ItemView> _dropItems;
         private Coroutine _spawnCoroutine;
         private GameSessionModel _gameSessionModel;
@@ -34,10 +29,10 @@ namespace UI
             _dropItems = new List<ItemView>();
             _gameSessionModel = gameSessionModel;
 
-            ResetSpawnDelay();
-
             settingsButton.button.onClick.AddListener(OnSettingsButtonClickHandler);
             sessionResultView.OnRetrySessionAction = OnRetrySessionHandler;
+            
+            ResetSpawnDelay();
         }
 
         private void OnRetrySessionHandler()
@@ -48,13 +43,13 @@ namespace UI
 
         private void ResetSpawnDelay()
         {
-            _spawnDelay = defaultSpawnDelay;
+            _spawnDelay = _gameSessionModel.defaultSpawnDelay;
         }
 
         private void UpdateTexts()
         {
-            caughtItemsText.text = $"Caught Items: {_caughtItemsAmount}";
-            failItemsText.text = $"Fail Items: {_failItemsAmount}";
+            caughtItemsText.text = $"Caught Items: {_gameSessionModel.caughtItemsAmount}";
+            failItemsText.text = $"Fail Items: {_gameSessionModel.failItemsAmount}";
         }
 
         private void OnSettingsButtonClickHandler()
@@ -80,17 +75,15 @@ namespace UI
             while (true)
             {
                 var dropItem = itemModel.RenderItem();
-                dropItem.StartRotation();
                 dropItem.isInteractable = false;
                 dropItem.OnClickItemAction = () => { OnCatchItem(dropItem); };
-
-                var spawnPoint = GetRandomSpawnPoint();
+                dropItem.StartRotation();
 
                 Transform dropItemTransform;
                 (dropItemTransform = dropItem.transform).SetParent(itemsContainerTransform, false);
 
-                dropItemTransform.localPosition = new Vector3(spawnPoint.x, itemsContainerTransform.rect.yMax);
-
+                dropItemTransform.localPosition = new Vector3(GetRandomPositionX(), itemsContainerTransform.rect.yMax);
+                
                 StartMoveItem(dropItem);
 
                 _dropItems.Add(dropItem);
@@ -108,70 +101,65 @@ namespace UI
 
         private void OnUpdateItemPosition(ItemView itemView)
         {
-            if (IsFallsInCatchArea(itemView))
+            if (IsFallsCatchArea(itemView))
             {
                 itemView.isInteractable = true;
             }
 
-            if (IsFallsInFailArea(itemView) && !itemView.isCaught)
+            if (IsFallsFailArea(itemView) && !itemView.isCaught)
             {
                 itemView.isInteractable = false;
                 OnFailItem(itemView);
             }
         }
 
-        private bool IsFallsInCatchArea(ItemView itemView)
+        private bool IsFallsCatchArea(ItemView itemView)
         {
             var itemPositionY = itemView.transform.localPosition.y;
             return itemPositionY < catchAreaTransform.localPosition.y &&
                    itemPositionY > failAreaTransform.localPosition.y;
         }
 
-        private bool IsFallsInFailArea(ItemView itemView) =>
+        private bool IsFallsFailArea(ItemView itemView) =>
             itemView.transform.localPosition.y < failAreaTransform.localPosition.y;
 
         private void OnCatchItem(ItemView itemView)
         {
-            _caughtItemsAmount++;
+            _gameSessionModel.IncreaseCaughtItemsAmount();
             UpdateTexts();
             UpdateSpawnDelay();
 
             itemView.isCaught = true;
-            itemView.AnimateAlpha(0).OnComplete(() =>
-            {
-                itemView.StopRotation();
-                RemoveItem(itemView);
-            });
+            itemView.AnimateAlpha(0).OnComplete(() => RemoveItem(itemView));
         }
 
         private void UpdateSpawnDelay()
         {
-            if (_spawnDelay < maxSpawnDelay) return;
-            _spawnDelay -= 0.05f;
+            if (_spawnDelay < _gameSessionModel.maxSpawnDelay) return;
+            _spawnDelay -= spawnDecreaseAmount;
         }
 
         private void OnFailItem(ItemView itemView)
         {
+            _gameSessionModel.IncreaseFailItemsAmount();
+            
             RemoveItem(itemView);
-            _failItemsAmount++;
             UpdateTexts();
 
-            if (_failItemsAmount == maxFailItems)
+            if (_gameSessionModel.IsFailItemsLimitReached())
             {
-                StopGameSession();
-
-                sessionResultView.SetTotalResultText(_caughtItemsAmount, _failItemsAmount);
+                sessionResultView.SetTotalResultText(_gameSessionModel.caughtItemsAmount, _gameSessionModel.failItemsAmount);
                 sessionResultView.Show();
+                
+                StopGameSession();
             }
         }
 
         private void StopGameSession()
         {
-            _caughtItemsAmount = 0;
-            _failItemsAmount = 0;
-
+            _gameSessionModel.OnStopGameSession();
+            
             UpdateTexts();
-
             StopCoroutine(_spawnCoroutine);
             RemoveItems();
             ResetSpawnDelay();
@@ -179,6 +167,7 @@ namespace UI
 
         private void RemoveItem(ItemView itemView)
         {
+            itemView.StopRotation();
             _dropItems.Remove(itemView);
             Destroy(itemView.gameObject);
         }
@@ -193,10 +182,11 @@ namespace UI
             _dropItems.Clear();
         }
 
-        private Vector3 GetRandomSpawnPoint()
+        private float GetRandomPositionX()
         {
-            var randomIndex = Random.Range(0, itemSpawnPoints.Count);
-            return itemSpawnPoints[randomIndex];
+            var itemsContainerRect = itemsContainerTransform.rect;
+            var randomPositionX = Random.Range(itemsContainerRect.center.x - itemsContainerRect.xMax, itemsContainerRect.center.x + itemsContainerRect.xMax);
+            return randomPositionX;
         }
 
         protected override void AfterHide()

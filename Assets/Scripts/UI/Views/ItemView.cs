@@ -15,7 +15,6 @@ namespace UI
 
         private bool _isCaught;
         private Tween _rotationTween;
-        private Tween _moveTween;
         private ItemModel _itemModel;
 
         public void Init(ItemModel itemModel)
@@ -47,7 +46,6 @@ namespace UI
 
         public bool isInteractable
         {
-            get => itemButton.interactable;
             set
             {
                 if (itemButton.interactable == value) return;
@@ -68,7 +66,7 @@ namespace UI
 
         public Tween MoveToPosition(Vector2 position)
         {
-            return _moveTween = transform.DOMove(position, 5.5f);
+            return transform.DOMove(position, 5.5f);
         }
     }
 }

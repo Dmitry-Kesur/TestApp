@@ -11,7 +11,7 @@ namespace DefaultNamespace
         public MenuWindowModel(GameHandler gameHandler)
         {
             _gameHandler = gameHandler;
-            _gameScoreModel = _gameHandler.ScoreModel;
+            _gameScoreModel = _gameHandler.scoreModel;
         }
 
         public int gameScore => _gameScoreModel.GameScore;

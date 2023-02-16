@@ -18,5 +18,10 @@ namespace DefaultNamespace.UI
         {
             OnArrowClickAction?.Invoke();
         }
+
+        private void OnDisable()
+        {
+            arrowButton.onClick.RemoveListener(OnArrowClickHandler);
+        }
     }
 }

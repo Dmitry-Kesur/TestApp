@@ -16,6 +16,8 @@ namespace DefaultNamespace
 
         public List<ItemModel> GetItems() => _gameHandler.itemsHandler.GetItems();
 
+        public ItemModel selectedItem => _gameHandler.itemsHandler.GetSelectedItem();
+
         public override BaseWindow GetWindowInstance()
         {
             var instance = GameObject.Instantiate(Resources.Load<SettingsWindow>("Prefabs/UI/Windows/SettingsWindow"));

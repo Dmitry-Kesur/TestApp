@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
+    public static class GameAssetBundles
+    {
+        public const string ItemSprites = "itemssprites";
+    }
+    
     public static class LocalAssetBundleLoader
     {
         public static Sprite[] LoadSpritesBundle(string bundleName)

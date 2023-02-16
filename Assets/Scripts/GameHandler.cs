@@ -16,7 +16,7 @@ namespace DefaultNamespace
             _interfaceModel = new InterfaceModel();
             _itemsHandler = new ItemsHandler(this);
             _gameDataController = new GameDataController(dataOperationService);
-            
+
             _scoreModel = new GameScoreModel(_gameDataController.GetGameScore())
             {
                 SaveGameScoreAction = _gameDataController.SaveGameScore
@@ -47,11 +47,6 @@ namespace DefaultNamespace
 
         public ItemsHandler itemsHandler => _itemsHandler;
 
-        public GameScoreModel ScoreModel => _scoreModel;
-
-        public void SetScore(int scoreAmount)
-        {
-            _scoreModel.SetScore(scoreAmount);
-        }
+        public GameScoreModel scoreModel => _scoreModel;
     }
 }

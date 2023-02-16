@@ -9,5 +9,10 @@ namespace UI
         {
            
         }
+
+        public virtual void OnWindowHide()
+        {
+            
+        }
     }
 }

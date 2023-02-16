@@ -8,14 +8,14 @@ namespace DefaultNamespace
     {
         public Action<int> OnCatchItemAction;
         private readonly int _id;
-        private readonly int _scoreAmount;
+        private readonly int _rewardScoreAmount;
         private bool _isSelected;
         private readonly Sprite _sprite;
 
         public ItemModel(int id, Sprite sprite)
         {
             _id = id;
-            _scoreAmount = 2;
+            _rewardScoreAmount = 2;
             _sprite = sprite;
         }
 
@@ -38,7 +38,7 @@ namespace DefaultNamespace
 
         public void OnCatchItem()
         {
-            OnCatchItemAction?.Invoke(_scoreAmount);
+            OnCatchItemAction?.Invoke(_rewardScoreAmount);
         }
     }
 }

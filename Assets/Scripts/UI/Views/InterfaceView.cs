@@ -33,6 +33,7 @@ namespace UI
                 Debug.LogException(new Exception("[InterfaceView]: activeWindow = null"));
             }
             
+            _activeWindow.OnWindowHide();
             Destroy(_activeWindow.gameObject);
             _activeWindow = null;
         }

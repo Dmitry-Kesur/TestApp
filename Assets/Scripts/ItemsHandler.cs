@@ -17,7 +17,7 @@ namespace DefaultNamespace
 
         public void Init()
         {
-            var sprites = LocalAssetBundleLoader.LoadSpritesBundle("itemssprites");
+            var sprites = LocalAssetBundleLoader.LoadSpritesBundle(GameAssetBundles.ItemSprites);
             
             for (int i = 0; i < sprites.Length; i++)
             {
@@ -27,6 +27,7 @@ namespace DefaultNamespace
             }
 
             var randomIndex = Random.Range(0, _itemsModels.Count);
+            
             _selectedItem = _itemsModels[randomIndex];
             _selectedItem.OnCatchItemAction = OnCatchItemHandle;
             _selectedItem.isSelected = true;
@@ -52,9 +53,9 @@ namespace DefaultNamespace
             }
         }
 
-        private void OnCatchItemHandle(int scoreAmount)
+        private void OnCatchItemHandle(int rewardScoreAmount)
         {
-            _gameHandler.SetScore(scoreAmount);
+            _gameHandler.scoreModel.SetScore(rewardScoreAmount);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DefaultNamespace;
 using DefaultNamespace.UI;
 using DG.Tweening;
@@ -12,7 +11,7 @@ namespace UI
         [SerializeField] private Arrow arrowLeft;
         [SerializeField] private Arrow arrowRight;
         [SerializeField] private RectTransform itemContainer;
-        
+
         private ItemView _currentItem;
         private List<ItemModel> _items;
         private int _currentIndex;

@@ -16,18 +16,20 @@ namespace UI.Windows
         {
             base.Init(windowModel);
             _settingsWindowModel = windowModel as SettingsWindowModel;
-            
-            selectButton.SetButtonText("Select");
-            returnButton.SetButtonText("Return Menu");
-            
+
             itemsSelector.Init(_settingsWindowModel?.GetItems());
 
             selectButton.button.onClick?.AddListener(OnSelectButtonClickHandler);
             returnButton.button.onClick?.AddListener(OnReturnButtonClickHandler);
+            
+            selectButton.SetButtonText("Select");
+            returnButton.SetButtonText("Return Menu");
         }
         
         private void OnSelectButtonClickHandler()
         {
+            if (itemsSelector.selectedItemId == _settingsWindowModel.selectedItem.id) return;
+          
             itemsSelector.AnimateSelectedItem();
             _settingsWindowModel.SelectItem(itemsSelector.selectedItemId);
         }
@@ -35,6 +37,13 @@ namespace UI.Windows
         private void OnReturnButtonClickHandler()
         {
             _settingsWindowModel.OnReturnButtonClick();
+        }
+
+        public override void OnWindowHide()
+        {
+            base.OnWindowHide();
+            selectButton.button.onClick?.RemoveListener(OnSelectButtonClickHandler);
+            returnButton.button.onClick?.RemoveListener(OnReturnButtonClickHandler);
         }
     }
 }

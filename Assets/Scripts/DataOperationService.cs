@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace DefaultNamespace
@@ -7,41 +7,33 @@ namespace DefaultNamespace
     public class DataOperationService
     {
         private readonly string _gameDataPath;
-        private readonly BinaryFormatter _binaryFormatter;
 
         public DataOperationService()
         {
-            _binaryFormatter = new BinaryFormatter();
-            _gameDataPath = Application.persistentDataPath + "/gameData.save";
+            _gameDataPath = Application.persistentDataPath + "/gameData.json";
         }
-        
+
         public GameData LoadGameData()
         {
             GameData gameData;
-            FileStream fileStream;
 
-            if (!File.Exists(_gameDataPath))
+            if (File.Exists(_gameDataPath))
+            {
+                string dataJson = File.ReadAllText(_gameDataPath);
+                gameData = JsonConvert.DeserializeObject<GameData>(dataJson);
+            }
+            else
             {
                 gameData = new GameData();
-                fileStream = new FileStream(_gameDataPath, FileMode.Create);
-                _binaryFormatter.Serialize(fileStream, gameData);
-                
-                fileStream.Close();
-                return gameData;
             }
-            
-            fileStream = new FileStream(_gameDataPath, FileMode.Open);
-            gameData = _binaryFormatter.Deserialize(fileStream) as GameData;
-            
-            fileStream.Close();
+
             return gameData;
         }
 
         public void SaveGameData(GameData gameData)
         {
-            var fileStream = new FileStream(_gameDataPath, FileMode.Create);
-            _binaryFormatter.Serialize(fileStream, gameData);
-            fileStream.Close();
+            string dataJson = JsonConvert.SerializeObject(gameData);
+            File.WriteAllText(_gameDataPath, dataJson);
         }
     }
 }
