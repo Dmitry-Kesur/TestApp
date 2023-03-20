@@ -1,18 +1,19 @@
 using DefaultNamespace;
+using SimpleInjector;
 
 public class GameSessionState : BaseState
 {
-    private readonly GameHandler _gameHandler;
     private readonly GameSessionModel _gameSessionModel;
-    
-    public GameSessionState(GameHandler gameHandler)
+    private readonly InterfaceService _interfaceService;
+
+    public GameSessionState(Container dependencyInjectionContainer)
     {
-        _gameHandler = gameHandler;
-        _gameSessionModel = new GameSessionModel(_gameHandler);
+        _gameSessionModel = new GameSessionModel(dependencyInjectionContainer);
+        _interfaceService = dependencyInjectionContainer.GetInstance<InterfaceService>();
     }
 
     public override void OnStateEnter()
     {
-        _gameHandler.interfaceModel.ShowGameSessionInterface(_gameSessionModel);
+        _interfaceService.ShowGameSessionInterface(_gameSessionModel);
     }
 }

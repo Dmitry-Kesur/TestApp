@@ -1,4 +1,5 @@
-﻿using UI;
+﻿using SimpleInjector;
+using UI;
 using UI.Windows;
 using UnityEngine;
 
@@ -6,14 +7,16 @@ namespace DefaultNamespace
 {
     public class SettingsWindowModel : BaseWindowModel
     {
-        private readonly GameHandler _gameHandler;
+        private readonly StateMachine _stateMachine;
+        private readonly ItemsService _itemsService;
 
-        public SettingsWindowModel(GameHandler gameHandler)
+        public SettingsWindowModel(Container dependencyInjectionContainer)
         {
-            _gameHandler = gameHandler;
+            _stateMachine = dependencyInjectionContainer.GetInstance<StateMachine>();
+            _itemsService = dependencyInjectionContainer.GetInstance<ItemsService>();
         }
 
-        public ItemModel GetGameItem() => _gameHandler.itemsHandler.GetGameItem();
+        public ItemModel GetGameItem() => _itemsService.GetGameItem();
 
         public override BaseWindow GetWindowInstance()
         {
@@ -24,7 +27,7 @@ namespace DefaultNamespace
 
         public void OnReturnButtonClick()
         {
-            _gameHandler.stateMachine.SetState(StateName.MenuState);
+            _stateMachine.SetState(StateName.MenuState);
         }
     }
 }

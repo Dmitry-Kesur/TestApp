@@ -9,8 +9,6 @@ namespace DefaultNamespace
 
     public abstract class BaseState
     {
-        public StateMachine stateMachine;
-
         public virtual void OnStateEnter()
         {
         }

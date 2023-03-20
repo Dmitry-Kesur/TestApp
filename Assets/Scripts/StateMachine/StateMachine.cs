@@ -20,7 +20,6 @@ public class StateMachine
     public void SetState(StateName stateName)
     {
         _currentState = _states[stateName];
-        _currentState.stateMachine = this;
         _currentState.OnStateEnter();
         Debug.Log($"[State Machine] Set state to [ {_currentState.GetType().Name} ]");
     }

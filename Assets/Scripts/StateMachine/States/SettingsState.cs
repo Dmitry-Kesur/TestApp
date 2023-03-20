@@ -1,19 +1,21 @@
-﻿namespace DefaultNamespace.States
+﻿using SimpleInjector;
+
+namespace DefaultNamespace.States
 {
     public class SettingsState : BaseState
     {
-        private readonly GameHandler _gameHandler;
         private readonly SettingsWindowModel _settingsWindowModel;
+        private readonly InterfaceService _interfaceService;
 
-        public SettingsState(GameHandler gameHandler)
+        public SettingsState(Container dependencyInjectionContainer)
         {
-            _gameHandler = gameHandler;
-            _settingsWindowModel = new SettingsWindowModel(_gameHandler);
+            _settingsWindowModel = new SettingsWindowModel(dependencyInjectionContainer);
+            _interfaceService = dependencyInjectionContainer.GetInstance<InterfaceService>();
         }
-        
+
         public override void OnStateEnter()
         {
-            _gameHandler.interfaceModel.ShowWindow(_settingsWindowModel);
+            _interfaceService.ShowWindow(_settingsWindowModel);
         }
     }
 }

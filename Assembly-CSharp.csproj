@@ -47,13 +47,13 @@
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
      <Compile Include="Assets\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
-     <Compile Include="Assets\Scripts\GameData.cs" />
-     <Compile Include="Assets\Scripts\GameDataController.cs" />
+     <Compile Include="Assets\Scripts\Data\GameData.cs" />
+     <Compile Include="Assets\Scripts\Controllers\GameDataController.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
-     <Compile Include="Assets\Scripts\Api.cs" />
+     <Compile Include="Assets\Scripts\Api\Api.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
-     <Compile Include="Assets\Scripts\LocalAssetBundleLoader.cs" />
+     <Compile Include="Assets\Scripts\Services\LocalAssetBundleLoader.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
      <Compile Include="Assets\DOTween\Modules\DOTweenModuleAudio.cs" />
      <Compile Include="Assets\Scripts\Models\MenuWindowModel.cs" />
@@ -67,14 +67,14 @@
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
-     <Compile Include="Assets\Scripts\GameApplication.cs" />
+     <Compile Include="Assets\Scripts\EntryPoint.cs" />
      <Compile Include="Assets\Scripts\StateMachine\States\MenuState.cs" />
      <Compile Include="Assets\Scripts\UI\Windows\BaseWindow.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\Models\ItemModel.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
      <Compile Include="Assets\Scripts\UI\Views\BaseView.cs" />
-     <Compile Include="Assets\Scripts\Models\InterfaceModel.cs" />
+     <Compile Include="Assets\Scripts\Models\InterfaceService.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
@@ -91,11 +91,12 @@
      <Compile Include="Assets\Scripts\UI\Windows\SettingsWindow.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
-     <Compile Include="Assets\Scripts\ItemsHandler.cs" />
+     <Compile Include="Assets\Scripts\Data\MultiplierData.cs" />
+     <Compile Include="Assets\Scripts\Services\ItemsService.cs" />
      <Compile Include="Assets\DOTween\Modules\DOTweenModuleUtils.cs" />
      <Compile Include="Assets\Scripts\UI\Views\SessionResultView.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
-     <Compile Include="Assets\Scripts\StateMachine\BaseState.cs" />
+     <Compile Include="Assets\Scripts\StateMachine\States\BaseState.cs" />
      <Compile Include="Assets\Scripts\UI\Buttons\BaseButton.cs" />
      <Compile Include="Assets\DOTween\Modules\DOTweenModuleEPOOutline.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
@@ -103,7 +104,7 @@
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
      <Compile Include="Assets\Scripts\Models\BaseWindowModel.cs" />
      <Compile Include="Assets\Scripts\Models\GameScoreModel.cs" />
-     <Compile Include="Assets\Scripts\DataOperationService.cs" />
+     <Compile Include="Assets\Scripts\Services\DataOperationService.cs" />
      <Compile Include="Assets\Scripts\StateMachine\States\SettingsState.cs" />
      <Compile Include="Assets\Scripts\UI\Arrow.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
@@ -111,7 +112,6 @@
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
-     <Compile Include="Assets\Scripts\GameHandler.cs" />
      <Compile Include="Assets\Scripts\Models\GameSessionModel.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -356,14 +356,17 @@
      <Reference Include="UnityEditor.UnityConnectModule">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.44f1\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
      </Reference>
+     <Reference Include="DOTween">
+     <HintPath>C:\Users\User\RiderProjects\Test\Assets\DOTween\DOTween.dll</HintPath>
+     </Reference>
      <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
      <HintPath>C:\Users\User\RiderProjects\Test\Library\PackageCache\com.unity.visualscripting@1.7.8\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="Newtonsoft.Json">
      <HintPath>C:\Users\User\RiderProjects\Test\Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.1\Runtime\Newtonsoft.Json.dll</HintPath>
      </Reference>
-     <Reference Include="DOTween">
-     <HintPath>C:\Users\User\RiderProjects\Test\Assets\DOTween\DOTween.dll</HintPath>
+     <Reference Include="SimpleInjector">
+     <HintPath>C:\Users\User\RiderProjects\Test\Assets\Plugins\SimpleInjector.dll</HintPath>
      </Reference>
      <Reference Include="UnityEditor.iOS.Extensions.Xcode">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.44f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -762,6 +765,10 @@
       <Project>{597527b8-a4b9-8965-7299-aa96663c2687}</Project>
       <Name>Unity.VisualScripting.State.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="LunarConsole.csproj">
+      <Project>{554fa110-a286-d620-2f34-1ebd59547866}</Project>
+      <Name>LunarConsole</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.SettingsProvider.Editor.csproj">
       <Project>{c545be46-5176-1b88-9de8-630a2cded87e}</Project>
       <Name>Unity.VisualScripting.SettingsProvider.Editor</Name>
@@ -801,6 +808,10 @@
     <ProjectReference Include="Unity.VisualScripting.Core.csproj">
       <Project>{2ed6a1e3-f471-47c3-192f-6b5a9798a4f4}</Project>
       <Name>Unity.VisualScripting.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="LunarConsoleEditor.csproj">
+      <Project>{8a8df691-d861-5099-04e7-8deb945e6590}</Project>
+      <Name>LunarConsoleEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -9,15 +9,16 @@ namespace UI
         [SerializeField] private Transform interfaceContainerTransform;
         [SerializeField] private GameSessionView gameSessionView;
         private BaseWindow _activeWindow;
-        private GameHandler _gameHandler;
+        private InterfaceService _interfaceService;
 
-        public void Init(GameHandler gameHandler)
+        public void Init(InterfaceService interfaceService)
         {
-            _gameHandler = gameHandler;
-            _gameHandler.interfaceModel.OnShowWindowAction = OnShowWindow;
-            _gameHandler.interfaceModel.OnCloseWindowAction = OnCloseWindow;
-            _gameHandler.interfaceModel.OnShowGameSessionInterfaceAction = OnShowGameSessionInterface;
-            _gameHandler.interfaceModel.HideGameSessionInterfaceAction = OnHideGameSessionInterface;
+            _interfaceService = interfaceService;
+
+            _interfaceService.OnShowWindowAction = OnShowWindow;
+            _interfaceService.OnCloseWindowAction = OnCloseWindow;
+            _interfaceService.OnShowGameSessionInterfaceAction = OnShowGameSessionInterface;
+            _interfaceService.HideGameSessionInterfaceAction = OnHideGameSessionInterface;
         }
 
         private void OnShowWindow(BaseWindowModel windowModel)
@@ -32,24 +33,24 @@ namespace UI
             {
                 Debug.LogException(new Exception("[InterfaceView]: activeWindow = null"));
             }
-            
+
             _activeWindow.OnWindowHide();
             Destroy(_activeWindow.gameObject);
             _activeWindow = null;
         }
-        
+
         private void OnShowGameSessionInterface(GameSessionModel gameSessionModel)
         {
             gameSessionView.Init(gameSessionModel);
             gameSessionView.Show();
         }
-        
+
         private void OnHideGameSessionInterface()
         {
             if (gameSessionView.isActiveAndEnabled)
             {
                 gameSessionView.Hide();
-            }   
+            }
         }
     }
 }
