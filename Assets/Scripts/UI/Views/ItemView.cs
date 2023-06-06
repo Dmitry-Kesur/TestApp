@@ -69,7 +69,8 @@ namespace UI
         private void OnItemClickHandler()
         {
             if (isCatch) return;
-         
+
+            _isCatch = true;
             OnClickItemAction?.Invoke();
             _itemModel.OnCatchItem();
         }

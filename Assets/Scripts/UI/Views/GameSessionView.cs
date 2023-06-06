@@ -146,8 +146,7 @@ namespace UI
             _gameSessionModel.IncreaseCatchItemsAmount();
             UpdateTexts();
             UpdateSpawnDelay();
-
-            itemView.isCatch = true;
+            
             var tween = itemView.AnimateAlpha(0);
             tween.OnComplete(() => RemoveItem(itemView));
         }
