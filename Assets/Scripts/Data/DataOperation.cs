@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class DataOperationService
+    public class DataOperation
     {
         private readonly string _gameDataPath;
 
-        public DataOperationService()
+        public DataOperation()
         {
             _gameDataPath = Application.persistentDataPath + "/gameData.json";
         }

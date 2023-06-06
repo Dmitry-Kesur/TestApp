@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace DefaultNamespace
 {
-    public static class Api
+    public static class ApiService
     {
         private static HttpClient _httpClient;
 
-        public static void InitializeApi()
+        public static void Init()
         {
             _httpClient = new HttpClient();
         }

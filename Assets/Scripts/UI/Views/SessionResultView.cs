@@ -11,20 +11,20 @@ namespace UI
         [SerializeField] private TextMeshProUGUI totalResultText;
         [SerializeField] private BaseButton retryButton;
 
-        protected override void AfterShow()
+        protected override void OnShow()
         {
-            base.AfterShow();
-            retryButton.button.onClick.AddListener(OnRetryButtonClickHandler);
+            base.OnShow();
+            retryButton.OnButtonClickAction = OnRetryButtonClickHandler;
         }
 
-        public void SetTotalResultText(int catchItemsAmount, int failItemsAmount)
+        public void SetTotalResult(int catchItemsAmount, int failItemsAmount)
         {
             totalResultText.text = $"Catch Items: {catchItemsAmount}\nFail Items: {failItemsAmount}";
         }
 
         private void OnRetryButtonClickHandler()
         {
-            retryButton.button.onClick.RemoveListener(OnRetryButtonClickHandler);
+            retryButton.OnButtonClickAction = null;
             OnRetrySessionAction?.Invoke();
         }
     }

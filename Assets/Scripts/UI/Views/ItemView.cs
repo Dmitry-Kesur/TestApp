@@ -13,8 +13,9 @@ namespace UI
         [SerializeField] private Button itemButton;
         [SerializeField] private CanvasGroup canvasGroup;
 
-        private bool _isCaught;
+        private bool _isCatch;
         private Tween _rotationTween;
+        private Tween _moveTween;
         private ItemModel _itemModel;
 
         public void Init(ItemModel itemModel)
@@ -23,6 +24,11 @@ namespace UI
             SetSprite(itemModel.GetActiveSprite());
 
             itemButton.onClick.AddListener(OnItemClickHandler);
+        }
+
+        public void Clear()
+        {
+            StopRotation();
         }
         
         public void SetSprite(Sprite sprite)
@@ -35,13 +41,7 @@ namespace UI
             _rotationTween = transform.DORotate(new Vector3(0, 0, 360), 8, RotateMode.FastBeyond360).SetLoops(-1);
         }
 
-        public void StopRotation()
-        {
-            _rotationTween?.Kill();
-            _rotationTween = null;
-        }
-
-        public bool isInteractable
+        public bool interactable
         {
             set
             {
@@ -50,10 +50,10 @@ namespace UI
             }
         }
 
-        public bool isCaught
+        public bool isCatch
         {
-            get => _isCaught;
-            set => _isCaught = value;
+            get => _isCatch;
+            set => _isCatch = value;
         }
 
         public Tweener AnimateAlpha(int alpha)
@@ -68,10 +68,16 @@ namespace UI
         
         private void OnItemClickHandler()
         {
-            itemButton.onClick.RemoveListener(OnItemClickHandler);
-            
+            if (isCatch) return;
+         
             OnClickItemAction?.Invoke();
             _itemModel.OnCatchItem();
+        }
+        
+        private void StopRotation()
+        {
+            _rotationTween?.Kill();
+            _rotationTween = null;
         }
     }
 }

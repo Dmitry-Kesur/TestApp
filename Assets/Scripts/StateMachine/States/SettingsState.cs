@@ -6,15 +6,26 @@ namespace DefaultNamespace.States
     {
         private readonly SettingsWindowModel _settingsWindowModel;
         private readonly InterfaceService _interfaceService;
+        private BaseState _previousState;
 
-        public SettingsState(Container dependencyInjectionContainer)
+        public SettingsState(StateType stateType, Container container) : base(stateType, container)
         {
-            _settingsWindowModel = new SettingsWindowModel(dependencyInjectionContainer);
-            _interfaceService = dependencyInjectionContainer.GetInstance<InterfaceService>();
+            _settingsWindowModel = new SettingsWindowModel(container)
+            {
+                OnReturnAction = OnReturnHandler
+            };
+
+            _interfaceService = container.GetInstance<InterfaceService>();
         }
 
-        public override void OnStateEnter()
+        private void OnReturnHandler()
         {
+            ChangeStateAction?.Invoke(_previousState.stateType);
+        }
+
+        public override void OnStateChanged(BaseState previousState)
+        {
+            _previousState = previousState;
             _interfaceService.ShowWindow(_settingsWindowModel);
         }
     }

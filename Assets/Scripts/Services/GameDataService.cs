@@ -3,16 +3,16 @@ using System.Threading.Tasks;
 
 namespace DefaultNamespace
 {
-    public class GameDataController
+    public class GameDataService
     {
-        private readonly DataOperationService _dataOperationService;
+        private readonly DataOperation _dataOperation;
         private readonly GameScoreModel _gameScoreModel;
         private readonly GameData _gameData;
 
-        public GameDataController(DataOperationService dataOperationService)
+        public GameDataService()
         {
-            _dataOperationService = dataOperationService;
-            _gameData = _dataOperationService.LoadGameData();
+            _dataOperation = new DataOperation();
+            _gameData = _dataOperation.LoadGameData();
 
             _gameScoreModel = new GameScoreModel(_gameData.gameScore)
             {
@@ -20,9 +20,9 @@ namespace DefaultNamespace
             };
         }
 
-        public async Task InitScoreMultiplier()
+        public async Task Init()
         {
-            var result = await Api.Get<MultiplierData>("https://mocki.io/v1/9d718cd5-3e36-48c2-9d46-4f043eecb646");
+            var result = await ApiService.Get<MultiplierData>("https://mocki.io/v1/9d718cd5-3e36-48c2-9d46-4f043eecb646");
             if (result == null)
             {
                 throw new Exception("[Api] request return null");
@@ -42,7 +42,7 @@ namespace DefaultNamespace
         {
             _gameData.gameScore = _gameScoreModel.gameScore;
 
-            _dataOperationService.SaveGameData(_gameData);
+            _dataOperation.SaveGameData(_gameData);
         }
     }
 }

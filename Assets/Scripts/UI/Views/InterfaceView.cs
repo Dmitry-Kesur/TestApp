@@ -19,12 +19,20 @@ namespace UI
             _interfaceService.OnCloseWindowAction = OnCloseWindow;
             _interfaceService.OnShowGameSessionInterfaceAction = OnShowGameSessionInterface;
             _interfaceService.HideGameSessionInterfaceAction = OnHideGameSessionInterface;
+
+            InitGameSession();
+        }
+
+        private void InitGameSession()
+        {
+            gameSessionView.Init(_interfaceService.gameSessionModel);
         }
 
         private void OnShowWindow(BaseWindowModel windowModel)
         {
             _activeWindow = windowModel.GetWindowInstance();
             _activeWindow.transform.SetParent(interfaceContainerTransform, false);
+            _activeWindow.OnWindowShow();
         }
 
         private void OnCloseWindow()
@@ -39,9 +47,8 @@ namespace UI
             _activeWindow = null;
         }
 
-        private void OnShowGameSessionInterface(GameSessionModel gameSessionModel)
+        private void OnShowGameSessionInterface()
         {
-            gameSessionView.Init(gameSessionModel);
             gameSessionView.Show();
         }
 

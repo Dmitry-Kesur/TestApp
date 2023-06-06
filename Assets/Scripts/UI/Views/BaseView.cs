@@ -7,21 +7,21 @@ namespace UI
         public void Show()
         {
             gameObject.SetActive(true);
-            AfterShow();
+            OnShow();
         }
 
         public void Hide()
         {
             gameObject.SetActive(false);
-            AfterHide();
+            OnHide();
         }
 
-        protected virtual void AfterHide()
+        protected virtual void OnHide()
         {
          
         }
 
-        protected virtual void AfterShow()
+        protected virtual void OnShow()
         {
             
         }

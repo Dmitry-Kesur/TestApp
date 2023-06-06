@@ -14,31 +14,43 @@ namespace UI
         [SerializeField] private RectTransform catchAreaTransform;
         [SerializeField] private RectTransform failAreaTransform;
         [SerializeField] private BaseButton settingsButton;
-        [SerializeField] private TextMeshProUGUI caughtItemsText;
+        [SerializeField] private TextMeshProUGUI catchItemsText;
         [SerializeField] private TextMeshProUGUI failItemsText;
         [SerializeField] private SessionResultView sessionResultView;
         
         private float _spawnDelay;
         private const float spawnDecreaseAmount = 0.03f;
         private List<ItemView> _dropItems;
-        private Coroutine _spawnCoroutine;
+        private IEnumerator _spawnCoroutine;
         private GameSessionModel _gameSessionModel;
 
         public void Init(GameSessionModel gameSessionModel)
         {
             _dropItems = new List<ItemView>();
             _gameSessionModel = gameSessionModel;
-
-            settingsButton.button.onClick.AddListener(OnSettingsButtonClickHandler);
-            sessionResultView.OnRetrySessionAction = OnRetrySessionHandler;
-            
-            ResetSpawnDelay();
         }
 
+        protected override void OnShow()
+        {
+            settingsButton.OnButtonClickAction = OnSettingsButtonClickHandler;
+            sessionResultView.OnRetrySessionAction = OnRetrySessionHandler;
+            
+            if (_gameSessionModel.isPause)
+            {
+                ResumeGameSession();
+            }
+            else
+            {
+                ResetGameSession();
+            }
+            
+            SpawnItems();
+        }
+        
         private void OnRetrySessionHandler()
         {
             sessionResultView.Hide();
-            StartSpawnItems();
+            SpawnItems();
         }
 
         private void ResetSpawnDelay()
@@ -48,34 +60,40 @@ namespace UI
 
         private void UpdateTexts()
         {
-            caughtItemsText.text = $"Caught Items: {_gameSessionModel.caughtItemsAmount}";
+            catchItemsText.text = $"Catch Items: {_gameSessionModel.catchItemsAmount}";
             failItemsText.text = $"Fail Items: {_gameSessionModel.failItemsAmount}";
         }
 
         private void OnSettingsButtonClickHandler()
         {
-            StopGameSession();
+            PauseGameSession();
             _gameSessionModel.SettingsButtonClick();
         }
 
-        protected override void AfterShow()
+        private void PauseGameSession()
         {
-            UpdateTexts();
-            StartSpawnItems();
+            _gameSessionModel.isPause = true;
+            RemoveItems();
+        }
+        
+        private void ResumeGameSession()
+        {
+            _gameSessionModel.isPause = false;
         }
 
-        private void StartSpawnItems()
+        private void SpawnItems()
         {
             var itemModel = _gameSessionModel.GetGameItem();
-            _spawnCoroutine = StartCoroutine(SpawnItem(itemModel));
+            _spawnCoroutine = SpawnItem(itemModel);
+            StartCoroutine(_spawnCoroutine);
         }
 
         private IEnumerator SpawnItem(ItemModel itemModel)
         {
-            while (true)
+            while (!_gameSessionModel.isPause)
             {
                 var dropItem = itemModel.RenderItem();
-                dropItem.isInteractable = false;
+                dropItem.interactable = false;
                 dropItem.OnClickItemAction = () => { OnCatchItem(dropItem); };
                 dropItem.StartRotation();
 
@@ -103,12 +121,12 @@ namespace UI
         {
             if (IsFallsCatchArea(itemView))
             {
-                itemView.isInteractable = true;
+                itemView.interactable = true;
             }
 
-            if (IsFallsFailArea(itemView) && !itemView.isCaught)
+            if (IsFallsFailArea(itemView) && !itemView.isCatch)
             {
-                itemView.isInteractable = false;
+                itemView.interactable = false;
                 OnFailItem(itemView);
             }
         }
@@ -125,12 +143,13 @@ namespace UI
 
         private void OnCatchItem(ItemView itemView)
         {
-            _gameSessionModel.IncreaseCaughtItemsAmount();
+            _gameSessionModel.IncreaseCatchItemsAmount();
             UpdateTexts();
             UpdateSpawnDelay();
 
-            itemView.isCaught = true;
-            itemView.AnimateAlpha(0).OnComplete(() => RemoveItem(itemView));
+            itemView.isCatch = true;
+            var tween = itemView.AnimateAlpha(0);
+            tween.OnComplete(() => RemoveItem(itemView));
         }
 
         private void UpdateSpawnDelay()
@@ -145,41 +164,44 @@ namespace UI
             
             RemoveItem(itemView);
             UpdateTexts();
+            UpdateSpawnDelay();
 
             if (_gameSessionModel.IsFailItemsLimitReached())
             {
-                sessionResultView.SetTotalResultText(_gameSessionModel.caughtItemsAmount, _gameSessionModel.failItemsAmount);
+                sessionResultView.SetTotalResult(_gameSessionModel.catchItemsAmount, _gameSessionModel.failItemsAmount);
                 sessionResultView.Show();
                 
-                StopGameSession();
+                ResetGameSession();
             }
         }
 
-        private void StopGameSession()
+        private void ResetGameSession()
         {
-            _gameSessionModel.OnStopGameSession();
-            
+            _gameSessionModel.Reset();
             UpdateTexts();
-            StopCoroutine(_spawnCoroutine);
             RemoveItems();
             ResetSpawnDelay();
+
+            if (_spawnCoroutine != null)
+            {
+                StopCoroutine(_spawnCoroutine);
+            }
         }
 
         private void RemoveItem(ItemView itemView)
         {
-            itemView.StopRotation();
+            itemView.Clear();
             _dropItems.Remove(itemView);
             Destroy(itemView.gameObject);
         }
 
         private void RemoveItems()
         {
-            foreach (var item in _dropItems)
+            for (int i = 0; i < _dropItems.Count; i++)
             {
-                Destroy(item.gameObject);
+                var item = _dropItems[i];
+                RemoveItem(item);
             }
-
-            _dropItems.Clear();
         }
 
         private float GetRandomPositionX()
@@ -189,10 +211,11 @@ namespace UI
             return randomPositionX;
         }
 
-        protected override void AfterHide()
+        protected override void OnHide()
         {
-            base.AfterHide();
-            settingsButton.button.onClick.RemoveListener(OnSettingsButtonClickHandler);
+            base.OnHide();
+
+            settingsButton.OnButtonClickAction = null;
             sessionResultView.OnRetrySessionAction = null;
         }
     }

@@ -10,7 +10,7 @@ namespace DefaultNamespace
         public Action<int> OnCatchItemAction;
         private int _activeSpriteIndex;
         private readonly int _rewardScoreAmount;
-        private Dictionary<int, Sprite> _sprites;
+        private readonly Dictionary<int, Sprite> _sprites;
         private Sprite _activeSprite;
 
         public ItemModel(Dictionary<int, Sprite> sprites, int activeSpriteIndex)

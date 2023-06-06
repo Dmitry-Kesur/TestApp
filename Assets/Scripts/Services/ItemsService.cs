@@ -6,16 +6,18 @@ namespace DefaultNamespace
     public class ItemsService
     {
         private ItemModel _itemModel;
-        private readonly GameDataController _gameDataController;
+        private readonly GameDataService _gameDataService;
 
-        public ItemsService(GameDataController gameDataController)
+        public ItemsService(GameDataService gameDataService)
         {
-            _gameDataController = gameDataController;
+            _gameDataService = gameDataService;
+
+            InitItems();
         }
 
-        public void Init()
+        private void InitItems()
         {
-            var sprites = LocalAssetBundleLoader.LoadSpritesBundle(GameAssetBundles.ItemSprites);
+            var sprites = AssetBundlesService.LoadSpritesBundle(GameAssetBundles.ItemSprites);
 
             Dictionary<int, Sprite> spritesDictionary = new Dictionary<int, Sprite>();
             for (int i = 0; i < sprites.Length; i++)
@@ -35,7 +37,7 @@ namespace DefaultNamespace
 
         private void OnCatchItemHandle(int rewardScoreAmount)
         {
-            _gameDataController.SetScore(rewardScoreAmount);
+            _gameDataService.SetScore(rewardScoreAmount);
         }
     }
 }

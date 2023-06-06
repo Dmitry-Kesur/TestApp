@@ -1,4 +1,5 @@
-﻿using SimpleInjector;
+﻿using System;
+using SimpleInjector;
 using UI;
 using UI.Windows;
 using UnityEngine;
@@ -7,27 +8,30 @@ namespace DefaultNamespace
 {
     public class SettingsWindowModel : BaseWindowModel
     {
-        private readonly StateMachine _stateMachine;
+        public Action OnReturnAction;
         private readonly ItemsService _itemsService;
 
-        public SettingsWindowModel(Container dependencyInjectionContainer)
+        public SettingsWindowModel(Container container)
         {
-            _stateMachine = dependencyInjectionContainer.GetInstance<StateMachine>();
-            _itemsService = dependencyInjectionContainer.GetInstance<ItemsService>();
+            _itemsService = container.GetInstance<ItemsService>();
         }
 
         public ItemModel GetGameItem() => _itemsService.GetGameItem();
 
         public override BaseWindow GetWindowInstance()
         {
-            var instance = GameObject.Instantiate(Resources.Load<SettingsWindow>("Prefabs/UI/Windows/SettingsWindow"));
-            instance.Init(this);
-            return instance;
+            if (windowInstance == null)
+            {
+                windowInstance = GameObject.Instantiate(Resources.Load<SettingsWindow>("Prefabs/UI/Windows/SettingsWindow"));
+                windowInstance.Init(this);    
+            }
+            
+            return windowInstance;
         }
 
         public void OnReturnButtonClick()
         {
-            _stateMachine.SetState(StateName.MenuState);
+            OnReturnAction?.Invoke();
         }
     }
 }

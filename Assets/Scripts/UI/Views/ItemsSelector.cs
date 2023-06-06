@@ -28,7 +28,7 @@ namespace UI
             arrowLeft.OnArrowClickAction = OnLeftArrowClick;
             arrowRight.OnArrowClickAction = OnRightArrowClick;
 
-            selectButton.button.onClick?.AddListener(OnSelectButtonClickHandler);
+            selectButton.OnButtonClickAction = OnSelectButtonClickHandler;
 
             selectButton.SetButtonText("Select");
 
@@ -89,11 +89,6 @@ namespace UI
             {
                 _previewItem.transform.DOScale(new Vector3(1f, 1f), 0.5f);
             });
-        }
-
-        public void Clear()
-        {
-            selectButton.button.onClick?.RemoveListener(OnSelectButtonClickHandler);
         }
     }
 }

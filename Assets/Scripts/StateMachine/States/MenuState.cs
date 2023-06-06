@@ -7,13 +7,28 @@ namespace DefaultNamespace.States
         private readonly MenuWindowModel _menuWindowModel;
         private readonly InterfaceService _interfaceService;
 
-        public MenuState(Container dependencyInjectionContainer)
+        public MenuState(StateType stateType, Container container) : base(stateType, container)
         {
-            _menuWindowModel = new MenuWindowModel(dependencyInjectionContainer);
-            _interfaceService = dependencyInjectionContainer.GetInstance<InterfaceService>();
+            _menuWindowModel = new MenuWindowModel(container)
+            {
+                OnPlayButtonClickAction = OnPlayButtonClickHandler,
+                OnSettingsButtonClickAction = OnSettingsButtonClickHandler
+            };
+
+            _interfaceService = container.GetInstance<InterfaceService>();
         }
 
-        public override void OnStateEnter()
+        private void OnSettingsButtonClickHandler()
+        {
+            ChangeStateAction?.Invoke(StateType.SettingsState);
+        }
+
+        private void OnPlayButtonClickHandler()
+        {
+            ChangeStateAction?.Invoke(StateType.GameSession);
+        }
+
+        public override void OnStateChanged(BaseState previousState)
         {
             _interfaceService.ShowWindow(_menuWindowModel);
         }

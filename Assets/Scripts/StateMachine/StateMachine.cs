@@ -1,26 +1,44 @@
 using System.Collections.Generic;
 using DefaultNamespace;
-using UnityEngine;
+using SimpleInjector;
 
 public class StateMachine
 {
-    private readonly Dictionary<StateName, BaseState> _states;
+    private Dictionary<StateType, BaseState> _states;
+    private List<StateType> _stateTypes;
     private BaseState _currentState;
+    private Container _container;
 
-    public StateMachine()
+    public void Init(Container container)
     {
-        _states = new Dictionary<StateName, BaseState>();
+        _container = container;
+        _states = new Dictionary<StateType, BaseState>();
+        _stateTypes = new List<StateType> {StateType.InitState, StateType.MenuState, StateType.SettingsState, StateType.GameSession};
+
+        InitStates();
     }
 
-    public void AddState(StateName stateName, BaseState state)
+    private void InitStates()
     {
-        _states.Add(stateName, state);
+        foreach (var stateType in _stateTypes)
+        {
+            var state = StateFactory.CreateState(stateType, _container);
+            state.ChangeStateAction = SetState;
+            AddState(stateType, state);
+        }
+        
+        SetState(StateType.InitState);
     }
-    
-    public void SetState(StateName stateName)
+
+    private void AddState(StateType stateType, BaseState state)
     {
-        _currentState = _states[stateName];
-        _currentState.OnStateEnter();
-        Debug.Log($"[State Machine] Set state to [ {_currentState.GetType().Name} ]");
+        _states.Add(stateType, state);
+    }
+
+    private void SetState(StateType stateType)
+    {
+        var previousState = _currentState;
+        _currentState = _states[stateType];
+        _currentState.OnStateChanged(previousState);
     }
 }

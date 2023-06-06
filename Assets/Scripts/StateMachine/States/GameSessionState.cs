@@ -3,17 +3,26 @@ using SimpleInjector;
 
 public class GameSessionState : BaseState
 {
-    private readonly GameSessionModel _gameSessionModel;
     private readonly InterfaceService _interfaceService;
 
-    public GameSessionState(Container dependencyInjectionContainer)
+    public GameSessionState(StateType stateType, Container container) : base(stateType, container)
     {
-        _gameSessionModel = new GameSessionModel(dependencyInjectionContainer);
-        _interfaceService = dependencyInjectionContainer.GetInstance<InterfaceService>();
+        var gameSessionModel = new GameSessionModel(container)
+        {
+            OnSettingsButtonClickAction = OnSettingsButtonClickHandler
+        };
+
+        _interfaceService = container.GetInstance<InterfaceService>();
+        _interfaceService.SetGameSessionModel(gameSessionModel);
     }
 
-    public override void OnStateEnter()
+    private void OnSettingsButtonClickHandler()
     {
-        _interfaceService.ShowGameSessionInterface(_gameSessionModel);
+        ChangeStateAction?.Invoke(StateType.SettingsState);
+    }
+
+    public override void OnStateChanged(BaseState previousState)
+    {
+        _interfaceService.ShowGameSessionInterface();
     }
 }

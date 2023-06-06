@@ -18,9 +18,13 @@ namespace UI.Windows
 
             itemsSelector.Init(_settingsWindowModel?.GetGameItem());
 
-            returnButton.button.onClick?.AddListener(OnReturnButtonClickHandler);
-            
-            returnButton.SetButtonText("Return Menu");
+            returnButton.SetButtonText("Return");
+        }
+
+        public override void OnWindowShow()
+        {
+            base.OnWindowShow();
+            returnButton.OnButtonClickAction = OnReturnButtonClickHandler;
         }
 
         private void OnReturnButtonClickHandler()
@@ -31,8 +35,7 @@ namespace UI.Windows
         public override void OnWindowHide()
         {
             base.OnWindowHide();
-            returnButton.button.onClick?.RemoveListener(OnReturnButtonClickHandler);
-            itemsSelector.Clear();
+            returnButton.OnButtonClickAction = OnReturnButtonClickHandler;
         }
     }
 }

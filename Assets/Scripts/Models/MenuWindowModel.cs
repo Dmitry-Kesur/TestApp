@@ -1,4 +1,5 @@
-﻿using SimpleInjector;
+﻿using System;
+using SimpleInjector;
 using UI;
 using UnityEngine;
 
@@ -6,15 +7,15 @@ namespace DefaultNamespace
 {
     public class MenuWindowModel : BaseWindowModel
     {
+        public Action OnPlayButtonClickAction;
+        public Action OnSettingsButtonClickAction;
+        private MenuWindow _instance;
         private readonly GameScoreModel _gameScoreModel;
-        private readonly StateMachine _stateMachine;
 
         public MenuWindowModel(Container dependencyInjectionContainer)
         {
-            var gameDataController = dependencyInjectionContainer.GetInstance<GameDataController>();
+            var gameDataController = dependencyInjectionContainer.GetInstance<GameDataService>();
             _gameScoreModel = gameDataController.GetGameScoreModel();
-
-            _stateMachine = dependencyInjectionContainer.GetInstance<StateMachine>();
         }
 
         public int gameScore => _gameScoreModel.gameScore;
@@ -23,19 +24,23 @@ namespace DefaultNamespace
 
         public override BaseWindow GetWindowInstance()
         {
-            var instance = GameObject.Instantiate(Resources.Load<MenuWindow>("Prefabs/UI/Windows/MenuWindow"));
-            instance.Init(this);
-            return instance;
+            if (windowInstance == null)
+            {
+                windowInstance = GameObject.Instantiate(Resources.Load<MenuWindow>("Prefabs/UI/Windows/MenuWindow"));
+                windowInstance.Init(this);   
+            }
+            
+            return windowInstance;
         }
 
         public void PlayButtonClick()
         {
-            _stateMachine.SetState(StateName.GameSession);
+            OnPlayButtonClickAction?.Invoke();
         }
 
         public void OnSettingsButtonClick()
         {
-            _stateMachine.SetState(StateName.SettingsState);
+            OnSettingsButtonClickAction?.Invoke();
         }
     }
 }

@@ -14,5 +14,10 @@ namespace UI
         {
             
         }
+
+        public virtual void OnWindowShow()
+        {
+            
+        }
     }
 }

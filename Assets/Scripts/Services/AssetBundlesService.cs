@@ -8,7 +8,7 @@ namespace DefaultNamespace
         public const string ItemSprites = "itemssprites";
     }
     
-    public static class LocalAssetBundleLoader
+    public static class AssetBundlesService
     {
         public static Sprite[] LoadSpritesBundle(string bundleName)
         {

@@ -17,14 +17,19 @@ namespace DefaultNamespace
         {
             _menuWindowModel = windowModel as MenuWindowModel;
 
-            playButton.button.onClick.AddListener(OnPlayButtonClickHandler);
-            settingsButton.button.onClick.AddListener(OnSettingsButtonClickHandler);
-            
             playButton.SetButtonText("Play Game");
             settingsButton.SetButtonText("Settings");
             
-            scoreText.text = $"Game Score: {_menuWindowModel?.gameScore}";
             scoreMultiplierText.text = $"Score Multiplier: {_menuWindowModel?.gameScoreMultiplier}";
+        }
+
+        public override void OnWindowShow()
+        {
+            base.OnWindowShow();
+            playButton.OnButtonClickAction = OnPlayButtonClickHandler;
+            settingsButton.OnButtonClickAction = OnSettingsButtonClickHandler;
+            
+            scoreText.text = $"Game Score: {_menuWindowModel?.gameScore}";
         }
 
         private void OnPlayButtonClickHandler()
@@ -40,8 +45,8 @@ namespace DefaultNamespace
         public override void OnWindowHide()
         {
             base.OnWindowHide();
-            playButton.button.onClick.RemoveListener(OnPlayButtonClickHandler);
-            settingsButton.button.onClick.RemoveListener(OnSettingsButtonClickHandler);
+            playButton.OnButtonClickAction = null;
+            settingsButton = null;
         }
     }
 }

@@ -391,7 +391,7 @@ GameObject:
   - component: {fileID: 8613594363572286354}
   - component: {fileID: 1204076010901809960}
   m_Layer: 5
-  m_Name: CaughtItemsText
+  m_Name: CatchItemsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1140,7 +1140,7 @@ MonoBehaviour:
   catchAreaTransform: {fileID: 2537388458076406308}
   failAreaTransform: {fileID: 5987158920211822297}
   settingsButton: {fileID: 4014379390424037055}
-  caughtItemsText: {fileID: 1204076010901809960}
+  catchItemsText: {fileID: 1204076010901809960}
   failItemsText: {fileID: 8216138460009719924}
   sessionResultView: {fileID: 6457597958358310118}
 --- !u!1 &8029118058888876527

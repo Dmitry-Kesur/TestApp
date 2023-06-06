@@ -1,25 +1,32 @@
-﻿using SimpleInjector;
+﻿using System;
+using SimpleInjector;
 
 namespace DefaultNamespace
 {
     public class GameSessionModel
     {
+        public Action OnSettingsButtonClickAction;
         public readonly float maxSpawnDelay = 0.4f;
         public readonly float defaultSpawnDelay = 2.2f;
         private readonly int _failItemsLimit = 3;
-        private int _caughtItemsAmount;
+        private int _catchItemsAmount;
         private int _failItemsAmount;
+        private bool _isPause;
         
         private readonly ItemsService _itemsService;
-        private readonly StateMachine _stateMachine;
 
         public GameSessionModel(Container dependencyInjectionContainer)
         {
             _itemsService = dependencyInjectionContainer.GetInstance<ItemsService>();
-            _stateMachine = dependencyInjectionContainer.GetInstance<StateMachine>();
         }
 
-        public int caughtItemsAmount => _caughtItemsAmount;
+        public bool isPause
+        {
+            get => _isPause;
+            set => _isPause = value;
+        }
+        
+        public int catchItemsAmount => _catchItemsAmount;
 
         public int failItemsAmount => _failItemsAmount;
         
@@ -27,12 +34,12 @@ namespace DefaultNamespace
 
         public void SettingsButtonClick()
         {
-            _stateMachine.SetState(StateName.SettingsState);
+            OnSettingsButtonClickAction?.Invoke();
         }
 
-        public void IncreaseCaughtItemsAmount()
+        public void IncreaseCatchItemsAmount()
         {
-            _caughtItemsAmount++;
+            _catchItemsAmount++;
         }
         
         public void IncreaseFailItemsAmount()
@@ -40,10 +47,10 @@ namespace DefaultNamespace
             _failItemsAmount++;
         }
 
-        public void OnStopGameSession()
+        public void Reset()
         {
             _failItemsAmount = 0;
-            _caughtItemsAmount = 0;
+            _catchItemsAmount = 0;
         }
 
         public bool IsFailItemsLimitReached() => _failItemsAmount == _failItemsLimit;
