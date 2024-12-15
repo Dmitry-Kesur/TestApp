@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 210c79c829b54efe8b2ef34016dd65c1, type: 3}
+  m_Name: Level5
+  m_EditorClassIdentifier: 
+  Level: 5
+  MaximumFailItems: 2
+  ScorePointsToWin: 800
+  CatchItemsToDecreaseSpawnDelay: 3
+  DefaultItemsSpawnDelay: 1.2
+  MinimalItemsSpawnDelay: 0.5
+  SpawnDelayDecreaseValue: 0.3
+  DefaultDropItemsDuration: 5.5
+  MinimalDropItemsDuration: 2.2
+  DropItemsDecreaseDurationValue: 0.3
+  LevelBackground: {fileID: 21300000, guid: 41b7c73d9558b8747b30f91f1cd1aaae, type: 3}
+  LevelItemIds: 01000000020000000300000004000000
+  LevelRewards:
+  - {fileID: 11400000, guid: 143e4d3aea1c1524db0509721cf25e8f, type: 2}

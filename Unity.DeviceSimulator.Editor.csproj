@@ -320,6 +320,9 @@
      <Reference Include="log4netPlastic">
      <HintPath>C:\Users\User\RiderProjects\Test\Library\PackageCache\com.unity.collab-proxy@1.17.2\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
      </Reference>
+     <Reference Include="SimpleInjector">
+     <HintPath>C:\Users\User\RiderProjects\Test\Assets\Plugins\SimpleInjector.dll</HintPath>
+     </Reference>
      <Reference Include="DOTween">
      <HintPath>C:\Users\User\RiderProjects\Test\Assets\DOTween\DOTween.dll</HintPath>
      </Reference>
@@ -349,9 +352,6 @@
      </Reference>
      <Reference Include="unityplastic">
      <HintPath>C:\Users\User\RiderProjects\Test\Library\PackageCache\com.unity.collab-proxy@1.17.2\Lib\Editor\PlasticSCM\unityplastic.dll</HintPath>
-     </Reference>
-     <Reference Include="SimpleInjector">
-     <HintPath>C:\Users\User\RiderProjects\Test\Assets\Plugins\SimpleInjector.dll</HintPath>
      </Reference>
      <Reference Include="nunit.framework">
      <HintPath>C:\Users\User\RiderProjects\Test\Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>

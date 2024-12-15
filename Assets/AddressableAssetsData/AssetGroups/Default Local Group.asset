@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 6042d327a9a5d1a4f8971da1965972bb
+  m_SerializeEntries:
+  - m_GUID: 2173bfa3ccdb14c4eaac727ffc2f0d90
+    m_Address: HudView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b1df7c5ed95f98c4880fe71535128120
+    m_Address: LoseSoundData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - sounds
+  - m_GUID: d0a72094ff0b97648881e9eb8b39120d
+    m_Address: CatchSoundData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - sounds
+  - m_GUID: 709685b01f9228647bf86121387e26e7
+    m_Address: WinSoundData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - sounds
+  - m_GUID: 8ae17cf049bd4384189817bf9c02b9b1
+    m_Address: FailSoundData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - sounds
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 6436b313d4066a24281bf3fc99b894d0, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b2ddfe03c0c52c748b5818ba2088b1bf, type: 2}
+    - {fileID: 11400000, guid: 6ee9f1ed9caa9c44cbc010fce6f04f82, type: 2}

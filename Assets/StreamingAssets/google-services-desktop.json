@@ -1,0 +1,52 @@
+{
+  "project_info": {
+    "project_number": "687813169709",
+    "firebase_url": "https://candycatch-35eca-default-rtdb.firebaseio.com",
+    "project_id": "candycatch-35eca",
+    "storage_bucket": "candycatch-35eca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687813169709:android:3cbb8dcaf9ccb3e6609ea4",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.CandyCatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687813169709-f0os0kangvteh3rbq120gdqo0gdonft1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DefaultCompany.CandyCatch",
+            "certificate_hash": "1a20da720ab033098afef0b1485d6c68af15c665"
+          }
+        },
+        {
+          "client_id": "687813169709-qu8j1qtt2e58i954cknh53n8mhusrjrf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DefaultCompany.CandyCatch",
+            "certificate_hash": "60710d62f530115d1bb48c7db880e8928d25f08a"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFxjOhx7Aou_cfBAmBkGJY-fCLM2Ur9dk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687813169709-hmu5qv0mpekcaq7hq8sbjft7u8k2iut0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

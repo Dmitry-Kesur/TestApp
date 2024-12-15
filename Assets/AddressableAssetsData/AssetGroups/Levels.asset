@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Levels
+  m_EditorClassIdentifier: 
+  m_GroupName: Levels
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 691a0997984aa904dbeb28615dcfab19
+  m_SerializeEntries:
+  - m_GUID: 767b041c70495434c90a05a783d25e4a
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level0.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  - m_GUID: 9f071cb5a041e884187e875b1531e188
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  - m_GUID: 0e6a560fcd925d043897d0957b4b3a0a
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  - m_GUID: 5a2b5af611724594d9ce12708f5876b5
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level4.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  - m_GUID: 2c1012e38ccaccd4fbe6740d4fdf05d1
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level5.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  - m_GUID: 1965145c78187774eba3222a9af796f7
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level6.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  - m_GUID: f9ebcf6fa5f21c745be0addb1cd1cfae
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level7.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  - m_GUID: eb490458ee5b3574faec4cca7b737abd
+    m_Address: Assets/Scripts/ScriptableObjects/Levels/Level8.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - levels
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 6436b313d4066a24281bf3fc99b894d0, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a70777221fcbebd438ebf5cd51048d84, type: 2}
+    - {fileID: 11400000, guid: 27a7339d5d964454db10011bc801bfbd, type: 2}
