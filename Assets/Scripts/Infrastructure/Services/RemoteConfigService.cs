@@ -7,30 +7,6 @@ namespace Infrastructure.Services
 {
     public class RemoteConfigService
     {
-        // public async Task Initialize()
-        // {
-        //     var fetched = await FetchRemoteConfig();
-        //     if (fetched)
-        //     {
-        //         await FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
-        //         Debug.Log("RemoteConfig initialized and activated");
-        //     }
-        //     else
-        //     {
-        //         Debug.LogWarning("RemoteConfig fetch failed");
-        //     }
-        // }
-        //
-        // public string GetValue(string key) =>
-        //     FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
-        //
-        // private async Task<bool> FetchRemoteConfig()
-        // {
-        //     var lastFetchStatus = FirebaseRemoteConfig.DefaultInstance.Info.LastFetchStatus;
-        //     return lastFetchStatus == LastFetchStatus.Success;
-        // }
-        
-        
         public async Task Initialize()
         {
             var fetched = await FetchRemoteConfig();
