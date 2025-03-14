@@ -7,7 +7,7 @@ namespace Infrastructure.Services
     public interface ILevelsService
     {
         bool ReachedMaxLevel { get; }
-        List<LevelPreviewModel> GetOrCreatePreviewsModels();
+        List<LevelPreviewModel> GetPreviewsModels();
         LevelModel GetCurrentLevel();
         void Select(int level);
         void Start();

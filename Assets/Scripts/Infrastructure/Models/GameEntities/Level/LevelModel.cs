@@ -4,7 +4,6 @@ using Infrastructure.Controllers.Levels;
 using Infrastructure.Data.Level;
 using Infrastructure.Data.Rewards;
 using Infrastructure.Enums;
-using Infrastructure.Factories;
 using Infrastructure.Models.GameEntities.Level.Items;
 using Infrastructure.Services;
 using Infrastructure.Views.GameEntities;
@@ -15,10 +14,10 @@ namespace Infrastructure.Models.GameEntities.Level
 {
     public class LevelModel : ILevelModel
     {
-        private readonly ILevelViewsFactory _levelViewsFactory;
+        private readonly LevelViewsFactory _levelViewsFactory;
         private readonly ISoundService _soundService;
         private readonly ProgressController _progressController;
-        private readonly ICrashlyticsService _crashlyticsService;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
         private readonly ItemsSpawnController _itemsSpawnController;
 
         public Action OnLoseAction;
@@ -33,16 +32,15 @@ namespace Infrastructure.Models.GameEntities.Level
 
         private LevelView _levelView;
 
-
-        public LevelModel(ILevelViewsFactory levelViewsFactory, ISoundService soundService,
+        public LevelModel(LevelViewsFactory levelViewsFactory, ISoundService soundService,
             ItemsSpawnController itemsSpawnController, ProgressController progressController,
-            ICrashlyticsService crashlyticsService)
+            IExceptionLoggerService exceptionLoggerService)
         {
             _levelViewsFactory = levelViewsFactory;
             _soundService = soundService;
             _itemsSpawnController = itemsSpawnController;
             _progressController = progressController;
-            _crashlyticsService = crashlyticsService;
+            _exceptionLoggerService = exceptionLoggerService;
         }
 
         public int Level =>
@@ -106,7 +104,7 @@ namespace Infrastructure.Models.GameEntities.Level
             _progressController.Clear();
 
             RenderLevel();
-            SetupLevelParameters();
+            _itemsSpawnController.SetItemsByIds(_levelStaticData.LevelItemIds);
 
             _itemsSpawnController.OnStartLevel();
 
@@ -114,19 +112,12 @@ namespace Infrastructure.Models.GameEntities.Level
         }
 
         public void OnPause() =>
-            _itemsSpawnController.OnPauseLevel();
+            _itemsSpawnController.OnPause();
 
         public void OnResume()
         {
-            _itemsSpawnController.OnResumeLevel();
+            _itemsSpawnController.OnResume();
             OnUpdateProgress();
-        }
-
-        private void OnFailItem()
-        {
-            _progressController.UpdateProgressByFailItem();
-
-            _soundService.PlaySound(SoundId.Fail);
         }
 
         public void Stop()
@@ -136,9 +127,13 @@ namespace Infrastructure.Models.GameEntities.Level
             OnDestroyLevel();
         }
 
-        private void SetupLevelParameters() =>
-            _itemsSpawnController.SetItemsByIds(_levelStaticData.LevelItemIds);
+        private void OnFailItem()
+        {
+            _progressController.UpdateProgressByFailItem();
 
+            _soundService.PlaySound(SoundId.Fail);
+        }
+        
         private void OnCatchItem(ItemModel itemModel)
         {
             _progressController.UpdateProgressByCatchItem(itemModel.ScorePoints);
@@ -170,11 +165,7 @@ namespace Infrastructure.Models.GameEntities.Level
         private void OnDestroyLevel()
         {
             if (_levelView == null)
-            {
-                var exceptionText = "Level View is null";
-                _crashlyticsService.LogError(exceptionText);
-                throw new NullReferenceException(exceptionText);
-            }
+                return;
 
             Object.Destroy(_levelView.gameObject);
             _levelView = null;

@@ -18,6 +18,11 @@ namespace Infrastructure.Views.GameEntities
         public void SetModel(LevelModel levelModel)
         {
             _levelModel = levelModel;
+            AfterSetModel();
+        }
+
+        private void AfterSetModel()
+        {
             _levelModel.OnSpawnItemAction = OnSpawnItem;
             _levelBackground.sprite = _levelModel.LevelBackground;
         }
@@ -34,17 +39,11 @@ namespace Infrastructure.Views.GameEntities
         {
             itemView.StartRotation();
             
-            var finishPositionY = GetFinishAnimatePositionY(itemView);
+            var finishPositionY = _containerRectTransform.rect.yMin - itemView.Height / 2;
             var animateDuration = _levelModel.DropItemsDuration;
             var animationTween = itemView.MoveToPosition(new Vector2(itemView.PositionX, finishPositionY),
                 animateDuration);
             animationTween.OnUpdate(() => OnUpdateItem(itemView));
-        }
-
-        private float GetFinishAnimatePositionY(ItemView itemView)
-        {
-            var finishPositionY = _containerRectTransform.rect.yMin - itemView.Height / 2;
-            return finishPositionY;
         }
 
         private void AlignItem(ItemView itemView)
@@ -69,16 +68,14 @@ namespace Infrastructure.Views.GameEntities
             
             if (CheckReachCatchArea(itemView))
                 itemView.OnReachedCatchArea();
-
-            if (CheckReachFailArea(itemView))
+            else
                 itemView.OnReachedFailArea();
         }
-
+        
         private bool CheckReachCatchArea(ItemView itemView)
         {
-            var itemPositionY = itemView.PositionY;
-            return itemPositionY < _catchAreaTransform.localPosition.y &&
-                   itemPositionY > _failAreaTransform.localPosition.y;
+            var itemY = itemView.PositionY;
+            return itemY < _catchAreaTransform.localPosition.y && !CheckReachFailArea(itemView);
         }
 
         private bool CheckReachFailArea(ItemView itemView) =>

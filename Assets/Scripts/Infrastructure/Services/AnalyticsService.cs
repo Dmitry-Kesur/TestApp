@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using Firebase;
-using Firebase.Analytics;
+﻿using Firebase.Analytics;
 using UnityEngine;
 
 namespace Infrastructure.Services
@@ -16,19 +14,9 @@ namespace Infrastructure.Services
         public void LogPurchaseProduct(int productId) =>
             LogEventParameter("buy_product", "product_id", productId.ToString());
 
-        public async Task InitializeAsync()
+        public void Initialize()
         {
-            var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
-            Debug.Log($"initializing {nameof(AnalyticsService)}");
-            if (dependencyStatus == DependencyStatus.Available)
-            {
-                FirebaseApp app = FirebaseApp.DefaultInstance;
-            }
-            else
-            {
-                Debug.LogError(System.String.Format(
-                    "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-            }
+           Debug.Log("Analytics service initialized");
         }
 
         private void LogEventParameter(string eventName, string parameterName, string parameterValue) =>

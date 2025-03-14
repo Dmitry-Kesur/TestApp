@@ -1,8 +1,10 @@
-﻿namespace Infrastructure.Services
+using System;
+
+namespace Infrastructure.Services
 {
-    public interface ICrashlyticsService : IInitializeAsync
+    public interface IExceptionLoggerService : IFirebaseInitialize
     {
-        void LogError(string message);
-        void LogException(System.Exception exception);
+        public void LogError(string message);
+        public void LogException(Exception exception);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Infrastructure.Factories;
-using Infrastructure.Providers;
-using Infrastructure.Services;
+﻿using Infrastructure.Services;
 using Zenject;
 
 namespace Infrastructure.Installers
@@ -9,41 +7,29 @@ namespace Infrastructure.Installers
     {
         public override void InstallBindings()
         {
-            BindFirebaseInitializer();
-            BindProviders();
             BindServices();
-            BindPurchaseProcessors();
-        }
-
-        private void BindFirebaseInitializer() =>
-            Container.BindInterfacesAndSelfTo<FirebaseInitializer>().AsSingle();
-
-        private void BindProviders()
-        {
-            Container.BindInterfacesAndSelfTo<InAppPurchaseProvider>().AsSingle();
         }
 
         private void BindServices()
         {
             BindAnalyticsService();
-            BindCrashlyticsService();
+            BindExceptionLoggerService();
             BindRemoteConfigService();
             BindAdsService();
-            BindInAppProductsService();
-            BindPurchaseProcessorsResolver();
-            BindGoogleAuthenticationService();
-        }
-
-        private void BindPurchaseProcessors()
-        {
-            Container.BindInterfacesAndSelfTo<BoosterPurchaseProcessor>().AsSingle();
+            BindAuthenticationService();
         }
 
         private void BindAnalyticsService() =>
             Container.BindInterfacesAndSelfTo<AnalyticsService>().AsSingle();
 
-        private void BindCrashlyticsService() =>
+        private void BindExceptionLoggerService()
+        {
+            #if !UNITY_EDITOR
             Container.BindInterfacesAndSelfTo<CrashlyticsService>().AsSingle();
+            #else
+            Container.BindInterfacesAndSelfTo<EditorExceptionLoggerService>().AsSingle();
+            #endif
+        }
 
         private void BindRemoteConfigService() =>
             Container.BindInterfacesAndSelfTo<RemoteConfigService>().AsSingle();
@@ -51,13 +37,13 @@ namespace Infrastructure.Installers
         private void BindAdsService() =>
             Container.BindInterfacesAndSelfTo<AdsService>().AsSingle();
 
-        private void BindInAppProductsService() =>
-            Container.BindInterfacesAndSelfTo<InAppPurchaseService>().AsSingle();
-
-        private void BindPurchaseProcessorsResolver() =>
-            Container.Bind<PurchaseProcessorsResolver>().AsSingle();
-
-        private void BindGoogleAuthenticationService() =>
-            Container.BindInterfacesAndSelfTo<GoogleAuthenticationService>().AsSingle();
+        private void BindAuthenticationService()
+        {
+            #if UNITY_EDITOR
+                Container.BindInterfacesAndSelfTo<EditorAuthenticationService>().AsSingle();
+            #else
+                Container.BindInterfacesAndSelfTo<GoogleAuthenticationService>().AsSingle();
+            #endif
+        }
     }
 }

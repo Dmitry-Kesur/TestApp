@@ -1,15 +1,16 @@
 ﻿using Infrastructure.Constants;
 using Infrastructure.Data.Notifications;
 using Infrastructure.Services;
+using Infrastructure.Utils;
 using Infrastructure.Views.UI.Notifications;
 
 namespace Infrastructure.Factories
 {
-    public class NotificationsFactory : INotificationsFactory
+    public class NotificationsFactory
     {
-        private readonly IPrefabInstantiationService _prefabInstantiationService;
+        private readonly PrefabInstantiationService _prefabInstantiationService;
         
-        public NotificationsFactory(IPrefabInstantiationService prefabInstantiationService)
+        public NotificationsFactory(PrefabInstantiationService prefabInstantiationService)
         {
             _prefabInstantiationService = prefabInstantiationService;
         }

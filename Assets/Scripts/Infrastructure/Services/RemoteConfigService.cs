@@ -1,40 +1,77 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Firebase;
 using Firebase.RemoteConfig;
 using UnityEngine;
 
 namespace Infrastructure.Services
 {
-    public class RemoteConfigService : IRemoteConfigService
+    public class RemoteConfigService
     {
-        public async Task InitializeAsync()
+        // public async Task Initialize()
+        // {
+        //     var fetched = await FetchRemoteConfig();
+        //     if (fetched)
+        //     {
+        //         await FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
+        //         Debug.Log("RemoteConfig initialized and activated");
+        //     }
+        //     else
+        //     {
+        //         Debug.LogWarning("RemoteConfig fetch failed");
+        //     }
+        // }
+        //
+        // public string GetValue(string key) =>
+        //     FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
+        //
+        // private async Task<bool> FetchRemoteConfig()
+        // {
+        //     var lastFetchStatus = FirebaseRemoteConfig.DefaultInstance.Info.LastFetchStatus;
+        //     return lastFetchStatus == LastFetchStatus.Success;
+        // }
+        
+        
+        public async Task Initialize()
         {
-            var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
-            if (dependencyStatus == DependencyStatus.Available)
+            var fetched = await FetchRemoteConfig();
+            if (fetched)
             {
-                await FetchRemoteConfig();
                 await FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
+                Debug.Log("RemoteConfig initialized and activated");
             }
             else
             {
-                Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                Debug.LogWarning("RemoteConfig fetch failed");
             }
         }
-        
+
         public string GetValue(string key) =>
             FirebaseRemoteConfig.DefaultInstance.GetValue(key).StringValue;
-        
-        private async Task FetchRemoteConfig()
+
+        private async Task<bool> FetchRemoteConfig()
         {
             try
             {
-                await FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.Zero);
-                Debug.Log("Remote Config fetched successfully.");
+                var fetchTask = FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.Zero);
+                await fetchTask;
+
+                if (fetchTask.IsCanceled)
+                {
+                    Debug.LogWarning("Fetch canceled");
+                    return false;
+                }
+                if (fetchTask.IsFaulted)
+                {
+                    Debug.LogError($"Fetch faulted: {fetchTask.Exception}");
+                    return false;
+                }
+
+                return FirebaseRemoteConfig.DefaultInstance.Info.LastFetchStatus == LastFetchStatus.Success;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Debug.LogError($"Failed to fetch Remote Config: {ex.Message}");
+                Debug.LogError($"Exception during fetch: {e}");
+                return false;
             }
         }
     }

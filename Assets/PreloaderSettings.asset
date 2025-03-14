@@ -15,15 +15,15 @@ MonoBehaviour:
   _preloaderDatas:
   - LoadingStage: 2
     SortValue: 1
-    ProgressValue: 0.1
+    ProgressValue: 0.2
     StageText: Loading Game Data..
   - LoadingStage: 0
     SortValue: 2
-    ProgressValue: 0.4
+    ProgressValue: 0.3
     StageText: Loading Items..
   - LoadingStage: 3
     SortValue: 3
-    ProgressValue: 0.5
+    ProgressValue: 0.4
     StageText: Loading Products...
   - LoadingStage: 1
     SortValue: 4

@@ -6,51 +6,38 @@ namespace Infrastructure.Services.PlayerProgressUpdaters
 {
     public class ResourceProgressUpdater : IProgressUpdater
     {
-        private int _activeBoosterId;
-        private int _currencyAmount;
-        private List<int> _purchasedProductIds;
-
-        public void UpdateProgress(PlayerProgress playerProgress)
-        {
-            playerProgress.ActiveBoosterId = _activeBoosterId;
-            playerProgress.CurrencyAmount = _currencyAmount;
-            playerProgress.PurchasedProductIds = _purchasedProductIds;
-        }
-
+        public Action OnLoadedResourcesProgress;
+        
         public void OnLoadProgress(PlayerProgress playerProgress)
         {
-            _activeBoosterId = playerProgress.ActiveBoosterId;
-            _currencyAmount = playerProgress.CurrencyAmount;
-            _purchasedProductIds = playerProgress.PurchasedProductIds;
+            Progress = playerProgress;
+            OnLoadedResourcesProgress?.Invoke();
         }
-
-        public Action OnProgressChanged { get; set; }
+        
+        public PlayerProgress Progress { get; set; }
 
         public int GetActiveBoosterId() =>
-            _activeBoosterId;
+            Progress.ActiveBoosterId;
 
         public int GetCurrencyAmount() =>
-            _currencyAmount;
+            Progress.CurrencyAmount;
 
         public List<int> GetPurchasedProductIds() =>
-            _purchasedProductIds;
+            Progress.PurchasedProductIds;
 
         public void SetActiveBoosterId(int boosterId)
         {
-            _activeBoosterId = boosterId;
-            OnProgressChanged?.Invoke();
+            Progress.ActiveBoosterId = boosterId;
         }
 
         public void UpdateCurrencyAmount(int currencyAmount)
         {
-            _currencyAmount = currencyAmount;
-            OnProgressChanged?.Invoke();
+            Progress.CurrencyAmount = currencyAmount;
         }
 
         public void SetPurchasedProductId(int productId)
         {
-            _purchasedProductIds.Add(productId);
-            OnProgressChanged?.Invoke();
+            Progress.PurchasedProductIds.Add(productId);
         }
     }
 }

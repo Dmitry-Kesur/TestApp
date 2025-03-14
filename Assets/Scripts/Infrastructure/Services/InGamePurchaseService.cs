@@ -5,7 +5,6 @@ using Infrastructure.Data.Notifications;
 using Infrastructure.Data.Preloader;
 using Infrastructure.Data.Products;
 using Infrastructure.Factories;
-using Infrastructure.Models.GameEntities.Products;
 using Infrastructure.Models.GameEntities.Products.InGame;
 using Infrastructure.Services.PlayerProgressUpdaters;
 using Infrastructure.Strategy;

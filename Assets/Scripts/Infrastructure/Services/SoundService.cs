@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Infrastructure.Constants;
 using Infrastructure.Data.Preloader;
@@ -16,12 +17,14 @@ namespace Infrastructure.Services
         private readonly AudioSource _audioSource;
         private readonly LocalAddressableService _localAddressableService;
         private readonly SettingsProgressUpdater _settingsProgressUpdater;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
 
-        public SoundService(SceneProvider sceneProvider, LocalAddressableService localAddressableService, SettingsProgressUpdater settingsProgressUpdater)
+        public SoundService(SceneProvider sceneProvider, LocalAddressableService localAddressableService, SettingsProgressUpdater settingsProgressUpdater, IExceptionLoggerService exceptionLoggerService)
         {
             _audioSource = sceneProvider.AudioSource;
             _localAddressableService = localAddressableService;
             _settingsProgressUpdater = settingsProgressUpdater;
+            _exceptionLoggerService = exceptionLoggerService;
         }
 
         public async Task Load()

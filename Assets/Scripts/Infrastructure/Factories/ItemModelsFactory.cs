@@ -4,7 +4,7 @@ using Infrastructure.Models.GameEntities.Level.Items;
 
 namespace Infrastructure.Factories
 {
-    public class ItemModelsFactory : IItemModelsFactory
+    public class ItemModelsFactory
     {
         public ItemModel CreateItem(ItemData itemData)
         {

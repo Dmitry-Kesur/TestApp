@@ -122,8 +122,7 @@ namespace Infrastructure.Views.GameEntities
             
             _itemModel.OnCatch();
             
-            if (_itemModel.NeedDissolveEffect)
-                PlayDissolveEffect();
+            PlayDissolveEffect();
         }
 
         protected virtual void Clear()
@@ -140,6 +139,9 @@ namespace Infrastructure.Views.GameEntities
 
         private void PlayDissolveEffect()
         {
+            if (!_itemModel.NeedDissolveEffect)
+                return;
+            
             _dissolveTween = DOTween.To(() => _dissolveShader.DissolveAmount, amount => _dissolveShader.DissolveAmount = amount, 1, 1f);
             _dissolveTween.OnComplete(RemoveItem);
         }

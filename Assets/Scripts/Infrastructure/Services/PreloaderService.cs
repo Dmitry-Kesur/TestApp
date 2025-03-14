@@ -9,12 +9,15 @@ namespace Infrastructure.Services
     public class PreloaderService : IPreloaderService
     {
         private Action<float, string> _updateLoadingProgress;
+        
         private readonly DiContainer _diContainer;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
         private readonly PreloaderSettings _preloaderSettings;
 
-        public PreloaderService(DiContainer diContainer)
+        public PreloaderService(DiContainer diContainer, IExceptionLoggerService exceptionLoggerService)
         {
             _diContainer = diContainer;
+            _exceptionLoggerService = exceptionLoggerService;
             _preloaderSettings = _diContainer.Resolve<PreloaderSettings>();
         }
 
@@ -31,7 +34,17 @@ namespace Infrastructure.Services
             {
                 var data = _preloaderSettings.GetData(loadableService.LoadingStage);
 
-                await loadableService.Load();
+                try
+                {
+                    await loadableService.Load();
+                }
+                catch (Exception e)
+                {
+                    _exceptionLoggerService.LogException(e);
+                    Console.WriteLine(e);
+                    throw;
+                }
+                
                 _updateLoadingProgress?.Invoke(data.ProgressValue, data.StageText);
             }
         }

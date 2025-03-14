@@ -1,59 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Infrastructure.Data.PlayerProgress;
 
 namespace Infrastructure.Services.PlayerProgressUpdaters
 {
     public class LevelProgressUpdater : IProgressUpdater
     {
-        private int _activeLevel;
-        private int _bestScore;
-        private List<int> _completeLevelIds;
-        private List<int> _unlockedLevelItemIds;
-
-        public Action OnProgressChanged { get; set; }
-
-        public void UpdateProgress(PlayerProgress playerProgress)
-        {
-            playerProgress.ActiveLevel = _activeLevel;
-            playerProgress.BestScore = _bestScore;
-            playerProgress.CompleteLevelIds = _completeLevelIds;
-            playerProgress.UnlockedLevelItemIds = _unlockedLevelItemIds;
-        }
+        public PlayerProgress Progress { get; set; }
 
         public void OnLoadProgress(PlayerProgress playerProgress)
         {
-            _activeLevel = playerProgress.ActiveLevel;
-            _bestScore = playerProgress.BestScore;
-            _completeLevelIds = playerProgress.CompleteLevelIds;
-            _unlockedLevelItemIds = playerProgress.UnlockedLevelItemIds;
+            Progress = playerProgress;
         }
 
         public int GetActiveLevel() =>
-            _activeLevel;
+            Progress.ActiveLevel;
 
         public int GetBestScore() =>
-            _bestScore;
+            Progress.BestScore;
 
         public List<int> GetCompleteLevelIds() =>
-            _unlockedLevelItemIds;
+            Progress.UnlockedLevelItemIds;
 
         public void ChangeActiveLevel(int level)
         {
-            _activeLevel = level;
-            OnProgressChanged?.Invoke();
+            Progress.ActiveLevel = level;
         }
 
         public void SetCompleteLevel(int level)
         {
-            _completeLevelIds.Add(level);
-            OnProgressChanged?.Invoke();
+            Progress.CompleteLevelIds.Add(level);
         }
 
         public void UpdateBestScore(int scoreValue)
         {
-            _bestScore = scoreValue;
-            OnProgressChanged?.Invoke();
+            Progress.BestScore = scoreValue;
         }
     }
 }

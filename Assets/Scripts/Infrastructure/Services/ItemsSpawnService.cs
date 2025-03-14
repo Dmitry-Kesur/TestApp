@@ -11,7 +11,7 @@ namespace Infrastructure.Services
 {
     public class ItemsSpawnService : IItemsSpawnService, ITickable
     {
-        private readonly ILevelViewsFactory _levelViewsFactory;
+        private readonly IItemViewsFactory _itemsFactory;
 
         private float _itemsSpawnDelay;
         private float _spawnTimer;
@@ -19,8 +19,8 @@ namespace Infrastructure.Services
 
         private ILevelItemsStrategy _levelItemsStrategy;
 
-        public ItemsSpawnService(ILevelViewsFactory levelViewsFactory) =>
-            _levelViewsFactory = levelViewsFactory;
+        public ItemsSpawnService(IItemViewsFactory itemsFactory) =>
+            _itemsFactory = itemsFactory;
 
         public void UpdateSpawnDelay(float spawnDelay) =>
             _itemsSpawnDelay = spawnDelay;
@@ -35,7 +35,7 @@ namespace Infrastructure.Services
         }
 
         public void RemoveItem(ItemView itemView) =>
-            _levelViewsFactory.ReleaseItem(itemView);
+            _itemsFactory.ReleaseItem(itemView);
 
         public void Tick()
         {
@@ -61,7 +61,7 @@ namespace Infrastructure.Services
         {
             _spawnTimer = 0;
             DisableSpawn();
-            _levelViewsFactory.Clear();
+            _itemsFactory.Clear();
         }
 
         public Action<ItemView> OnSpawnItemAction { get; set; }
@@ -88,7 +88,7 @@ namespace Infrastructure.Services
         private void SpawnItem()
         {
             var itemModel = GetItemBySpawnChance();
-            var itemView = _levelViewsFactory.GetItem();
+            var itemView = _itemsFactory.GetItem();
             itemView.SetModel(itemModel);
             itemView.Draw();
             

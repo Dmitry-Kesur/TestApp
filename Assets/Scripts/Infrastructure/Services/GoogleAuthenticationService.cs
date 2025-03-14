@@ -10,34 +10,29 @@ namespace Infrastructure.Services
     public class GoogleAuthenticationService : IAuthenticationService, IInitializable
     {
         private static readonly string WebClientId = "687813169709-hmu5qv0mpekcaq7hq8sbjft7u8k2iut0.apps.googleusercontent.com";
-        private static readonly string TestEditorUserId = "687813169709";
         
         private readonly StateMachineService _stateMachineService;
-        private readonly IPlayerProgressService _playerProgressService;
-        
+        private readonly IProgressService _progressService;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
+
         private GoogleSignInConfiguration _configuration;
 
-        public GoogleAuthenticationService(StateMachineService stateMachineService, IPlayerProgressService playerProgressService)
+        public GoogleAuthenticationService(StateMachineService stateMachineService, IProgressService progressService, IExceptionLoggerService exceptionLoggerService)
         {
             _stateMachineService = stateMachineService;
-            _playerProgressService = playerProgressService;
+            _progressService = progressService;
+            _exceptionLoggerService = exceptionLoggerService;
         }
 
         public void Initialize()
         {
-            #if !UNITY_EDITOR
             CreateConfiguration();
-            #endif
         }
 
         public void SignIn()
         {
-            #if !UNITY_EDITOR
             GoogleSignIn.Configuration = _configuration;
             GoogleSignIn.DefaultInstance.SignIn().ContinueWith(OnAuthenticationFinished, TaskScheduler.FromCurrentSynchronizationContext());
-            #else
-            SuccessfullyAuthenticated(TestEditorUserId);
-            #endif
         }
 
         private void CreateConfiguration()
@@ -53,7 +48,10 @@ namespace Infrastructure.Services
         {
             if (task.IsFaulted)
             {
-                Debug.LogError("SignIn Failed: " + task.Exception);
+                var taskException = task.Exception;
+                var exceptionMessage = "SignIn Failed: " + taskException;
+                Debug.Log(exceptionMessage);
+                _exceptionLoggerService.LogException(taskException);
             }
             else if (task.IsCompleted)
             {
@@ -64,7 +62,7 @@ namespace Infrastructure.Services
 
         private async void SuccessfullyAuthenticated(string userId)
         {
-            await _playerProgressService.LoadPlayerProgress(userId);
+            await _progressService.LoadPlayerProgress(userId);
             _stateMachineService.TransitionTo(StateType.LoadingState);
         }
     }

@@ -16,8 +16,9 @@ namespace Infrastructure.Installers
 
         private void BindFactories()
         {
-            Container.Bind<IItemModelsFactory>().To<ItemModelsFactory>().AsSingle();
-            Container.Bind<ILevelViewsFactory>().To<LevelViewsFactory>().AsSingle();
+            Container.Bind<ItemModelsFactory>().AsSingle();
+            Container.Bind<LevelViewsFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ItemViewsFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<LevelsFactory>().AsSingle();
         }
 

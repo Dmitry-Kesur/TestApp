@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Services
 {
-    public interface IAnalyticsService : IInitializeAsync
+    public interface IAnalyticsService : IFirebaseInitialize
     {
         void LogWinLevel(int level);
         void LogLoseLevel(int level);

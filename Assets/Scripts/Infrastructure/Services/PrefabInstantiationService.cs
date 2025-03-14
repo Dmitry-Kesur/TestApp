@@ -1,9 +1,8 @@
-﻿using Infrastructure.Services;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Infrastructure.Utils
 {
-    public class PrefabInstantiationService : IPrefabInstantiationService
+    public class PrefabInstantiationService
     {
         public T GetPrefabInstance<T>(string prefabPath) where T : Object
         {

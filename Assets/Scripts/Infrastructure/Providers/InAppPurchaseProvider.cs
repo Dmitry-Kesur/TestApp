@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Infrastructure.Constants;
 using Infrastructure.Data.Products;
 using Infrastructure.Services;
 using Newtonsoft.Json;
@@ -9,18 +10,20 @@ using UnityEngine.Purchasing.Extension;
 
 namespace Infrastructure.Providers
 {
-    public class InAppPurchaseProvider : IInAppPurchaseProvider, IDetailedStoreListener
+    public class InAppPurchaseProvider : IDetailedStoreListener
     {
-        private readonly IRemoteConfigService _remoteConfigService;
+        private readonly RemoteConfigService _remoteConfigService;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
 
         private List<InAppProductData> _products;
 
         private IStoreController _controller;
         private IExtensionProvider _extensions;
 
-        public InAppPurchaseProvider(IRemoteConfigService remoteConfigService)
+        public InAppPurchaseProvider(RemoteConfigService remoteConfigService, IExceptionLoggerService exceptionLoggerService)
         {
             _remoteConfigService = remoteConfigService;
+            _exceptionLoggerService = exceptionLoggerService;
         }
 
         public void Initialize()
@@ -32,8 +35,6 @@ namespace Infrastructure.Providers
                 builder.AddProduct(product.productId, product.productLifetimeType);
 
             UnityPurchasing.Initialize(this, builder);
-
-            OnInitializedAction?.Invoke();
         }
 
         public void Purchase(string productId) =>
@@ -41,19 +42,25 @@ namespace Infrastructure.Providers
 
         public Action<InAppProductData> OnProcessPurchaseAction { get; set; }
 
-        public Action OnInitializedAction { get; set; }
-
         public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
             _controller = controller;
             _extensions = extensions;
         }
 
-        public void OnInitializeFailed(InitializationFailureReason error) =>
-            Debug.Log($"[InAppPurchase] Initialization failed: {error}");
+        public void OnInitializeFailed(InitializationFailureReason error)
+        {
+            var logMessage = "[InAppPurchase] Initialization failed:" + " " + error;
+            Debug.LogError(logMessage);
+            _exceptionLoggerService.LogError(logMessage);
+        }
 
-        public void OnInitializeFailed(InitializationFailureReason error, string message) =>
-            Debug.Log($"[InAppPurchase] Initialization failed: {error} | {message}");
+        public void OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            var logMessage = $"[InAppPurchase] Initialization failed: {error} | {message}";
+            Debug.LogError(logMessage);
+            _exceptionLoggerService.LogError(logMessage);
+        }
 
         public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
         {
@@ -65,20 +72,35 @@ namespace Infrastructure.Providers
             return PurchaseProcessingResult.Complete;
         }
 
-        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason) =>
-            Debug.Log(
-                $"[InAppPurchase] PurchaseFailed : {product.definition.id} | failureReason: {failureReason} | transactionId: {product.transactionID}");
+        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+        {
+            var logMessage =
+                $"[InAppPurchase] PurchaseFailed : {product.definition.id} | failureReason: {failureReason} | transactionId: {product.transactionID}";
+            Debug.LogError(logMessage);
+            _exceptionLoggerService.LogError(logMessage);
+        }
 
-        public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription) =>
-            Debug.Log(
-                $"[InAppPurchase] PurchaseFailed : {product.definition.id} | failureDescription: {failureDescription} | transactionId: {product.transactionID}");
+        public void OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
+        {
+            var logMessage =
+                $"[InAppPurchase] PurchaseFailed : {product.definition.id} | failureDescription: {failureDescription} | transactionId: {product.transactionID}";
+            Debug.LogError(logMessage);
+            _exceptionLoggerService.LogError(logMessage);
+        }
 
         private InAppProductData GetProductById(string productId) =>
             _products.Find(data => data.productId == productId);
 
         private List<InAppProductData> GetProductsData()
         {
-            var json = _remoteConfigService.GetValue("Products");
+            var json = _remoteConfigService.GetValue(RemoteConfigKeys.Products);
+            if (string.IsNullOrEmpty(json))
+            {
+                var exceptionText = "[InAppPurchase] Failed to get products data";
+                _exceptionLoggerService.LogError(exceptionText);
+                throw new Exception(exceptionText);
+            }
+            
             return JsonConvert.DeserializeObject<List<InAppProductData>>(json);
         }
     }

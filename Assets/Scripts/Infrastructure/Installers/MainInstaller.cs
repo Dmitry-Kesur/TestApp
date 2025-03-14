@@ -28,7 +28,7 @@ namespace Infrastructure.Installers
         {
             Container.Bind<IStatesFactory>().To<StatesFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<WindowFactory>().AsSingle();
-            Container.Bind<INotificationsFactory>().To<NotificationsFactory>().AsSingle();
+            Container.Bind<NotificationsFactory>().AsSingle();
             Container.Bind<IReceiveRewardsControllersFactory>().To<ReceiveRewardsControllersFactory>().AsSingle();
             Container.Bind<IProductStrategiesFactory>().To<ProductStrategiesFactory>().AsSingle();
         }
@@ -42,12 +42,13 @@ namespace Infrastructure.Installers
         {
             Container.Bind<UIProvider>().FromInstance(_uiProvider).AsSingle();
             Container.Bind<SceneProvider>().FromInstance(sceneProvider).AsSingle();
+            Container.Bind<DeviceInfoProvider>().AsSingle();
         }
 
         private void BindServices()
         {
             Container.Bind<LocalAddressableService>().AsSingle();
-            Container.Bind<IPrefabInstantiationService>().To<PrefabInstantiationService>().AsSingle();
+            Container.Bind<PrefabInstantiationService>().AsSingle();
             Container.Bind<StateMachineService>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemsService>().AsSingle();
             Container.BindInterfacesAndSelfTo<InGamePurchaseService>().AsSingle();
@@ -56,7 +57,7 @@ namespace Infrastructure.Installers
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.BindInterfacesAndSelfTo<SoundService>().AsSingle();
             Container.BindInterfacesAndSelfTo<HudService>().AsSingle();
-            Container.Bind<ICurrencyService>().To<PlayerCurrencyService>().AsSingle();
+            Container.Bind<ICurrencyService>().To<CurrencyService>().AsSingle();
             Container.BindInterfacesAndSelfTo<RewardsService>().AsSingle();
             Container.Bind<IReceiveRewardsService>().To<ReceiveRewardsService>().AsSingle();
             Container.Bind<INotificationService>().To<NotificationService>().AsSingle();

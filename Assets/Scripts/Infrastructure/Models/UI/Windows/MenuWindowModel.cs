@@ -5,7 +5,7 @@ namespace Infrastructure.Models.UI.Windows
 {
     public class MenuWindowModel : BaseWindowModel
     {
-        private readonly IPlayerProgressService _playerProgressService;
+        private readonly IProgressService _iProgressService;
         private readonly IAuthenticationService _authenticationService;
 
         public Action OnPlayButtonClickAction;

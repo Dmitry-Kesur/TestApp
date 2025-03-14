@@ -32,6 +32,7 @@ namespace Infrastructure.Data.Preloader
         LoadingProducts,
         LoadingSounds,
         LoadingRewards,
-        LoadingBoosters
+        LoadingBoosters,
+        LoadingFirebase
     }
 }

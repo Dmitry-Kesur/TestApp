@@ -41,23 +41,17 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <None Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor\Unity.Addressables.Editor.Tests.asmdef" />
-     <Folder Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor\Build" />
-     <None Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor\DocExampleCode\Readme.txt" />
-     <Folder Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor\DocExampleCode" />
-     <Folder Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor\HostingServices" />
-     <Folder Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor" />
-     <Folder Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor\Diagnostics" />
-     <Folder Include="Library\PackageCache\com.unity.addressables@1.19.19\Tests\Editor\AnalyzeRules" />
-     <Reference Include="UnityEngine">
-     <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.19f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
-     </Reference>
-     <Reference Include="UnityEngine.CoreModule">
-     <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.19f1\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
-     </Reference>
-     <Reference Include="UnityEditor">
-     <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.19f1\Editor\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
-     </Reference>
+    <None Include="Library/PackageCache/com.unity.addressables@1.22.3/Tests/Editor/Unity.Addressables.Editor.Tests.asmdef" />
+    <None Include="Library/PackageCache/com.unity.addressables@1.22.3/Tests/Editor/Fixtures/buildlayout1.json" />
+    <Reference Include="UnityEngine">
+      <HintPath>/Applications/Unity/Hub/Editor/2022.3.58f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>/Applications/Unity/Hub/Editor/2022.3.58f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>/Applications/Unity/Hub/Editor/2022.3.58f1/Unity.app/Contents/Managed/UnityEngine/UnityEditor.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

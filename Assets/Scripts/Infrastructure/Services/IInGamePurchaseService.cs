@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Infrastructure.Models.GameEntities.Products;
 using Infrastructure.Models.GameEntities.Products.InGame;
 
 namespace Infrastructure.Services

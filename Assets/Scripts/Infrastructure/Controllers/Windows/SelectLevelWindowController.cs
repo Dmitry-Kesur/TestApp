@@ -30,7 +30,7 @@ namespace Infrastructure.Controllers.Windows
         {
             base.OnWindowAdd(view);
             windowView.SetModel(_selectLevelWindowModel);
-            _selectLevelWindowModel.SetLevelPreviews(_levelsService.GetOrCreatePreviewsModels());
+            _selectLevelWindowModel.SetLevelPreviews(_levelsService.GetPreviewsModels());
         }
 
         private void OnLevelSelect(int level)

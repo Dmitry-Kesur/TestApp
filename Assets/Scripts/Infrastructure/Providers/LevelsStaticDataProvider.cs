@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Infrastructure.Constants;
 using Infrastructure.Data.Level;
@@ -9,6 +10,8 @@ namespace Infrastructure.Providers
 {
     public class LevelsStaticDataProvider : ILoadableService
     {
+        public Action OnLevelsDataLoaded;
+        
         private readonly LocalAddressableService _addressableService;
 
         private List<LevelStaticData> _levelsData;
@@ -18,16 +21,24 @@ namespace Infrastructure.Providers
             _addressableService = addressableService;
         }
 
-        public List<LevelStaticData> GetLevelsData() =>
-            _levelsData;
+        public int MaxLevel =>
+            GetLevelsData().Count;
+
+        public List<LevelStaticData> GetLevelsData()
+        {
+            _levelsData.Sort((levelA, levelB) => levelA.Level - levelB.Level);
+            return _levelsData;
+        }
 
         public LevelStaticData GetDataByLevel(int level) =>
             _levelsData.Find(data => data.Level == level);
-        
+
         public async Task Load()
         {
             _levelsData = await _addressableService.LoadScriptableCollectionFromGroupAsync<LevelStaticData>(AddressableGroupNames
                     .LevelsGroup);
+            
+            OnLevelsDataLoaded?.Invoke();
         }
 
         public LoadingStage LoadingStage =>

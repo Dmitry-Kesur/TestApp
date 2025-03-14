@@ -10,11 +10,14 @@ namespace Infrastructure.Services
     {
         private static readonly string AndroidGameId = "5578461";
         private static readonly bool EnabledTestMode = false;
-        
+
         private readonly List<BaseAdsProvider> _adsProviders = new();
 
-        public AdsService()
+        private readonly IExceptionLoggerService _exceptionLoggerService;
+
+        public AdsService(IExceptionLoggerService exceptionLoggerService)
         {
+            _exceptionLoggerService = exceptionLoggerService;
             InitializeAds();
         }
 
@@ -39,7 +42,9 @@ namespace Infrastructure.Services
 
         public void OnInitializationFailed(UnityAdsInitializationError error, string message)
         {
-            Debug.Log($"[Ads-Service]: Ads initialize error. {error.ToString()} - {message}");
+            var errorMessage = $"[Ads-Service]: Ads initialize error. {error.ToString()} - {message}";
+            Debug.Log(errorMessage);
+            _exceptionLoggerService.LogError(errorMessage);
         }
         
         private void InitializeAds()

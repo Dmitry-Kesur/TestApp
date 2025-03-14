@@ -3,6 +3,7 @@
     public enum StateType
     {
         AuthenticationState,
+        InitializeThirdPartyServicesState,
         LoadingState,
         GameLoopState,
         MenuState,

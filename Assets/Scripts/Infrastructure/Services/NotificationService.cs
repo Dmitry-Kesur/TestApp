@@ -9,7 +9,7 @@ namespace Infrastructure.Services
 {
     public class NotificationService : INotificationService
     {
-        private readonly INotificationsFactory _notificationsFactory;
+        private readonly NotificationsFactory _notificationsFactory;
         private readonly RectTransform _notificationsLayer;
 
         private OverlayView _notificationsOverlay;
@@ -17,7 +17,7 @@ namespace Infrastructure.Services
 
         private Tween _animationTween;
 
-        public NotificationService(UIProvider uiProvider, INotificationsFactory notificationsFactory)
+        public NotificationService(UIProvider uiProvider, NotificationsFactory notificationsFactory)
         {
             _notificationsLayer = uiProvider.NotificationsLayer;
             _notificationsFactory = notificationsFactory;

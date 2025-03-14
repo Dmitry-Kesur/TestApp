@@ -8,7 +8,9 @@ namespace Infrastructure
 {
     public class EntryPoint : MonoBehaviour
     {
-        [SerializeField] private SceneContext sceneContext;
+        [Inject] private IStatesFactory _statesFactory;
+        [Inject] private StateMachineService _stateMachine;
+        [Inject] private IProgressService _progressService;
 
         private void Start()
         {
@@ -21,19 +23,21 @@ namespace Infrastructure
                 SaveProgress();
         }
 
+        private void OnApplicationQuit()
+        {
+            SaveProgress();
+        }
+
         private void PrepareGame()
         {
-            var statesFactory = sceneContext.Container.Resolve<IStatesFactory>();
-            var states = statesFactory.CreateStates();
-            var stateMachine = sceneContext.Container.Resolve<StateMachineService>();
-            stateMachine.SetStates(states);
-            stateMachine.TransitionTo(StateType.AuthenticationState);
+            var states = _statesFactory.CreateStates();
+            _stateMachine.SetStates(states);
+            _stateMachine.TransitionTo(StateType.InitializeThirdPartyServicesState);
         }
 
         private void SaveProgress()
         {
-            var playerProgressService = sceneContext.Container.Resolve<IPlayerProgressService>();
-            playerProgressService.SavePlayerProgress();
+            _progressService.SavePlayerProgress();
         }
     }
 }

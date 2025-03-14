@@ -1,44 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Infrastructure.Data.PlayerProgress;
 
 namespace Infrastructure.Services.PlayerProgressUpdaters
 {
     public class ItemsProgressUpdater : IProgressUpdater
     {
-        private int _selectedItemId;
-        private List<int> _unlockedLevelItemIds;
-
-        public Action OnProgressChanged { get; set; }
-
-        public void UpdateProgress(PlayerProgress playerProgress)
-        {
-            playerProgress.SelectedItemId = _selectedItemId;
-            playerProgress.UnlockedLevelItemIds = _unlockedLevelItemIds;
-        }
+        public PlayerProgress Progress { get; set; }
 
         public void OnLoadProgress(PlayerProgress playerProgress)
         {
-            _selectedItemId = playerProgress.SelectedItemId;
-            _unlockedLevelItemIds = playerProgress.UnlockedLevelItemIds;
+            Progress = playerProgress;
         }
 
         public int GetSelectedItemId() =>
-            _selectedItemId;
+            Progress.SelectedItemId;
 
         public List<int> GetUnlockedItemIds() =>
-            _unlockedLevelItemIds;
+            Progress.UnlockedLevelItemIds;
 
         public void SetSelectedItemId(int itemId)
         {
-            _selectedItemId = itemId;
-            OnProgressChanged?.Invoke();
+            Progress.SelectedItemId = itemId;
         }
 
         public void SetUnlockedItem(int itemId)
         {
-            _unlockedLevelItemIds.Add(itemId);
-            OnProgressChanged?.Invoke();
+            Progress.UnlockedLevelItemIds.Add(itemId);
         }
     }
 }

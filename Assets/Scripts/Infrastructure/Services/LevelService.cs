@@ -17,6 +17,7 @@ namespace Infrastructure.Services
         private readonly LevelProgressUpdater _levelProgressUpdater;
         private readonly IReceiveRewardsService _receiveRewardsService;
         private readonly AnalyticsService _analyticsService;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
         private readonly StateMachineService _stateMachine;
         private readonly ILevelFactory _levelFactory;
 
@@ -26,7 +27,7 @@ namespace Infrastructure.Services
 
         public LevelService(LevelsStaticDataProvider levelsStaticDataProvider,
             LevelProgressUpdater levelProgressUpdater, IReceiveRewardsService receiveRewardsService,
-            AnalyticsService analyticsService, StateMachineService stateMachine, ILevelFactory levelFactory)
+            AnalyticsService analyticsService, StateMachineService stateMachine, ILevelFactory levelFactory, IExceptionLoggerService exceptionLoggerService)
         {
             _levelsStaticDataProvider = levelsStaticDataProvider;
             _levelProgressUpdater = levelProgressUpdater;
@@ -34,6 +35,9 @@ namespace Infrastructure.Services
             _analyticsService = analyticsService;
             _stateMachine = stateMachine;
             _levelFactory = levelFactory;
+            _exceptionLoggerService = exceptionLoggerService;
+
+            _levelsStaticDataProvider.OnLevelsDataLoaded = OnLevelsDataLoaded;
         }
 
         public void Start()
@@ -49,9 +53,14 @@ namespace Infrastructure.Services
 
         public void Select(int level)
         {
-            var levelModel = GetOrCreateLevel(level);
-            _currentLevelModel = levelModel;
-            _levelProgressUpdater.ChangeActiveLevel(_currentLevelModel.Level);
+            _currentLevelModel = GetLevel(level);
+            if (_currentLevelModel == null)
+            {
+                _exceptionLoggerService.LogError($"[level-service] Failed to get {level} level model at select");
+                return;
+            }
+            
+            _levelProgressUpdater.ChangeActiveLevel(level);
         }
 
         public void Pause() =>
@@ -64,33 +73,21 @@ namespace Infrastructure.Services
             _currentLevelModel;
 
         public bool ReachedMaxLevel =>
-            _currentLevelModel.Level == _levelsStaticDataProvider.GetLevelsData().Count;
+            _currentLevelModel.Level == _levelsStaticDataProvider.MaxLevel;
 
-        public List<LevelPreviewModel> GetOrCreatePreviewsModels() =>
-            _levelPreviews ??= CreateLevelPreviews();
+        public List<LevelPreviewModel> GetPreviewsModels() =>
+            _levelPreviews;
 
-        private List<LevelPreviewModel> CreateLevelPreviews()
+        private void CreatePreviewModels()
         {
-            var previewModels = new List<LevelPreviewModel>();
+            _levelPreviews = new List<LevelPreviewModel>();
 
             var levelsData = _levelsStaticDataProvider.GetLevelsData();
-            var activeLevel = _levelProgressUpdater.GetActiveLevel();
-            var completeLevels = _levelProgressUpdater.GetCompleteLevelIds();
-
             foreach (var levelData in levelsData)
             {
-                var previewModel = new LevelPreviewModel(levelData);
-
-                if (levelData.Level == activeLevel)
-                    previewModel.IsActive = true;
-
-                else if (completeLevels.Contains(levelData.Level))
-                    previewModel.IsComplete = true;
-
-                previewModels.Add(previewModel);
+                var previewModel = _levelFactory.CreatePreviewModel(levelData);
+                _levelPreviews.Add(previewModel);
             }
-
-            return previewModels;
         }
 
         private void Resume() =>
@@ -99,14 +96,15 @@ namespace Infrastructure.Services
         private LevelPreviewModel GetLevelPreview(int level) =>
             _levelPreviews.Find(model => model.Level == level);
 
-        private void SelectNextLevel()
+        private void UpdateNextLevel()
         {
             if (ReachedMaxLevel) return;
-
+            
             var nextLevel = GetNextLevel();
+            CreateLevelModel(nextLevel);
+            SetActiveStateLevelPreview(nextLevel);
+            
             Select(nextLevel);
-
-            SetActiveLevelPreview(_currentLevelModel.Level);
         }
 
         private void SubscribeListeners(LevelModel levelModel)
@@ -119,26 +117,26 @@ namespace Infrastructure.Services
         {
             _receiveRewardsService.ReceiveRewards(_currentLevelModel.GetRewards());
 
-            var level = _currentLevelModel.Level;
+            var currentLevel = _currentLevelModel.Level;
 
-            _levelProgressUpdater.SetCompleteLevel(level);
-            _analyticsService.LogWinLevel(level);
+            _levelProgressUpdater.SetCompleteLevel(currentLevel);
+            _analyticsService.LogWinLevel(currentLevel);
+            
+            SetCompleteStateLevelPreview(currentLevel);
+            
+            UpdateNextLevel();
 
             _stateMachine.TransitionTo(StateType.WinLevelState);
-
-            SetCompleteLevelPreview(level);
-
-            SelectNextLevel();
         }
 
-        private void SetCompleteLevelPreview(int level)
+        private void SetCompleteStateLevelPreview(int level)
         {
             var previewModel = GetLevelPreview(level);
             previewModel.IsActive = false;
             previewModel.IsComplete = true;
         }
 
-        private void SetActiveLevelPreview(int level)
+        private void SetActiveStateLevelPreview(int level)
         {
             var previewModel = GetLevelPreview(level);
             previewModel.IsActive = true;
@@ -154,22 +152,21 @@ namespace Infrastructure.Services
             _stateMachine.TransitionTo(StateType.LoseLevelState);
         }
 
-        private LevelModel GetOrCreateLevel(int level)
-        {
-            LevelModel levelModel = _levelModels.Find(model => model.Level == level);
-            if (levelModel != null)
-                return levelModel;
+        private LevelModel GetLevel(int level) =>
+            _levelModels.Find(model => model.Level == level);
 
-            return CreateLevelModel(level);
-        }
-
-        private LevelModel CreateLevelModel(int level)
+        private void CreateLevelModel(int level)
         {
             var levelData = _levelsStaticDataProvider.GetDataByLevel(level);
             var levelModel = _levelFactory.CreateModel(levelData);
             SubscribeListeners(levelModel);
             _levelModels.Add(levelModel);
-            return levelModel;
+        }
+
+        private void OnLevelsDataLoaded()
+        {
+            CreateLevelModel(_levelProgressUpdater.GetActiveLevel());
+            CreatePreviewModels();
         }
     }
 }

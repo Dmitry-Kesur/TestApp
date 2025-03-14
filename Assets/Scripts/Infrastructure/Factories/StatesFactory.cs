@@ -28,7 +28,8 @@ namespace Infrastructure.Factories
                 {StateType.SelectLevelState, _diContainer.Instantiate<SelectLevelState>()},
                 {StateType.ShopState, _diContainer.Instantiate<ShopState>()},
                 {StateType.BoostersState, _diContainer.Instantiate<BoostersState>()},
-                {StateType.AuthenticationState, _diContainer.Instantiate<AuthenticationState>()}
+                {StateType.AuthenticationState, _diContainer.Instantiate<AuthenticationState>()},
+                {StateType.InitializeThirdPartyServicesState, _diContainer.Instantiate<InitializeThirdPartyServicesState>()}
             };
 
             return states;

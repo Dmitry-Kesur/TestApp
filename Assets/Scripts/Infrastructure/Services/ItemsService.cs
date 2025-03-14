@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Infrastructure.Constants;
 using Infrastructure.Data.Items;
@@ -16,15 +17,17 @@ namespace Infrastructure.Services
         
         private readonly LocalAddressableService _addressableService;
         private readonly ItemsProgressUpdater _itemsProgressUpdater;
-        private readonly IItemModelsFactory _itemModelsFactory;
-        
+        private readonly ItemModelsFactory _itemModelsFactory;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
+
         private List<ItemData> _itemsData;
 
-        public ItemsService(LocalAddressableService localAddressableService, ItemsProgressUpdater itemsProgressUpdater, IItemModelsFactory itemModelsFactory)
+        public ItemsService(LocalAddressableService localAddressableService, ItemsProgressUpdater itemsProgressUpdater, ItemModelsFactory itemModelsFactory, IExceptionLoggerService exceptionLoggerService)
         {
             _addressableService = localAddressableService;
             _itemsProgressUpdater = itemsProgressUpdater;
             _itemModelsFactory = itemModelsFactory;
+            _exceptionLoggerService = exceptionLoggerService;
         }
 
         public async Task Load()
@@ -32,6 +35,7 @@ namespace Infrastructure.Services
             _itemsData =
                 await _addressableService.LoadScriptableCollectionFromGroupAsync<ItemData>(AddressableGroupNames
                     .LevelItemsGroup);
+            
             CreateItems();
             UpdateUnlockedItems();
         }
@@ -97,15 +101,18 @@ namespace Infrastructure.Services
 
             foreach (var unlockedItemId in unlockedItemsIds)
             {
-                var itemById = GetItemById(unlockedItemId);
-                itemById.Unlocked = true;
+                var itemModel = GetItemById(unlockedItemId);
+                UpdateUnlockedItem(itemModel);
             }
         }
 
         private void OnUnlockItem(ItemModel itemModel)
         {
             _itemsProgressUpdater.SetUnlockedItem(itemModel.Id);
-            UpdateUnlockedItems();
+            UpdateUnlockedItem(itemModel);
         }
+
+        private void UpdateUnlockedItem(ItemModel itemModel) =>
+            itemModel.Unlocked = true;
     }
 }
