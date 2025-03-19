@@ -1,6 +1,4 @@
-﻿using Infrastructure.Models.GameEntities;
-using Infrastructure.Models.GameEntities.Currency;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace Infrastructure.Views.UI.Windows
@@ -9,21 +7,7 @@ namespace Infrastructure.Views.UI.Windows
     {
         [SerializeField] private TextMeshProUGUI _currencyAmountTextField;
 
-        private CurrencyModel _currencyModel;
-
-        public void Init(CurrencyModel currencyModel)
-        {
-            _currencyModel = currencyModel;
-            _currencyModel.OnUpdateCurrencyAction += UpdateCurrency;
-            UpdateCurrency();
-        }
-        
-        private void UpdateCurrency() =>
-            _currencyAmountTextField.text = _currencyModel.CurrencyAmount.ToString();
-
-        public void Clear()
-        {
-            _currencyModel.OnUpdateCurrencyAction -= UpdateCurrency;
-        }
+        public void UpdateCurrency(int currencyAmount) =>
+            _currencyAmountTextField.text = currencyAmount.ToString();
     }
 }

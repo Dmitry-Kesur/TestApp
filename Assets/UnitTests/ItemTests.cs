@@ -2,6 +2,8 @@ using System;
 using Infrastructure.Controllers.Levels;
 using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Services;
+using Infrastructure.Services.Items;
+using Infrastructure.Services.Log;
 using NSubstitute;
 using NUnit.Framework;
 using Zenject;

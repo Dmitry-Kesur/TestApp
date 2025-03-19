@@ -1,6 +1,7 @@
-﻿using Infrastructure.Factories;
+﻿using Infrastructure.Factories.Progress;
 using Infrastructure.Services;
-using Infrastructure.Services.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
+using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 using Zenject;
 
 namespace Infrastructure.Installers

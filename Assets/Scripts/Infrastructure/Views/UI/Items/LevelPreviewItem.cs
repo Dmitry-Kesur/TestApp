@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using Infrastructure.Models.UI;
+using Infrastructure.Models.UI.Items;
 using Infrastructure.Views.UI.Buttons;
 using TMPro;
 using UnityEngine;

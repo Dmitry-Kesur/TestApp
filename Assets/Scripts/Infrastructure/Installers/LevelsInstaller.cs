@@ -1,7 +1,9 @@
 ﻿using Infrastructure.Controllers.Levels;
-using Infrastructure.Factories;
+using Infrastructure.Factories.Level;
 using Infrastructure.Providers;
+using Infrastructure.Providers.Level;
 using Infrastructure.Services;
+using Infrastructure.Services.Level;
 using Zenject;
 
 namespace Infrastructure.Installers

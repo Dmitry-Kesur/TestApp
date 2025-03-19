@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services;
+using Infrastructure.Services.Currency;
+using Infrastructure.Services.InGamePurchase;
 using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.Windows;
 
@@ -10,18 +12,17 @@ namespace Infrastructure.Controllers.Windows
     {
         private readonly ShopWindowModel _shopWindowModel;
         private readonly StateMachineService _stateMachineService;
-        private readonly IInGamePurchaseService _inGamePurchaseService;
+        private readonly InGamePurchaseService _inGamePurchaseService;
         private readonly ICurrencyService _currencyService;
 
-        public ShopWindowController(StateMachineService stateMachineService, IInGamePurchaseService inGamePurchaseService,
+        public ShopWindowController(StateMachineService stateMachineService, InGamePurchaseService inGamePurchaseService,
             ICurrencyService currencyService)
         {
             _stateMachineService = stateMachineService;
             _inGamePurchaseService = inGamePurchaseService;
             _currencyService = currencyService;
 
-            _shopWindowModel = new ShopWindowModel();
-            _shopWindowModel.SetCurrencyModel(_currencyService.GetCurrencyModel());
+            _shopWindowModel = new ShopWindowModel(_currencyService);
             _shopWindowModel.SetProducts(_inGamePurchaseService.GetProducts());
             SubscribeListeners();
         }

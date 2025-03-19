@@ -1,6 +1,7 @@
 ﻿using System;
 using Infrastructure.Models.GameEntities.Boosters;
 using Infrastructure.Services;
+using Infrastructure.Services.Level;
 
 namespace Infrastructure.Models.UI.HUD
 {

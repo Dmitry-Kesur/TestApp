@@ -1,6 +1,7 @@
-using Infrastructure.Factories;
 using Infrastructure.Providers;
+using Infrastructure.Providers.InAppPurchase;
 using Infrastructure.Services;
+using Infrastructure.Services.InAppPurchase;
 using Zenject;
 
 namespace Infrastructure.Installers
@@ -9,20 +10,13 @@ namespace Infrastructure.Installers
     {
         public override void InstallBindings()
         {
-            BindFactories();
             BindProviders();
             BindServices();
-        }
-
-        private void BindFactories()
-        {
-            Container.Bind<PurchaseProcessorsFactory>().AsSingle();
         }
 
         private void BindProviders()
         {
             Container.BindInterfacesAndSelfTo<InAppPurchaseProvider>().AsSingle();
-            Container.BindInterfacesAndSelfTo<PurchaseProcessorsProvider>().AsSingle().NonLazy();
         }
 
         private void BindServices()

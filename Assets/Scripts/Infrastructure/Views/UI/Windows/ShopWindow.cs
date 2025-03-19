@@ -19,8 +19,9 @@ namespace Infrastructure.Views.UI.Windows
         {
             base.Init();
             _backButton.OnButtonClickAction = _shopWindowModel.OnBackButtonClick;
+            _shopWindowModel.OnUpdateCurrencyAction = _currencyView.UpdateCurrency;
+            
             _shopLoader.DrawLoader(_shopWindowModel.ShopProducts);
-            _currencyView.Init(_shopWindowModel.CurrencyModel);
         }
 
         public override void SetModel(BaseWindowModel model)
@@ -35,8 +36,9 @@ namespace Infrastructure.Views.UI.Windows
         protected override void Clear()
         {
             base.Clear();
-            _currencyView.Clear();
+
             _backButton.OnButtonClickAction = null;
+            _shopWindowModel.OnUpdateCurrencyAction = null;
         }
     }
 }

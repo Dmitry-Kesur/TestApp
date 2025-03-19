@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Infrastructure.Models.UI.Items;
 
 namespace Infrastructure.Models.UI.Windows
 {

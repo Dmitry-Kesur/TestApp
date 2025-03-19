@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Factories
+﻿namespace Infrastructure.Constants
 {
     public class NotificationPrefabsPath
     {

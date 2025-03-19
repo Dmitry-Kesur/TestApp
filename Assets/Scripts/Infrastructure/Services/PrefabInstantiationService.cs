@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Infrastructure.Utils
+namespace Infrastructure.Services
 {
     public class PrefabInstantiationService
     {

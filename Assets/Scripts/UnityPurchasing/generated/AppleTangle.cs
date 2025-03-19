@@ -1,0 +1,18 @@
+// WARNING: Do not modify! Generated file.
+
+namespace UnityEngine.Purchasing.Security {
+    public class AppleTangle
+    {
+        private static byte[] data = System.Convert.FromBase64String("PHbERzB2SEBFE1tJR0e5QkJFREcyLik0LzI/d1B2UkBFE0JFVUsHNlnDxcNd33sBcbTv3QbIapL31lSeQ0ZFxEdJRnbER0xExEdHRqLX7082KiNmFCkpMmYFB3ZYUUt2cHZydO6aOGRzjGOTn0mQLZLkYmVXsefqD54w2XVSI+cx0o9rREVHRkflxEfGUm2WLwHSME+4si3LaAbgsQELOUnbe7VtD25cjriI8/9InxhakI17ZicoImYlIzQyLyAvJScyLykoZjZmKSBmMi4jZjIuIyhmJzY2Ki8lJ2zADsCxS0dHQ0NGdiR3TXZPQEUTaXbHhUBObUBHQ0NBRER2x/Bcx/UDOFkKLRbQB8+CMiRNVsUHwXXMxzkH7t6/l4wg2mItV5bl/aJdbIVZMi8gLyUnMiNmJD9mJyg/ZjYnNDJ1cBx2JHdNdk9ARRNCQFVEExV3VWgG4LEBCzlOGHZZQEUTW2VCXnZQn3A5h8ETn+Hf/3QEvZ6TN9g45xQ2KiNmBSM0Mi8gLyUnMi8pKGYHM0BFE1tIQlBCUm2WLwHSME+4si3LYHZiQEUTQk1VWwc2NiojZgUjNDLxXfvVBGJUbIFJW/AL2hgljg3GUT9mJzU1MysjNWYnJSUjNjInKCUjJCojZjUyJygiJzQiZjIjNCs1ZicqI2YPKCVod2B2YkBFE0JNVVsHNmKkrZfxNplJA6dhjLcrPquh81FRInNlUw1TH1v10rGw2tiJFvyHHhYxMWgnNjYqI2glKStpJzY2KiMlJ2pmJSM0Mi8gLyUnMiNmNikqLyU/e2AhZsx1LLFLxImYreVpvxUsHSJAdklARRNbVUdHuUJDdkVHR7l2W/iyNd2olCJJjT8Jcp7keL8+uS2OZgUHdsRHZHZLQE9swA7AsUtHR0d2V0BFE0JMVUwHNjYqI2YPKCVod8RHRkBPbMAOwLElIkNHdse0dmxAzV/PmL8NKrNB7WR2RK5eeL4WT5UoImYlKSgiLzIvKSg1ZikgZjM1I1B2UkBFE0JFVUsHNjYqI2YUKSkyThh2xEdXQEUTW2ZCxEdOdsRHQnYf4UNPOlEGEFdYMpXxzWV9AeWTKUJAVUQTFXdVdldARRNCTFVMBzY2dsRC/XbEReXmRURHRERHRHZLQE/t5TfUARUTh+lpB/W+vaU2i6DlChQjKi8nKCUjZikoZjIuLzVmJSM083zrsklIRtRN92dQaDKTekudJFBBqjt/xc0VZpV+gvf53AlMLbltuoYldTGxfEFqEK2cSWdInPw1XwnzcN8Kaz7xq8rdmrUx3bQwlDF2CYdZ151YARatQ6sYP8JrrXDkEQoTqiHJTvJmsY3qamYpNvB5R3bK8QWJNCclMi8lI2Y1MicyIysjKDI1aHbT2DxK4gHNHZJQcXWNgkkLiFIvl0tAT2zADsCxS0dHQ0NGRcRHR0Yac3R3cnZ1cBxRS3VzdnR2f3R3cnYvIC8lJzIvKShmBzMyLik0LzI/d49fNLMbSJM5Gd20Y0X8E8kLG0u393YeqhxCdMou9clbmCM1uSEYI/rJNccmgF0dT2nU9L4CDrYmfthTs05tQEdDQ0FER1BYLjIyNjV8aWkxFuzMk5yiupZPQXH2MzNn");
+        private static int[] order = new int[] { 28,5,49,14,6,54,27,32,22,45,41,54,37,25,17,39,22,31,58,27,30,41,59,40,42,31,53,30,36,44,56,44,50,44,45,45,59,43,43,44,52,49,59,59,59,52,51,57,48,59,59,51,58,57,59,59,56,57,59,59,60 };
+        private static int key = 70;
+
+        public static readonly bool IsPopulated = true;
+
+        public static byte[] Data() {
+        	if (IsPopulated == false)
+        		return null;
+            return Obfuscator.DeObfuscate(data, order, key);
+        }
+    }
+}

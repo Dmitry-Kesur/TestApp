@@ -16,7 +16,7 @@ MonoBehaviour:
   - LoadingStage: 2
     SortValue: 1
     ProgressValue: 0.2
-    StageText: Loading Game Data..
+    StageText: Loading in game products..
   - LoadingStage: 0
     SortValue: 2
     ProgressValue: 0.3
@@ -24,7 +24,7 @@ MonoBehaviour:
   - LoadingStage: 3
     SortValue: 3
     ProgressValue: 0.4
-    StageText: Loading Products...
+    StageText: Loading Sounds...
   - LoadingStage: 1
     SortValue: 4
     ProgressValue: 0.7
@@ -32,8 +32,8 @@ MonoBehaviour:
   - LoadingStage: 4
     SortValue: 5
     ProgressValue: 0.8
-    StageText: Loading Sounds...
+    StageText: Loading Rewards...
   - LoadingStage: 5
     SortValue: 6
     ProgressValue: 1
-    StageText: Loading Rewards..
+    StageText: Loading Boosters..

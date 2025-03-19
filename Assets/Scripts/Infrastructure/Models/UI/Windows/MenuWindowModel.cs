@@ -1,5 +1,7 @@
 ﻿using System;
 using Infrastructure.Services;
+using Infrastructure.Services.Authentication;
+using Infrastructure.Services.Progress;
 
 namespace Infrastructure.Models.UI.Windows
 {

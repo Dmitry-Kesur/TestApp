@@ -1,7 +1,9 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services;
-using Infrastructure.Services.PlayerProgressUpdaters;
+using Infrastructure.Services.Items;
+using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Sound;
 using Infrastructure.StateMachine;
 using Infrastructure.StateMachine.States;
 using Infrastructure.Views.UI.Windows;

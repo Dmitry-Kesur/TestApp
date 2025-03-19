@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Firebase;
 using Infrastructure.Enums;
 using Infrastructure.Providers;
+using Infrastructure.Providers.InAppPurchase;
 using Infrastructure.Services;
+using Infrastructure.Services.RemoteConfig;
 using UnityEngine;
 
 namespace Infrastructure.StateMachine.States
@@ -16,12 +18,10 @@ namespace Infrastructure.StateMachine.States
         private readonly RemoteConfigService _remoteConfigService;
         private readonly InAppPurchaseProvider _inAppPurchaseProvider;
 
-        public InitializeThirdPartyServicesState(List<IFirebaseInitialize> firebaseInitializeServices, RemoteConfigService remoteConfigService,
-            InAppPurchaseProvider inAppPurchaseProvider)
+        public InitializeThirdPartyServicesState(List<IFirebaseInitialize> firebaseInitializeServices, RemoteConfigService remoteConfigService)
         {
             _firebaseInitializeServices = firebaseInitializeServices;
             _remoteConfigService = remoteConfigService;
-            _inAppPurchaseProvider = inAppPurchaseProvider;
         }
 
         public override async void Enter()
@@ -31,8 +31,6 @@ namespace Infrastructure.StateMachine.States
                 await CheckAndFixFirebaseDependencies();
                 await InitializeRemoteConfigService();
                 InitializeFirebaseServices();
-                
-                InitializeInAppPurchaseProvider();
 
                 StateMachineService.TransitionTo(StateType.AuthenticationState);
             }
@@ -75,8 +73,5 @@ namespace Infrastructure.StateMachine.States
         {
             await _remoteConfigService.Initialize();
         }
-
-        private void InitializeInAppPurchaseProvider() =>
-            _inAppPurchaseProvider.Initialize();
     }
 }

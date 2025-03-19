@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using Infrastructure.Models.GameEntities.Currency;
-using Infrastructure.Models.GameEntities.Products;
 using Infrastructure.Models.GameEntities.Products.InGame;
+using Infrastructure.Services;
+using Infrastructure.Services.Currency;
 
 namespace Infrastructure.Models.UI.Windows
 {
     public class ShopWindowModel : BaseWindowModel
     {
         public Action OnBackButtonClickAction;
+        public Action<int> OnUpdateCurrencyAction;
+        
+        private readonly ICurrencyService _currencyService;
 
         private List<ProductModel> _shopProducts;
-        private CurrencyModel _currencyModel;
+
+        public ShopWindowModel(ICurrencyService currencyService)
+        {
+            _currencyService = currencyService;
+            _currencyService.OnUpdateCurrencyAction = OnUpdateCurrency;
+        }
 
         public void OnBackButtonClick() =>
             OnBackButtonClickAction?.Invoke();
@@ -19,13 +27,10 @@ namespace Infrastructure.Models.UI.Windows
         public void SetProducts(List<ProductModel> shopProducts) =>
             _shopProducts = shopProducts;
 
-        public void SetCurrencyModel(CurrencyModel currencyModel) =>
-            _currencyModel = currencyModel;
-
         public List<ProductModel> ShopProducts => 
             _shopProducts;
 
-        public CurrencyModel CurrencyModel =>
-            _currencyModel;
+        private void OnUpdateCurrency() =>
+            OnUpdateCurrencyAction?.Invoke(_currencyService.CurrencyAmount);
     }
 }

@@ -1,7 +1,7 @@
-﻿using Infrastructure.Data.Rewards;
-using Infrastructure.Enums;
+﻿using Infrastructure.Enums;
 using Infrastructure.Models.GameEntities.Rewards;
 using Infrastructure.Services;
+using Infrastructure.Services.Currency;
 
 namespace Infrastructure.Controllers.Rewards
 {

@@ -1,8 +1,7 @@
 ﻿using Infrastructure.Data.Level;
-using Infrastructure.Models.UI.Items;
 using UnityEngine;
 
-namespace Infrastructure.Models.UI
+namespace Infrastructure.Models.UI.Items
 {
     public class LevelPreviewModel : IDrawableModel
     {

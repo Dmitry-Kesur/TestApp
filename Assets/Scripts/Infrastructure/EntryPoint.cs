@@ -1,5 +1,6 @@
 using Infrastructure.Enums;
-using Infrastructure.Factories;
+using Infrastructure.Factories.State;
+using Infrastructure.Services.Progress;
 using Infrastructure.StateMachine;
 using UnityEngine;
 using Zenject;

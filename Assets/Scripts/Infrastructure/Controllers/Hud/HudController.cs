@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.HUD;
 using Infrastructure.Services;
+using Infrastructure.Services.Booster;
+using Infrastructure.Services.Level;
 using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.HUD;
 

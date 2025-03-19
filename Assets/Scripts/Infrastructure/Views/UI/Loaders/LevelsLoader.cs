@@ -1,5 +1,6 @@
 ﻿using System;
 using Infrastructure.Models.UI;
+using Infrastructure.Models.UI.Items;
 using Infrastructure.Views.UI.Items;
 
 namespace Infrastructure.Views.UI.Loaders

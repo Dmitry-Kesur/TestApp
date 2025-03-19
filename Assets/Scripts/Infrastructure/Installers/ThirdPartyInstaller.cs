@@ -1,4 +1,9 @@
 ﻿using Infrastructure.Services;
+using Infrastructure.Services.Ads;
+using Infrastructure.Services.Analytics;
+using Infrastructure.Services.Authentication;
+using Infrastructure.Services.Log;
+using Infrastructure.Services.RemoteConfig;
 using Zenject;
 
 namespace Infrastructure.Installers

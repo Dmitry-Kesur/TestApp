@@ -1,7 +1,9 @@
 ﻿using System;
 using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Services;
-using Infrastructure.Services.PlayerProgressUpdaters;
+using Infrastructure.Services.Booster;
+using Infrastructure.Services.Hud;
+using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 
 namespace Infrastructure.Controllers.Levels
 {

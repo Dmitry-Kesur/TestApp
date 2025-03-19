@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Infrastructure.Models.GameEntities.Boosters;
 using Infrastructure.Services;
+using Infrastructure.Services.Booster;
 
 namespace Infrastructure.Models.UI.Windows
 {

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services;
+using Infrastructure.Services.Authentication;
 using Infrastructure.Views.UI.Windows;
 
 namespace Infrastructure.Controllers.Windows

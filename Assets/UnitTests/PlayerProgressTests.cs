@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Infrastructure.Data.PlayerProgress;
-using Infrastructure.Factories;
+using Infrastructure.Factories.Purchase;
 using Infrastructure.Services;
-using Infrastructure.Services.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
+using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 using NSubstitute;
 using NUnit.Framework;
 
