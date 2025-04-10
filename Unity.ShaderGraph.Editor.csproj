@@ -120,8 +120,8 @@
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Interfaces/IGroupItem.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Nodes/Utility/RedirectNodeView.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Graphs/GraphDataUtils.cs" />
-    <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Drawing/Views/Slots/BooleanSlotControlView.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/ShaderGraphNodeValidationExtension.cs" />
+    <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Drawing/Views/Slots/BooleanSlotControlView.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Graphs/Vector3MaterialSlot.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Generation/TargetResources/BlockFields.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Graphs/Texture3DMaterialSlot.cs" />
@@ -326,8 +326,8 @@
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Graphs/AbstractShaderProperty.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Interface/IConditional.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Drawing/Interfaces/ISGControlledElement.cs" />
-    <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Generation/Targets/BuiltIn/Editor/ShaderGraph/AssetCallbacks/CreateLitShaderGraph.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Nodes/GeometryNode.cs" />
+    <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Generation/Targets/BuiltIn/Editor/ShaderGraph/AssetCallbacks/CreateLitShaderGraph.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Nodes/Math/Matrix/MatrixConstructionNode.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Data/Interfaces/IMayRequireTime.cs" />
     <Compile Include="Library/PackageCache/com.unity.shadergraph@14.0.11/Editor/Drawing/Controls/TextureArrayControl.cs" />

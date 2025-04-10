@@ -175,8 +175,8 @@
     <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/Settings/LabelTable.cs" />
     <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/GUI/ProfileWindow.cs" />
     <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/HostingServices/HostingServicesManager.cs" />
-    <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/Diagnostics/Profiler/AddressablesProfilerDetailsView.cs" />
     <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/BuildReportVisualizer/ContentView/ContentView.cs" />
+    <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/Diagnostics/Profiler/AddressablesProfilerDetailsView.cs" />
     <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/GUI/ProfileTreeView.cs" />
     <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/Build/ContentUpdateScript.cs" />
     <Compile Include="Library/PackageCache/com.unity.addressables@1.22.3/Editor/GUI/AddressableAssetSettingsInspector.cs" />
