@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase;
 using Infrastructure.Enums;
-using Infrastructure.Providers;
 using Infrastructure.Providers.InAppPurchase;
 using Infrastructure.Services;
 using Infrastructure.Services.RemoteConfig;
+using Unity.Services.Core;
 using UnityEngine;
 
 namespace Infrastructure.StateMachine.States
@@ -28,6 +28,7 @@ namespace Infrastructure.StateMachine.States
         {
             try
             {
+                await UnityServices.InitializeAsync();
                 await CheckAndFixFirebaseDependencies();
                 await InitializeRemoteConfigService();
                 InitializeFirebaseServices();

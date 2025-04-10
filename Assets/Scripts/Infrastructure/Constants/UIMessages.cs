@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Constants
 {
-    public class TextAliases
+    public class UIMessages
     {
         public const string ReceiveRewardAlias = "You receive rewards:";
         public const string SuccessfulPurchaseAlias = "You made a successful purchase";

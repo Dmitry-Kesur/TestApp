@@ -1,4 +1,5 @@
-﻿using Infrastructure.Providers.Scene;
+﻿using Infrastructure.Models.GameEntities.Level;
+using Infrastructure.Providers.Scene;
 using Infrastructure.Views.GameEntities;
 using UnityEngine;
 
@@ -8,16 +9,21 @@ namespace Infrastructure.Factories.Level
     {
         private readonly SceneProvider _sceneProvider;
 
+        private LevelView _levelView;
+
         public LevelViewsFactory(SceneProvider sceneProvider)
         {
             _sceneProvider = sceneProvider;
         }
 
-        public LevelView CreateLevelView()
+        public void CreateLevelView(LevelModel levelModel)
         {
             var levelPrefab = Resources.Load<LevelView>("Prefabs/Level/LevelView");
-            var levelView = Object.Instantiate(levelPrefab, _sceneProvider.GameLevelLayer, false);
-            return levelView;
+            _levelView = Object.Instantiate(levelPrefab, _sceneProvider.GameLevelLayer, false);
+            _levelView.SetModel(levelModel);
         }
+
+        public void DestroyLevelView() =>
+            GameObject.Destroy(_levelView.gameObject);
     }
 }

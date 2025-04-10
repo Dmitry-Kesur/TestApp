@@ -4,7 +4,7 @@ using Infrastructure.Models.UI.Items;
 
 namespace Infrastructure.Factories.Level
 {
-    public interface ILevelFactory
+    public interface ILevelModelsFactory
     {
         LevelModel CreateModel(LevelStaticData levelData);
         LevelPreviewModel CreatePreviewModel(LevelStaticData levelData);

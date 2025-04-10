@@ -36,6 +36,7 @@ namespace Infrastructure.Installers
             Container.BindInterfacesAndSelfTo<ItemsProgressUpdater>().AsSingle();
             Container.BindInterfacesAndSelfTo<LevelProgressUpdater>().AsSingle();
             Container.BindInterfacesAndSelfTo<ResourceProgressUpdater>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PurchaseProgressUpdater>().AsSingle();
         }
     }
 }

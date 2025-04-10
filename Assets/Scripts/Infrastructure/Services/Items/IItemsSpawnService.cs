@@ -1,5 +1,6 @@
 ﻿using System;
-using Infrastructure.Strategy;
+using System.Collections.Generic;
+using Infrastructure.Models.GameEntities.Level.Items;
 using Infrastructure.Views.GameEntities;
 
 namespace Infrastructure.Services.Items
@@ -7,7 +8,7 @@ namespace Infrastructure.Services.Items
     public interface IItemsSpawnService
     {
         void UpdateSpawnDelay(float spawnDelay);
-        void SetSpawnItemsStrategy(ILevelItemsStrategy levelItemsStrategy);
+        void SetItemModels(List<ItemModel> itemModels);
         void Spawn();
         void RemoveItem(ItemView itemView);
         void DisableSpawn();

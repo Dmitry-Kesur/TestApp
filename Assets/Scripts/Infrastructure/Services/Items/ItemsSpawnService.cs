@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Infrastructure.Factories.Level;
 using Infrastructure.Models.GameEntities.Level.Items;
-using Infrastructure.Strategy;
 using Infrastructure.Views.GameEntities;
 using UnityEngine;
 using Zenject;
@@ -17,7 +17,7 @@ namespace Infrastructure.Services.Items
         private float _spawnTimer;
         private bool _enableSpawn;
 
-        private ILevelItemsStrategy _levelItemsStrategy;
+        private List<ItemModel> _itemModels;
 
         public ItemsSpawnService(IItemViewsFactory itemsFactory) =>
             _itemsFactory = itemsFactory;
@@ -25,8 +25,8 @@ namespace Infrastructure.Services.Items
         public void UpdateSpawnDelay(float spawnDelay) =>
             _itemsSpawnDelay = spawnDelay;
 
-        public void SetSpawnItemsStrategy(ILevelItemsStrategy levelItemsStrategy) =>
-            _levelItemsStrategy = levelItemsStrategy;
+        public void SetItemModels(List<ItemModel> itemModels) =>
+            _itemModels = itemModels;
 
         public void Spawn()
         {
@@ -71,9 +71,7 @@ namespace Infrastructure.Services.Items
             float randomChanceValue = Random.Range(0f, 1f);
             float cumulativeChance = 0;
 
-            var itemModels = _levelItemsStrategy.GetItems();
-
-            foreach (var itemModel in itemModels)
+            foreach (var itemModel in _itemModels)
             {
                 cumulativeChance += itemModel.SpawnChance;
                 if (randomChanceValue <= cumulativeChance)

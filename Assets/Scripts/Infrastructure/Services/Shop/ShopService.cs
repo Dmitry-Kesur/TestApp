@@ -15,23 +15,24 @@ using Infrastructure.Strategy;
 
 namespace Infrastructure.Services.InGamePurchase
 {
-    public class InGamePurchaseService : ILoadableService
+    public class ShopService : ILoadableService
     {
         private readonly List<ProductModel> _shopProducts = new();
 
         private readonly LocalAddressableService _localAddressableService;
-        private readonly IPaymentProductService _paymentProductService;
+        private readonly IPaymentShopService _paymentProductService;
         private readonly IAnalyticsService _analyticsService;
         private readonly PurchaseProgressUpdater _purchaseProgressUpdater;
         private readonly INotificationService _notificationService;
-        private readonly IProductStrategiesFactory _productStrategiesFactory;
+        private readonly IShopProductStrategiesFactory _productStrategiesFactory;
 
         private List<IProductStrategy> _productStrategies;
+        private List<ProductData> _products;
 
-        public InGamePurchaseService(LocalAddressableService localAddressableService,
-            IPaymentProductService paymentProductService, IAnalyticsService analyticsService,
+        public ShopService(LocalAddressableService localAddressableService,
+            IPaymentShopService paymentProductService, IAnalyticsService analyticsService,
             PurchaseProgressUpdater purchaseProgressUpdater, INotificationService notificationService,
-            IProductStrategiesFactory productStrategiesFactory)
+            IShopProductStrategiesFactory productStrategiesFactory)
         {
             _localAddressableService = localAddressableService;
             _paymentProductService = paymentProductService;
@@ -47,15 +48,20 @@ namespace Infrastructure.Services.InGamePurchase
             _shopProducts;
 
         public LoadingStage LoadingStage => 
-            LoadingStage.LoadingProducts;
+            LoadingStage.LoadingShopProducts;
 
         public async Task Load()
         {
-            _productStrategies = _productStrategiesFactory.CreateProductStrategies();
-            var products = await LoadProductsData();
-            CreateProducts(products);
+            _products = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<ProductData>(AddressableGroupNames
+                    .ProductsGroup);
         }
 
+        public void Initialize()
+        {
+            _productStrategies = _productStrategiesFactory.CreateProductStrategies();
+            CreateProducts(_products);
+        }
+        
         private void CreateProducts(List<ProductData> productsData)
         {
             foreach (var productsStrategy in _productStrategies)
@@ -70,7 +76,7 @@ namespace Infrastructure.Services.InGamePurchase
 
         private void UpdatePurchasedProducts()
         {
-            var purchasedProductIds = _purchaseProgressUpdater.GetPurchasedInGameProductIds();
+            var purchasedProductIds = _purchaseProgressUpdater.GetPurchasedShopProductIds();
 
             foreach (var productId in purchasedProductIds)
             {
@@ -84,19 +90,25 @@ namespace Infrastructure.Services.InGamePurchase
 
         private void OnCompletePurchaseProduct(IProductModel product)
         {
-            product.OnPurchaseComplete();
-            var productId = product.Id;
-            _purchaseProgressUpdater.SetPurchasedInGameProductId(productId);
-            _analyticsService.LogPurchaseProduct(productId);
+            HandleProductPurchaseCompletion(product);
+            _purchaseProgressUpdater.SetPurchasedShopProductId(product.Id);
+            _analyticsService.LogPurchaseProduct(product.Id);
 
             ShowPurchaseProductNotification(product);
+        }
+
+        private static void HandleProductPurchaseCompletion(IProductModel product)
+        {
+            var purchaseTarget = product.GetPurchaseTarget();
+            purchaseTarget.OnPurchaseComplete();
+            product.UpdateProductAction?.Invoke();
         }
 
         private void ShowPurchaseProductNotification(IProductModel product)
         {
             var notificationModel = new NotificationWithIconModel
             {
-                NotificationText = TextAliases.SuccessfulPurchaseAlias,
+                NotificationText = UIMessages.SuccessfulPurchaseAlias,
                 NotificationIcon = product.ProductIcon
             };
 
@@ -111,14 +123,6 @@ namespace Infrastructure.Services.InGamePurchase
             }
 
             _paymentProductService.OnCompletePaymentProduct = OnCompletePurchaseProduct;
-        }
-
-        private async Task<List<ProductData>> LoadProductsData()
-        {
-            var products =
-                await _localAddressableService.LoadScriptableCollectionFromGroupAsync<ProductData>(AddressableGroupNames
-                    .ProductsGroup);
-            return products;
         }
     }
 }

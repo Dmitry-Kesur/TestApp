@@ -3,7 +3,7 @@ using Infrastructure.Models.GameEntities.Level.Items;
 
 namespace Infrastructure.Strategy
 {
-    public interface ILevelItemsStrategy
+    public interface IItemsStrategy
     {
         List<ItemModel> GetItems();
     }

@@ -4,11 +4,11 @@ using Infrastructure.Strategy;
 
 namespace Infrastructure.Factories.Purchase
 {
-    public class ProductStrategiesFactory : IProductStrategiesFactory
+    public class ShopProductStrategiesFactory : IShopProductStrategiesFactory
     {
         private readonly IItemsService _itemsService;
 
-        public ProductStrategiesFactory(IItemsService itemsService)
+        public ShopProductStrategiesFactory(IItemsService itemsService)
         {
             _itemsService = itemsService;
         }

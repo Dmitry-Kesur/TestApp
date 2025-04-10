@@ -1,13 +1,12 @@
 ﻿using System;
 using Infrastructure.Models.GameEntities.Level;
-using Infrastructure.Services;
 using Infrastructure.Services.Booster;
 using Infrastructure.Services.Hud;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 
 namespace Infrastructure.Controllers.Levels
 {
-    public class ProgressController
+    public class LevelProgressController
     {
         private readonly IHudService _hudService;
         private readonly IBoostersService _boostersService;
@@ -15,15 +14,14 @@ namespace Infrastructure.Controllers.Levels
 
         public Action OnReachScoreToWin;
         public Action OnReachedMaximumFailItems;
-        public Action OnUpdateProgress;
 
         private int _totalFailItems;
         private int _totalLevelScore;
         private int _totalCatchItems;
         
-        private ILevelModel _levelModel;
+        private LevelModel _levelModel;
 
-        public ProgressController(IHudService hudService, IBoostersService boostersService, LevelProgressUpdater levelProgressUpdater)
+        public LevelProgressController(IHudService hudService, IBoostersService boostersService, LevelProgressUpdater levelProgressUpdater)
         {
             _hudService = hudService;
             _boostersService = boostersService;
@@ -43,10 +41,9 @@ namespace Infrastructure.Controllers.Levels
         {
             _totalFailItems++;
             
-            OnUpdateProgress?.Invoke();
             _hudService.UpdateHud();
 
-            if (_totalFailItems == _levelModel.FailItemsMaximum)
+            if (_totalFailItems == _levelModel.MaximumFailItems)
             {
                 UpdateBestScore();
                 OnReachedMaximumFailItems?.Invoke();
@@ -60,15 +57,19 @@ namespace Infrastructure.Controllers.Levels
             _totalCatchItems = 0;
         }
 
-        public void SetModel(ILevelModel levelModel) =>
+        public void SetModel(LevelModel levelModel) =>
             _levelModel = levelModel;
+
+        public void Refresh()
+        {
+            _hudService.UpdateHud();
+        }
 
         public void UpdateProgressByCatchItem(int scorePoints)
         {
             _totalCatchItems++;
             _totalLevelScore += GetUpdatedScore(scorePoints);
             
-            OnUpdateProgress?.Invoke();
             _hudService.UpdateHud();
 
             if (TotalLevelScore >= _levelModel.ScorePointsToWin)

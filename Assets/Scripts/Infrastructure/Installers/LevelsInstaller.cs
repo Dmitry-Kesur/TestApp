@@ -1,8 +1,6 @@
 ﻿using Infrastructure.Controllers.Levels;
 using Infrastructure.Factories.Level;
-using Infrastructure.Providers;
 using Infrastructure.Providers.Level;
-using Infrastructure.Services;
 using Infrastructure.Services.Level;
 using Zenject;
 
@@ -13,23 +11,30 @@ namespace Infrastructure.Installers
         public override void InstallBindings()
         {
             BindFactories();
+            BindProviders();
             BindServices();
         }
 
         private void BindFactories()
         {
+            Container.BindInterfacesAndSelfTo<ItemsStrategyFactory>().AsSingle();
             Container.Bind<ItemModelsFactory>().AsSingle();
             Container.Bind<LevelViewsFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemViewsFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<LevelsFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelModelsFactory>().AsSingle();
+        }
+
+        private void BindProviders()
+        {
+            BindLevelsStaticDataProvider();
         }
 
         private void BindServices()
         {
-            BindLevelsStaticDataProvider();
             BindLevelsService();
             BindProgressController();
-            BindItemsController();
+            BindItemsInteractionController();
+            BindItemsSpawnController();
         }
 
         private void BindLevelsStaticDataProvider() =>
@@ -39,9 +44,12 @@ namespace Infrastructure.Installers
             Container.Bind<ILevelsService>().To<LevelService>().AsSingle();
 
         private void BindProgressController() =>
-            Container.Bind<ProgressController>().AsSingle();
+            Container.Bind<LevelProgressController>().AsSingle();
 
-        private void BindItemsController() =>
+        private void BindItemsInteractionController() =>
+            Container.Bind<ItemsInteractionController>().AsSingle();
+
+        private void BindItemsSpawnController() =>
             Container.Bind<ItemsSpawnController>().AsSingle();
     }
 }

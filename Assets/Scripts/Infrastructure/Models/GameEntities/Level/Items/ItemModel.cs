@@ -11,9 +11,8 @@ namespace Infrastructure.Models.GameEntities.Level.Items
         private readonly ItemData _itemData;
 
         public Action<ItemModel> OnUnlockItemAction;
-        public Action<ItemView> RemoveItemAction;
 
-        protected ItemModel(ItemData itemData) =>
+        public ItemModel(ItemData itemData) =>
             _itemData = itemData;
 
         public void OnFail() =>
@@ -51,6 +50,8 @@ namespace Infrastructure.Models.GameEntities.Level.Items
         public Action<ItemModel> OnCatchAction { get; set; }
 
         public Action OnFailAction { get; set; }
+        
+        public Action<ItemView> RemoveItemAction { get; set; }
 
         public void OnRemoveItem(ItemView itemView) =>
             RemoveItemAction?.Invoke(itemView);

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Infrastructure.Data.PlayerProgress;
 using Infrastructure.Factories.Purchase;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 
@@ -12,7 +11,7 @@ namespace Infrastructure.Services.Progress
         private readonly List<IProgressUpdater> _progressUpdaters;
         private readonly IProgressFactory _progressFactory;
 
-        private PlayerProgress _playerProgress;
+        private Data.PlayerProgress.Progress _progress;
 
         public ProgressService(ISaveLoadProgressService saveLoadProgress, List<IProgressUpdater> progressUpdaters, IProgressFactory progressFactory)
         {
@@ -23,18 +22,18 @@ namespace Infrastructure.Services.Progress
 
         public async Task LoadPlayerProgress(string userId)
         {
-            _playerProgress = await _saveLoadProgress.LoadProgress(userId) ?? _progressFactory.CreateNewProgress(userId);
+            _progress = await _saveLoadProgress.LoadProgress(userId) ?? _progressFactory.CreateNewProgress(userId);
 
             foreach (var progressUpdater in _progressUpdaters)
-                progressUpdater.OnLoadProgress(_playerProgress);
+                progressUpdater.OnLoadProgress(_progress);
         }
 
         public void SavePlayerProgress()
         {
-            if (_playerProgress == null)
+            if (_progress == null)
                 return;
             
-            _saveLoadProgress.SaveProgress(_playerProgress);
+            _saveLoadProgress.SaveProgress(_progress);
         }
     }
 }

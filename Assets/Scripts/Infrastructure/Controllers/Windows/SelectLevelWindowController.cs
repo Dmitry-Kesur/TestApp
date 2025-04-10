@@ -37,7 +37,7 @@ namespace Infrastructure.Controllers.Windows
 
         private void OnLevelSelect(int level)
         {
-            _levelsService.Select(level);
+            _levelsService.SetCurrentLevel(level);
             _stateMachineService.TransitionTo(StateType.GameLoopState);
         }
 

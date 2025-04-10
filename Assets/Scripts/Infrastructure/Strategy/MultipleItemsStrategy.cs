@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using Infrastructure.Models.GameEntities.Level.Items;
-using Infrastructure.Services;
 using Infrastructure.Services.Items;
 
 namespace Infrastructure.Strategy
 {
-    public class LevelMultipleItemsStrategy : BaseLevelItemsStrategy
+    public class MultipleItemsStrategy : BaseItemsStrategy
     {
         private readonly List<int> _itemIds;
         
-        public LevelMultipleItemsStrategy(IItemsService itemsService, List<int> itemIds) : base(itemsService)
+        public MultipleItemsStrategy(IItemsService itemsService, List<int> itemIds) : base(itemsService)
         {
             _itemIds = itemIds;
         }

@@ -15,14 +15,15 @@ namespace Infrastructure.Services.Items
     public class ItemsService : IItemsService, ILoadableService
     {
         private readonly List<ItemModel> _items = new();
-        
+
         private readonly LocalAddressableService _addressableService;
         private readonly ItemsProgressUpdater _itemsProgressUpdater;
         private readonly ItemModelsFactory _itemModelsFactory;
 
         private List<ItemData> _itemsData;
 
-        public ItemsService(LocalAddressableService localAddressableService, ItemsProgressUpdater itemsProgressUpdater, ItemModelsFactory itemModelsFactory)
+        public ItemsService(LocalAddressableService localAddressableService, ItemsProgressUpdater itemsProgressUpdater,
+            ItemModelsFactory itemModelsFactory)
         {
             _addressableService = localAddressableService;
             _itemsProgressUpdater = itemsProgressUpdater;
@@ -34,12 +35,15 @@ namespace Infrastructure.Services.Items
             _itemsData =
                 await _addressableService.LoadScriptableCollectionFromGroupAsync<ItemData>(AddressableGroupNames
                     .LevelItemsGroup);
-            
+        }
+
+        public void Initialize()
+        {
             CreateItems();
             UpdateUnlockedItems();
         }
 
-        public LoadingStage LoadingStage => LoadingStage.LoadingGameItems;
+        public LoadingStage LoadingStage => LoadingStage.LoadingItems;
 
         public ItemModel GetSelectedItem()
         {
@@ -75,7 +79,7 @@ namespace Infrastructure.Services.Items
             var itemModels = _items.FindAll(model => model.ItemType == itemsType);
             return itemModels;
         }
-        
+
         public List<ItemModel> GetUnlockedItems()
         {
             var unlockedItem = _items.FindAll(model => model.Unlocked);
@@ -91,11 +95,11 @@ namespace Infrastructure.Services.Items
                 _items.Add(itemModel);
             }
         }
-        
+
         private void UpdateUnlockedItems()
         {
             var unlockedItemsIds = _itemsProgressUpdater.GetUnlockedItemIds();
-            if (unlockedItemsIds is {Count: 0})
+            if (unlockedItemsIds is { Count: 0 })
                 return;
 
             foreach (var unlockedItemId in unlockedItemsIds)

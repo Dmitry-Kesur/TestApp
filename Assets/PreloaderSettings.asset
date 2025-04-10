@@ -16,7 +16,7 @@ MonoBehaviour:
   - LoadingStage: 2
     SortValue: 1
     ProgressValue: 0.2
-    StageText: Loading in game products..
+    StageText: Loading shop..
   - LoadingStage: 0
     SortValue: 2
     ProgressValue: 0.3

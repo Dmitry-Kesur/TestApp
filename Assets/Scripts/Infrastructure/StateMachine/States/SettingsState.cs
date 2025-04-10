@@ -1,6 +1,4 @@
-﻿using Infrastructure.Constants;
-using Infrastructure.Enums;
-using Infrastructure.Services;
+﻿using Infrastructure.Enums;
 using Infrastructure.Services.Window;
 
 namespace Infrastructure.StateMachine.States

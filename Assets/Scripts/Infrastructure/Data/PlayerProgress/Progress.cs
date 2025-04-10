@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace Infrastructure.Data.PlayerProgress
 {
     [Serializable]
-    public class PlayerProgress
+    public class Progress
     {
         public int ActiveLevel;
         public int BestScore;
@@ -15,7 +16,7 @@ namespace Infrastructure.Data.PlayerProgress
         public bool MuteSounds;
         public List<int> CompleteLevelIds = new();
         public List<int> UnlockedLevelItemIds = new();
-        public List<int> PurchasedInGameProductIds = new();
+        public List<int> PurchasedShopProductIds = new();
         public List<string> PendingInAppPurchaseProducts = new();
     }
 }

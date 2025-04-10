@@ -4,6 +4,6 @@ namespace Infrastructure.Factories.Purchase
 {
     public interface IProgressFactory
     {
-        PlayerProgress CreateNewProgress(string userId);
+        Data.PlayerProgress.Progress CreateNewProgress(string userId);
     }
 }

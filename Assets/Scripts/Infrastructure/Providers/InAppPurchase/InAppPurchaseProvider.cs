@@ -66,7 +66,7 @@ namespace Infrastructure.Providers.InAppPurchase
             var tcs = new TaskCompletionSource<bool>();
             _pendingTasks[productId] = tcs;
             
-            _purchaseProgressUpdater.SetPendingPurchaseInAppProduct(productId);
+            _purchaseProgressUpdater.SetPendingInAppPurchaseProduct(productId);
             
             _controller.InitiatePurchase(productId);
             
@@ -106,8 +106,6 @@ namespace Infrastructure.Providers.InAppPurchase
                 FinishPurchaseTask(productId, false);
                 return PurchaseProcessingResult.Complete;
             }
-            
-            _purchaseProgressUpdater.RemovePendingPurchaseProduct(productId);
             
             FinishPurchaseTask(productId, true);
             return PurchaseProcessingResult.Complete;
@@ -151,12 +149,13 @@ namespace Infrastructure.Providers.InAppPurchase
 
         private string GetProductId(Product product) =>
             product.definition.id;
-
+        
         private void FinishPurchaseTask(string productId, bool success)
         {
             if (!_pendingTasks.TryGetValue(productId, out var task)) return;
 
             task.SetResult(success);
+            _purchaseProgressUpdater.RemovePendingInAppPurchaseProduct(productId);
             _pendingTasks.Remove(productId);
         }
 
@@ -166,12 +165,12 @@ namespace Infrastructure.Providers.InAppPurchase
             {
                 var productId = product.definition.id;
                 
-                if (_purchaseProgressUpdater.HasPendingPurchaseProduct(productId))
+                if (_purchaseProgressUpdater.HasPendingInAppPurchaseProduct(productId))
                 {
                     if (product.hasReceipt && ValidatePurchase(product.receipt))
                     {
                         OnRestoreCompletePurchase?.Invoke(productId);
-                        _purchaseProgressUpdater.RemovePendingPurchaseProduct(productId);
+                        _purchaseProgressUpdater.RemovePendingInAppPurchaseProduct(productId);
                     }
                     else
                     {

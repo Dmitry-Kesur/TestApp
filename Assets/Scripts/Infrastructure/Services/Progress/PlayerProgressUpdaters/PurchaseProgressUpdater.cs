@@ -4,28 +4,28 @@ namespace Infrastructure.Services.Progress.PlayerProgressUpdaters
 {
     public class PurchaseProgressUpdater : ProgressUpdater
     {
-        public bool HasPendingPurchaseProduct(string productId)
+        public bool HasPendingInAppPurchaseProduct(string productId)
         {
             var pendingProducts = progress.PendingInAppPurchaseProducts;
             return pendingProducts.Contains(productId);
         }
 
-        public List<int> GetPurchasedInGameProductIds() =>
-            progress.PurchasedInGameProductIds;
+        public List<int> GetPurchasedShopProductIds() =>
+            progress.PurchasedShopProductIds;
 
-        public void SetPendingPurchaseInAppProduct(string productId)
+        public void SetPendingInAppPurchaseProduct(string productId)
         {
             progress.PendingInAppPurchaseProducts.Add(productId);
         }
 
-        public void SetPurchasedInGameProductId(int productId)
+        public void SetPurchasedShopProductId(int productId)
         {
-            progress.PurchasedInGameProductIds.Add(productId);
+            progress.PurchasedShopProductIds.Add(productId);
         }
 
-        public void RemovePendingPurchaseProduct(string productId)
+        public void RemovePendingInAppPurchaseProduct(string productId)
         {
-            if (HasPendingPurchaseProduct(productId))
+            if (HasPendingInAppPurchaseProduct(productId))
                 progress.PendingInAppPurchaseProducts.Remove(productId);
         }
     }

@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using Infrastructure.Enums;
 using Infrastructure.Models.GameEntities.Level.Items;
-using Infrastructure.Services;
 using Infrastructure.Services.Items;
 
 namespace Infrastructure.Strategy
 {
-    public class BaseLevelItemsStrategy : ILevelItemsStrategy
+    public class BaseItemsStrategy : IItemsStrategy
     {
         protected readonly IItemsService ItemsService;
 
-        protected BaseLevelItemsStrategy(IItemsService itemsService)
+        protected BaseItemsStrategy(IItemsService itemsService)
         {
             ItemsService = itemsService;
         }

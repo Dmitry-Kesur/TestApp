@@ -29,10 +29,10 @@ namespace Infrastructure.Views.UI.Windows
             _shopButton.OnButtonClickAction = _menuWindowModel.OnShopButtonClick;
 
             _bestScoreTextField.text = _menuWindowModel?.BestScore.ToString();
-            _scoreTitle.text = TextAliases.BestScoreAlias;
+            _scoreTitle.text = UIMessages.BestScoreAlias;
 
-            _playButton.SetButtonText(TextAliases.PlayGameAlias);
-            _settingsButton.SetButtonText(TextAliases.SettingsAlias);
+            _playButton.SetButtonText(UIMessages.PlayGameAlias);
+            _settingsButton.SetButtonText(UIMessages.SettingsAlias);
         }
 
         public override void SetModel(BaseWindowModel model)

@@ -22,8 +22,11 @@ namespace Infrastructure.StateMachine.States
         {
             await _hudService.ShowHud();
             _windowService.HideActiveWindow();
-            
-            _levelsService.Start();
+
+            if (_levelsService.LevelStarted)
+                _levelsService.Resume();
+            else
+                _levelsService.Start();
         }
 
         public override void Exit()

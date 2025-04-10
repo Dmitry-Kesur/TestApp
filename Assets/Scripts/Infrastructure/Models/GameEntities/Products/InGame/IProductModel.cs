@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Infrastructure.Models.GameEntities.Products.InGame
 {
@@ -7,6 +8,7 @@ namespace Infrastructure.Models.GameEntities.Products.InGame
         int Price { get; }
         int Id { get; }
         Sprite ProductIcon { get; }
-        void OnPurchaseComplete();
+        IPurchaseProductTarget GetPurchaseTarget();
+        Action UpdateProductAction { get; set; }
     }
 }

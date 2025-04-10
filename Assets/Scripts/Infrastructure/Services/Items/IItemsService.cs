@@ -11,5 +11,6 @@ namespace Infrastructure.Services.Items
         List<ItemModel> GetUnlockedItems();
         ItemModel GetSelectedItem();
         ItemModel GetItemById(int itemId);
+        void Initialize();
     }
 }

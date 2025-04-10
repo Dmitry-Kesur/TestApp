@@ -22,6 +22,8 @@ namespace Infrastructure.Services.Booster
         private readonly ResourceProgressUpdater _resourceProgressUpdater;
         private readonly INotificationService _notificationService;
 
+        private List<BoosterData> _boostersData = new();
+        
         private BoosterModel _activeBoosterModel;
 
         public BoostersService(LocalAddressableService localAddressableService, IInAppPurchaseService inAppPurchaseService, ResourceProgressUpdater resourceProgressUpdater, INotificationService notificationService)
@@ -45,12 +47,15 @@ namespace Infrastructure.Services.Booster
 
         public async Task Load()
         {
-            var boostersData = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<BoosterData>(AddressableGroupNames.BoostersGroup);
-            CreateBoosterModels(boostersData);
-
-            SetActiveBooster();
+            _boostersData = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<BoosterData>(AddressableGroupNames.BoostersGroup);
         }
 
+        public void Initialize()
+        {
+            CreateBoosterModels();
+            SetActiveBooster();
+        }
+        
         public LoadingStage LoadingStage =>
             LoadingStage.LoadingBoosters;
 
@@ -65,12 +70,14 @@ namespace Infrastructure.Services.Booster
             ShowActiveBoosterNotification($"Purchased booster: x{_activeBoosterModel.BoostValue}");
         }
 
-        private void CreateBoosterModels(List<BoosterData> boostersData)
+        private void CreateBoosterModels()
         {
-            foreach (var boosterData in boostersData)
+            foreach (var boosterData in _boostersData)
             {
-                var boosterModel = new BoosterModel(boosterData);
-                boosterModel.OnBuyBoosterAction = OnBuyBooster;
+                var boosterModel = new BoosterModel(boosterData)
+                {
+                    OnBuyBoosterAction = OnBuyBooster
+                };
                 _boosterModels.Add(boosterModel);
             }
         }

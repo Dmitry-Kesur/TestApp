@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Infrastructure.Factories.Level;
 using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Models.GameEntities.Level.Items;
-using Infrastructure.Services;
 using Infrastructure.Services.Items;
 using Infrastructure.Services.Log;
-using Infrastructure.Strategy;
 using Infrastructure.Views.GameEntities;
 
 namespace Infrastructure.Controllers.Levels
@@ -15,12 +14,10 @@ namespace Infrastructure.Controllers.Levels
         private readonly List<ItemView> _items = new();
 
         private readonly IItemsSpawnService _itemsSpawnService;
-        private readonly IItemsService _itemsService;
+        private readonly IItemsStrategyFactory _itemsStrategyFactory;
         private readonly IExceptionLoggerService _exceptionLoggerService;
+        private readonly LevelProgressController _levelProgressController;
 
-
-        public Action<ItemModel> OnCatchItemAction;
-        public Action OnFailItemAction;
         public Action<ItemView> OnSpawnItemAction;
 
         private int _catchItemsToDecreaseSpawnDelay;
@@ -29,15 +26,13 @@ namespace Infrastructure.Controllers.Levels
         private float _dropDurationDecreaseValue;
         private float _itemsSpawnDelay;
         private float _currentDropItemsDuration;
-        
+
         private ILevelModel _levelModel;
 
-        public ItemsSpawnController(IItemsSpawnService itemsSpawnService,
-            IItemsService itemsService, IExceptionLoggerService exceptionLoggerService)
+        public ItemsSpawnController(IItemsSpawnService itemsSpawnService, IExceptionLoggerService exceptionLoggerService)
         {
             _itemsSpawnService = itemsSpawnService;
             _itemsSpawnService.OnSpawnItemAction = OnSpawnItem;
-            _itemsService = itemsService;
             _exceptionLoggerService = exceptionLoggerService;
         }
 
@@ -45,29 +40,40 @@ namespace Infrastructure.Controllers.Levels
         {
             if (levelModel == null)
             {
-                var exceptionText = "Level model is null";
+                var exceptionText = $"{nameof(SetModel)}: Level data is null";
                 _exceptionLoggerService.LogError(exceptionText);
                 throw new ArgumentNullException(exceptionText);
             }
-            
+
             _levelModel = levelModel;
-            AfterSetModel();
+            AfterSetData();
         }
 
         public void OnStartLevel() =>
             SpawnItems();
 
-        public void SetItemsByIds(List<int> itemsIds)
+        public void SetItems(List<ItemModel> itemModels)
         {
-            var levelItemsStrategy = DefineItemsStrategy(itemsIds);
-            _itemsSpawnService.SetSpawnItemsStrategy(levelItemsStrategy);
-            SubscribeItemsListeners(levelItemsStrategy.GetItems());
+            _itemsSpawnService.SetItemModels(itemModels);
+            SubscribeListeners(itemModels);
+        }
+
+        private void SubscribeListeners(List<ItemModel> itemModels)
+        {
+            foreach (var itemModel in itemModels)
+                itemModel.RemoveItemAction = OnRemoveItem;
+        }
+
+        private void OnRemoveItem(ItemView itemView)
+        {
+            _items.Remove(itemView);
+            _itemsSpawnService.RemoveItem(itemView);
         }
 
         public void OnPause()
         {
             _itemsSpawnService.DisableSpawn();
-            
+
             foreach (var item in _items)
                 item.PauseAnimations();
         }
@@ -75,7 +81,7 @@ namespace Infrastructure.Controllers.Levels
         public void OnResume()
         {
             _itemsSpawnService.EnableSpawn();
-            
+
             foreach (var item in _items)
                 item.ResumeAnimations();
         }
@@ -90,35 +96,9 @@ namespace Infrastructure.Controllers.Levels
         {
             _itemsSpawnDelay = _levelModel.DefaultItemsSpawnDelay;
             _currentDropItemsDuration = _levelModel.DefaultDropItemsDuration;
-            
+
             _items.Clear();
             _itemsSpawnService.Clear();
-        }
-
-        private ILevelItemsStrategy DefineItemsStrategy(List<int> itemsIds)
-        {
-            ILevelItemsStrategy levelItemsStrategy;
-            var selectedItem = _itemsService.GetSelectedItem();
-            if (selectedItem == null)
-            {
-                levelItemsStrategy = new LevelMultipleItemsStrategy(_itemsService, itemsIds);
-            }
-            else
-            {
-                levelItemsStrategy = new LevelSingleItemStrategy(_itemsService, selectedItem.Id);
-            }
-
-            return levelItemsStrategy;
-        }
-
-        private void SubscribeItemsListeners(List<ItemModel> itemModels)
-        {
-            foreach (var itemModel in itemModels)
-            {
-                itemModel.OnCatchAction = OnCatchItem;
-                itemModel.OnFailAction = OnFailItem;
-                itemModel.RemoveItemAction = OnRemoveItem;
-            }
         }
 
         private void SpawnItems()
@@ -127,13 +107,7 @@ namespace Infrastructure.Controllers.Levels
             _itemsSpawnService.Spawn();
         }
 
-        private void OnCatchItem(ItemModel itemModel) =>
-            OnCatchItemAction?.Invoke(itemModel);
-
-        private void OnFailItem() =>
-            OnFailItemAction?.Invoke();
-
-        private void CalculateNewDelay(ref float currentDelay, int totalCatchItems, 
+        private void CalculateNewDelay(ref float currentDelay, int totalCatchItems,
             float decreaseValue, float minimalValue)
         {
             if (totalCatchItems % _catchItemsToDecreaseSpawnDelay != 0)
@@ -148,12 +122,12 @@ namespace Infrastructure.Controllers.Levels
 
         private void AdjustSpawnDelays(int totalCatchItems)
         {
-            CalculateNewDelay(ref _currentDropItemsDuration, totalCatchItems, 
-                _dropDurationDecreaseValue, 
+            CalculateNewDelay(ref _currentDropItemsDuration, totalCatchItems,
+                _dropDurationDecreaseValue,
                 _levelModel.MinimalDropItemsDuration);
 
-            CalculateNewDelay(ref _itemsSpawnDelay, totalCatchItems, 
-                _spawnDelayDecreaseValue, 
+            CalculateNewDelay(ref _itemsSpawnDelay, totalCatchItems,
+                _spawnDelayDecreaseValue,
                 _levelModel.MinimalItemsSpawnDelay);
 
             _itemsSpawnService.UpdateSpawnDelay(_itemsSpawnDelay);
@@ -165,13 +139,7 @@ namespace Infrastructure.Controllers.Levels
             OnSpawnItemAction?.Invoke(itemView);
         }
 
-        private void OnRemoveItem(ItemView itemView)
-        {
-            _items.Remove(itemView);
-            _itemsSpawnService.RemoveItem(itemView);
-        }
-
-        private void AfterSetModel()
+        private void AfterSetData()
         {
             _itemsSpawnDelay = _levelModel.DefaultItemsSpawnDelay;
             _currentDropItemsDuration = _levelModel.DefaultDropItemsDuration;

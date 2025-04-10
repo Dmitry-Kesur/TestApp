@@ -40,12 +40,26 @@ namespace Infrastructure.Views.GameEntities
 
         public virtual void Draw()
         {
-            _icon.sprite = _itemModel.GetSprite();
+            DrawIcon();
             ChangeBubbleImageVisibility(true);
             EnableInteraction = false;
             
+            UpdateDissolveShader();
+        }
+
+        private void UpdateDissolveShader()
+        {
+            if (_dissolveShader == null) return;
+            
             _dissolveShader.UpdateDissolveShader();
             _dissolveShader.DissolveAmount = 0;
+        }
+
+        private void DrawIcon()
+        {
+            if (_icon == null) return;
+         
+            _icon.sprite = _itemModel.GetSprite();
         }
 
         public void PauseAnimations()
@@ -154,8 +168,12 @@ namespace Infrastructure.Views.GameEntities
 
         private bool EnableInteraction { get; set; }
 
-        private void ChangeBubbleImageVisibility(bool visibility) =>
+        private void ChangeBubbleImageVisibility(bool visibility)
+        {
+            if (_bubbleEffectImage == null) return;
+            
             _bubbleEffectImage.gameObject.SetActive(visibility);
+        }
 
         private void OnClickHandler()
         {

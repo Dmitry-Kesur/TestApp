@@ -12,18 +12,18 @@ namespace Infrastructure.Controllers.Windows
     {
         private readonly ShopWindowModel _shopWindowModel;
         private readonly StateMachineService _stateMachineService;
-        private readonly InGamePurchaseService _inGamePurchaseService;
+        private readonly ShopService _shopService;
         private readonly ICurrencyService _currencyService;
 
-        public ShopWindowController(StateMachineService stateMachineService, InGamePurchaseService inGamePurchaseService,
+        public ShopWindowController(StateMachineService stateMachineService, ShopService shopService,
             ICurrencyService currencyService)
         {
             _stateMachineService = stateMachineService;
-            _inGamePurchaseService = inGamePurchaseService;
+            _shopService = shopService;
             _currencyService = currencyService;
 
             _shopWindowModel = new ShopWindowModel(_currencyService);
-            _shopWindowModel.SetProducts(_inGamePurchaseService.GetProducts());
+            _shopWindowModel.SetProducts(_shopService.GetProducts());
             SubscribeListeners();
         }
 

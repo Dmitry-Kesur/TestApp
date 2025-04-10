@@ -9,8 +9,7 @@ namespace Infrastructure.Models.GameEntities.Products.InGame
     {
         private readonly ProductData _productData;
         private readonly IPurchaseProductTarget _purchaseProductTarget;
-
-        public Action UpdateProductAction;
+        
         public Action<ProductModel> OnPurchaseProductAction;
 
         public ProductModel(ProductData productData, IPurchaseProductTarget purchaseProductTarget)
@@ -19,28 +18,26 @@ namespace Infrastructure.Models.GameEntities.Products.InGame
             _purchaseProductTarget = purchaseProductTarget;
         }
 
-        public int Id => _productData.ProductId;
+        public int Id => 
+            _productData.ProductId;
 
         public Sprite ProductIcon =>
             IconSprite;
 
-        public int Price => _productData.Price;
+        public int Price => 
+            _productData.Price;
 
         public Sprite IconSprite =>
             _productData.Icon;
 
         public bool Purchased { get; set; }
         
-        public void Purchase()
-        {
-            OnPurchaseProductAction?.Invoke(this);
-        }
+        public IPurchaseProductTarget GetPurchaseTarget() => 
+            _purchaseProductTarget;
 
-        public void OnPurchaseComplete()
-        {
-            Purchased = true;
-            _purchaseProductTarget.OnPurchaseComplete();
-            UpdateProductAction?.Invoke();
-        }
+        public Action UpdateProductAction { get; set; }
+
+        public void Purchase() =>
+            OnPurchaseProductAction?.Invoke(this);
     }
 }

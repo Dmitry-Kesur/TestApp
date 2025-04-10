@@ -6,15 +6,15 @@ namespace Infrastructure.Factories.Progress
 {
     public class ProgressFactory : IProgressFactory
     {
-        public PlayerProgress CreateNewProgress(string userId)
+        public Data.PlayerProgress.Progress CreateNewProgress(string userId)
         {
-            var playerProgress = new PlayerProgress
+            var playerProgress = new Data.PlayerProgress.Progress
             {
                 ActiveLevel = 1,
                 UserId = userId,
                 CompleteLevelIds = new List<int>(),
                 UnlockedLevelItemIds = new List<int>(),
-                PurchasedInGameProductIds = new List<int>(),
+                PurchasedShopProductIds = new List<int>(),
                 PendingInAppPurchaseProducts = new List<string>()
             };
 

@@ -5,11 +5,11 @@ using Infrastructure.Services.Items;
 
 namespace Infrastructure.Strategy
 {
-    public class LevelSingleItemStrategy : BaseLevelItemsStrategy
+    public class SingleItemStrategy : BaseItemsStrategy
     {
         private readonly int _itemId;
 
-        public LevelSingleItemStrategy(IItemsService itemsService, int itemId) : base(itemsService)
+        public SingleItemStrategy(IItemsService itemsService, int itemId) : base(itemsService)
         {
             _itemId = itemId;
         }

@@ -1,20 +1,17 @@
-﻿using Infrastructure.Controllers.Levels;
-using Infrastructure.Data.Preloader;
+﻿using Infrastructure.Data.Preloader;
 using Infrastructure.Factories.Notification;
-using Infrastructure.Factories.Purchase;
 using Infrastructure.Factories.Reward;
 using Infrastructure.Factories.State;
 using Infrastructure.Factories.Window;
-using Infrastructure.Providers;
 using Infrastructure.Providers.Device;
 using Infrastructure.Providers.Scene;
 using Infrastructure.Providers.UI;
 using Infrastructure.Services;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Booster;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Currency;
 using Infrastructure.Services.Hud;
-using Infrastructure.Services.InGamePurchase;
 using Infrastructure.Services.Items;
 using Infrastructure.Services.Notification;
 using Infrastructure.Services.Preloader;
@@ -47,7 +44,6 @@ namespace Infrastructure.Installers
             Container.BindInterfacesAndSelfTo<WindowFactory>().AsSingle();
             Container.Bind<NotificationsFactory>().AsSingle();
             Container.Bind<IReceiveRewardsControllersFactory>().To<ReceiveRewardsControllersFactory>().AsSingle();
-            Container.Bind<IProductStrategiesFactory>().To<ProductStrategiesFactory>().AsSingle();
         }
 
         private void BindSettings()
@@ -67,8 +63,8 @@ namespace Infrastructure.Installers
             Container.Bind<LocalAddressableService>().AsSingle();
             Container.Bind<PrefabInstantiationService>().AsSingle();
             Container.Bind<StateMachineService>().AsSingle();
+            Container.Bind<BootstrapService>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemsService>().AsSingle();
-            Container.BindInterfacesAndSelfTo<InGamePurchaseService>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemsSpawnService>().AsSingle();
             Container.Bind<IPreloaderService>().To<PreloaderService>().AsSingle();
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
@@ -78,7 +74,6 @@ namespace Infrastructure.Installers
             Container.BindInterfacesAndSelfTo<RewardsService>().AsSingle();
             Container.Bind<IReceiveRewardsService>().To<ReceiveRewardsService>().AsSingle();
             Container.Bind<INotificationService>().To<NotificationService>().AsSingle();
-            Container.Bind<IPaymentProductService>().To<PaymentProductService>().AsSingle();
             Container.BindInterfacesAndSelfTo<BoostersService>().AsSingle();
         }
     }

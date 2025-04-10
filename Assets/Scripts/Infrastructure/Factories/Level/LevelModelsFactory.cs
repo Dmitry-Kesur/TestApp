@@ -6,12 +6,12 @@ using Zenject;
 
 namespace Infrastructure.Factories.Level
 {
-    public class LevelsFactory : ILevelFactory
+    public class LevelModelsFactory : ILevelModelsFactory
     {
         private readonly DiContainer _diContainer;
         private readonly LevelProgressUpdater _levelProgressUpdater;
 
-        public LevelsFactory(DiContainer diContainer, LevelProgressUpdater levelProgressUpdater)
+        public LevelModelsFactory(DiContainer diContainer, LevelProgressUpdater levelProgressUpdater)
         {
             _diContainer = diContainer;
             _levelProgressUpdater = levelProgressUpdater;

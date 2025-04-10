@@ -49,7 +49,7 @@ namespace Infrastructure.Services.Reward
         {
             var notificationModel = new NotificationWithRewardsModel(rewards)
             {
-                NotificationText = TextAliases.ReceiveRewardAlias
+                NotificationText = UIMessages.ReceiveRewardAlias
             };
             _notificationService.ShowNotification(notificationModel);
         }

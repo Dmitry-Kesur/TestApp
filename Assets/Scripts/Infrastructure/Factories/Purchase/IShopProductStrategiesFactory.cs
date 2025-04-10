@@ -3,7 +3,7 @@ using Infrastructure.Strategy;
 
 namespace Infrastructure.Factories.Purchase
 {
-    public interface IProductStrategiesFactory
+    public interface IShopProductStrategiesFactory
     {
         List<IProductStrategy> CreateProductStrategies();
     }

@@ -27,12 +27,11 @@ namespace Infrastructure.Data.Preloader
 
     public enum LoadingStage
     {
-        LoadingGameItems,
+        LoadingItems,
         LoadingGameLevels,
-        LoadingProducts,
+        LoadingShopProducts,
         LoadingSounds,
         LoadingRewards,
-        LoadingBoosters,
-        LoadingFirebase
+        LoadingBoosters
     }
 }

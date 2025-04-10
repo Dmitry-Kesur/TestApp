@@ -3,25 +3,19 @@ using System.Collections.Generic;
 using Infrastructure.Controllers.Levels;
 using Infrastructure.Data.Level;
 using Infrastructure.Data.Rewards;
-using Infrastructure.Enums;
 using Infrastructure.Factories.Level;
-using Infrastructure.Models.GameEntities.Level.Items;
-using Infrastructure.Services;
-using Infrastructure.Services.Log;
-using Infrastructure.Services.Sound;
 using Infrastructure.Views.GameEntities;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Infrastructure.Models.GameEntities.Level
 {
     public class LevelModel : ILevelModel
     {
         private readonly LevelViewsFactory _levelViewsFactory;
-        private readonly ISoundService _soundService;
-        private readonly ProgressController _progressController;
-        private readonly IExceptionLoggerService _exceptionLoggerService;
+        private readonly LevelProgressController _levelProgressController;
+        private readonly IItemsStrategyFactory _itemsStrategyFactory;
         private readonly ItemsSpawnController _itemsSpawnController;
+        private readonly ItemsInteractionController _itemsInteractionController;
 
         public Action OnLoseAction;
         public Action OnWinAction;
@@ -29,46 +23,38 @@ namespace Infrastructure.Models.GameEntities.Level
 
         private bool _started;
 
-        private List<ItemModel> _itemModels;
-
         private LevelStaticData _levelStaticData;
 
-        private LevelView _levelView;
-
-        public LevelModel(LevelViewsFactory levelViewsFactory, ISoundService soundService,
-            ItemsSpawnController itemsSpawnController, ProgressController progressController,
-            IExceptionLoggerService exceptionLoggerService)
+        public LevelModel(LevelViewsFactory levelViewsFactory,
+            ItemsSpawnController itemsSpawnController, ItemsInteractionController itemsInteractionController, LevelProgressController levelProgressController, IItemsStrategyFactory itemsStrategyFactory)
         {
             _levelViewsFactory = levelViewsFactory;
-            _soundService = soundService;
             _itemsSpawnController = itemsSpawnController;
-            _progressController = progressController;
-            _exceptionLoggerService = exceptionLoggerService;
+            _itemsInteractionController = itemsInteractionController;
+            _levelProgressController = levelProgressController;
+            _itemsStrategyFactory = itemsStrategyFactory;
         }
 
         public int Level =>
             _levelStaticData.Level;
 
-        public int ScorePointsToWin =>
-            _levelStaticData.ScorePointsToWin;
+        public int TotalLevelScore =>
+            _levelProgressController.TotalLevelScore;
+
+        public int TotalFailItems =>
+            _levelProgressController.TotalFailItems;
 
         public int CatchItemsToDecreaseSpawnDelay =>
             _levelStaticData.CatchItemsToDecreaseSpawnDelay;
 
-        public int TotalFailItems =>
-            _progressController.TotalFailItems;
+        public int ScorePointsToWin =>
+            _levelStaticData.ScorePointsToWin;
 
-        public int TotalLevelScore =>
-            _progressController.TotalLevelScore;
+        public int MaximumFailItems =>
+            _levelStaticData.MaximumFailItems;
 
         public float DefaultItemsSpawnDelay =>
             _levelStaticData.DefaultItemsSpawnDelay;
-
-        public float MinimalItemsSpawnDelay =>
-            _levelStaticData.MinimalItemsSpawnDelay;
-
-        public float SpawnDelayDecreaseValue =>
-            _levelStaticData.SpawnDelayDecreaseValue;
 
         public float DefaultDropItemsDuration =>
             _levelStaticData.DefaultDropItemsDuration;
@@ -76,11 +62,14 @@ namespace Infrastructure.Models.GameEntities.Level
         public float MinimalDropItemsDuration =>
             _levelStaticData.MinimalDropItemsDuration;
 
+        public float MinimalItemsSpawnDelay =>
+            _levelStaticData.MinimalItemsSpawnDelay;
+
+        public float SpawnDelayDecreaseValue =>
+            _levelStaticData.SpawnDelayDecreaseValue;
+
         public float DropItemsDecreaseDurationValue =>
             _levelStaticData.DropItemsDecreaseDurationValue;
-
-        public int FailItemsMaximum =>
-            _levelStaticData.MaximumFailItems;
 
         public Sprite LevelBackground =>
             _levelStaticData.LevelBackground;
@@ -98,20 +87,25 @@ namespace Infrastructure.Models.GameEntities.Level
         {
             _levelStaticData = levelStaticData;
 
-            AssignControllers();
+            AfterSetData();
         }
 
-        public void OnStart()
+        private void AfterSetData()
+        {
+            SetupProgressController();
+            SetupItemsSpawnController();
+        }
+
+        public void Start()
         {
             _started = true;
-            _progressController.Clear();
+            ClearAllControllers();
 
-            RenderLevel();
-            _itemsSpawnController.SetItemsByIds(_levelStaticData.LevelItemIds);
+            _levelViewsFactory.CreateLevelView(this);
+            
+            ApplyItemsToControllers();
 
             _itemsSpawnController.OnStartLevel();
-
-            OnUpdateProgress();
         }
 
         public void OnPause() =>
@@ -119,29 +113,22 @@ namespace Infrastructure.Models.GameEntities.Level
 
         public void OnResume()
         {
+            _levelProgressController.Refresh();
             _itemsSpawnController.OnResume();
-            OnUpdateProgress();
         }
 
         public void Stop()
         {
             _started = false;
             _itemsSpawnController.Clear();
-            OnDestroyLevel();
+            _levelViewsFactory.DestroyLevelView();
         }
 
-        private void OnFailItem()
+        private void ClearAllControllers()
         {
-            _progressController.UpdateProgressByFailItem();
-
-            _soundService.PlaySound(SoundId.Fail);
-        }
-        
-        private void OnCatchItem(ItemModel itemModel)
-        {
-            _progressController.UpdateProgressByCatchItem(itemModel.ScorePoints);
-
-            _soundService.PlaySound(SoundId.Catch);
+            _itemsSpawnController.Clear();
+            _itemsInteractionController.Clear();
+            _levelProgressController.Clear();
         }
 
         private void OnLose()
@@ -156,41 +143,29 @@ namespace Infrastructure.Models.GameEntities.Level
             Stop();
         }
 
-        private void RenderLevel()
+        private void SetupProgressController()
         {
-            if (_levelView != null)
-                return;
-
-            _levelView = _levelViewsFactory.CreateLevelView();
-            _levelView.SetModel(this);
+            _levelProgressController.SetModel(this);
+            _levelProgressController.OnReachScoreToWin = OnWin;
+            _levelProgressController.OnReachedMaximumFailItems = OnLose;
         }
 
-        private void OnDestroyLevel()
+        private void SetupItemsSpawnController()
         {
-            if (_levelView == null)
-                return;
-
-            Object.Destroy(_levelView.gameObject);
-            _levelView = null;
-        }
-
-        private void OnUpdateProgress() =>
-            _itemsSpawnController.UpdateItemsByTotalCatchAmount(_progressController.TotalCatchItems);
-
-        private void AssignControllers()
-        {
-            _progressController.SetModel(this);
-            _progressController.OnUpdateProgress = OnUpdateProgress;
-            _progressController.OnReachScoreToWin = OnWin;
-            _progressController.OnReachedMaximumFailItems = OnLose;
-
             _itemsSpawnController.SetModel(this);
-            _itemsSpawnController.OnCatchItemAction = OnCatchItem;
-            _itemsSpawnController.OnFailItemAction = OnFailItem;
             _itemsSpawnController.OnSpawnItemAction = OnSpawnItem;
         }
 
         private void OnSpawnItem(ItemView itemView) =>
             OnSpawnItemAction?.Invoke(itemView);
+
+        private void ApplyItemsToControllers()
+        {
+            var levelItemsStrategy = _itemsStrategyFactory.GetItemsStrategy(_levelStaticData.LevelItemIds);
+            var items = levelItemsStrategy.GetItems();
+            
+            _itemsSpawnController.SetItems(items);
+            _itemsInteractionController.SetItems(items);
+        }
     }
 }

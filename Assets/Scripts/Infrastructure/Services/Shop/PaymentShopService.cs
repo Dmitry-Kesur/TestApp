@@ -8,13 +8,13 @@ using Infrastructure.Services.Notification;
 
 namespace Infrastructure.Services.InGamePurchase
 {
-    public class PaymentProductService : IPaymentProductService
+    public class PaymentShopService : IPaymentShopService
     {
         private readonly ICurrencyService _currencyService;
         private readonly INotificationService _notificationService;
         private readonly IAdsService _adsService;
         
-        public PaymentProductService(ICurrencyService currencyService, INotificationService notificationService, IAdsService adsService)
+        public PaymentShopService(ICurrencyService currencyService, INotificationService notificationService, IAdsService adsService)
         {
             _currencyService = currencyService;
             _notificationService = notificationService;
