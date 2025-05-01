@@ -11,10 +11,10 @@ namespace Infrastructure.Views.UI.Windows
         [SerializeField] private BaseButton _signInButton;
 
         private AuthenticationWindowModel _windowModel;
-        
-        public override void Init()
+
+        protected override void SubscribeListeners()
         {
-            base.Init();
+            base.SubscribeListeners();
             _signInButton.OnButtonClickAction = OnSignInButtonClicked;
         }
 
@@ -29,5 +29,11 @@ namespace Infrastructure.Views.UI.Windows
 
         private void OnSignInButtonClicked() =>
             _windowModel.OnSignInButtonClicked();
+
+        protected override void Clear()
+        {
+            base.Clear();
+            _signInButton.OnButtonClickAction = null;
+        }
     }
 }

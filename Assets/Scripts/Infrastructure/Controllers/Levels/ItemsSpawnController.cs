@@ -89,6 +89,9 @@ namespace Infrastructure.Controllers.Levels
         public float GetDropItemsDuration() =>
             _currentDropItemsDuration;
 
+        public float GetItemsSpawnDelay() =>
+            _itemsSpawnDelay;
+
         public void UpdateItemsByTotalCatchAmount(int totalCatchItems) =>
             AdjustSpawnDelays(totalCatchItems);
 

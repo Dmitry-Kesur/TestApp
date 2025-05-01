@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Models.UI.Items;
 
@@ -8,6 +9,7 @@ namespace Infrastructure.Services.Level
     {
         bool ReachedMaxLevel { get; }
         bool LevelStarted { get; }
+        Action OnWinLevelAction { get; set; }
         List<LevelPreviewModel> GetPreviewsModels();
         LevelModel GetCurrentLevel();
         void SetCurrentLevel(int level);

@@ -11,8 +11,10 @@ namespace Infrastructure.Views.UI.Windows
         
         protected BaseWindowModel windowModel;
 
-        public virtual void Init()
+        public void OnCreate()
         {
+            SubscribeListeners();
+            Draw();
         }
 
         public virtual void SetModel(BaseWindowModel model)
@@ -22,9 +24,17 @@ namespace Infrastructure.Views.UI.Windows
 
         public virtual Type GetWindowControllerType() => null;
 
-        public void OnShowWindow()
-        {
+        public void AnimateShow() =>
             AnimateChangeScale(1);
+
+        protected virtual void SubscribeListeners()
+        {
+            
+        }
+
+        protected virtual void Draw()
+        {
+            
         }
 
         protected virtual void Clear()

@@ -60,6 +60,7 @@ namespace Infrastructure.Installers
 
         private void BindServices()
         {
+            Container.BindInterfacesAndSelfTo<ApplicationFocusWatcher>().AsSingle();
             Container.Bind<LocalAddressableService>().AsSingle();
             Container.Bind<PrefabInstantiationService>().AsSingle();
             Container.Bind<StateMachineService>().AsSingle();

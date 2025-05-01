@@ -11,7 +11,7 @@ namespace Infrastructure.Factories.Level
         public ItemViewsFactory()
         {
             _itemsPool = new ObjectPool<ItemView>(
-                InstantiateItemView, OnViewGet, OnViewRelease, OnViewDestroy, true, 15, 65);
+                InstantiateItem, OnItemGet, OnItemRelease, OnItemDestroy, true, 15, 65);
         }
         
         public ItemView GetItem() =>
@@ -23,16 +23,16 @@ namespace Infrastructure.Factories.Level
         public void Clear() =>
             _itemsPool.Clear();
 
-        private void OnViewGet(ItemView view) =>
+        private void OnItemGet(ItemView view) =>
             view.gameObject.SetActive(true);
 
-        private void OnViewRelease(ItemView view) => 
+        private void OnItemRelease(ItemView view) => 
             view.gameObject.SetActive(false);
 
-        private void OnViewDestroy(ItemView view) => 
+        private void OnItemDestroy(ItemView view) => 
             Object.Destroy(view.gameObject);
 
-        private ItemView InstantiateItemView()
+        private ItemView InstantiateItem()
         {
             var itemPrefab = Resources.Load<ItemView>("Prefabs/Level/ItemView");
             return Object.Instantiate(itemPrefab);

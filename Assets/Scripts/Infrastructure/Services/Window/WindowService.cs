@@ -22,8 +22,7 @@ namespace Infrastructure.Services.Window
             HideActiveWindow();
             
             var windowView = _windowFactory.Create(windowId);
-            windowView.OnShowWindow();
-            windowView.Init();
+            windowView.AnimateShow();
             _windows.TryAdd(windowId, windowView);
             _activeWindowId = windowId;
         }

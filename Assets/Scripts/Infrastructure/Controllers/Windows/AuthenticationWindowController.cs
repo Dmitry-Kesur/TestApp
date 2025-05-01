@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Models.UI.Windows;
-using Infrastructure.Services;
 using Infrastructure.Services.Authentication;
 using Infrastructure.Views.UI.Windows;
 
@@ -13,19 +12,16 @@ namespace Infrastructure.Controllers.Windows
         public AuthenticationWindowController(IAuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
-            _authenticationWindowModel = new AuthenticationWindowModel();
-            _authenticationWindowModel.OnSignInAction = OnSignIn;
+            _authenticationWindowModel = new AuthenticationWindowModel
+            {
+                OnSignInAction = OnSignIn
+            };
         }
 
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            windowView.SetModel(_authenticationWindowModel);
-        }
+        protected override BaseWindowModel GetModel() =>
+            _authenticationWindowModel;
 
-        private void OnSignIn()
-        {
+        private void OnSignIn() =>
             _authenticationService.SignIn();
-        }
     }
 }

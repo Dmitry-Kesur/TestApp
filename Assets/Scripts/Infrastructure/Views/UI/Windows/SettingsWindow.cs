@@ -21,20 +21,25 @@ namespace Infrastructure.Views.UI.Windows
             _settingsWindowModel = windowModel as SettingsWindowModel;
         }
 
-        public override void Init()
+        public override Type GetWindowControllerType() => typeof(SettingsWindowController);
+
+        protected override void SubscribeListeners()
         {
-            base.Init();
-            itemsSelector.Init(_settingsWindowModel?.GetItems(), _settingsWindowModel.SelectedItemId);
+            base.SubscribeListeners();
             itemsSelector.OnItemSelectAction = _settingsWindowModel.SelectItem;
-
             returnButton.OnButtonClickAction = OnReturnButtonClickHandler;
-            returnButton.SetButtonText("Return");
-
             _muteSoundsToggle.OnToggleStateChange = OnChangeMuteSoundsStateChange;
-            _muteSoundsToggle.ChangeToggleState(_settingsWindowModel.MuteSounds);
         }
 
-        public override Type GetWindowControllerType() => typeof(SettingsWindowController);
+        protected override void Draw()
+        {
+            base.Draw();
+            itemsSelector.Init(_settingsWindowModel?.GetItems(), _settingsWindowModel.SelectedItemId);
+            
+            returnButton.SetButtonText("Return");
+            
+            _muteSoundsToggle.ChangeToggleState(_settingsWindowModel.MuteSounds);
+        }
 
         protected override void Clear()
         {

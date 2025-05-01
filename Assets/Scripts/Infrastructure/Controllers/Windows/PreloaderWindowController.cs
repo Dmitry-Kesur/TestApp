@@ -25,15 +25,12 @@ namespace Infrastructure.Controllers.Windows
             _preloaderWindowModel.StartGameAction = OnStartGame;
         }
 
+        protected override BaseWindowModel GetModel() =>
+            _preloaderWindowModel;
+
         private void OnStartGame()
         {
             _stateMachineService.TransitionTo(StateType.MenuState);
-        }
-
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            view.SetModel(_preloaderWindowModel);
         }
 
         private void OnUpdateLoadingProgress(float progress, string stageText)

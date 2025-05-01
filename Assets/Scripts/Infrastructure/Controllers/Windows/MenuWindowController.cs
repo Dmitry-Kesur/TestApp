@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
-using Infrastructure.Services;
 using Infrastructure.Services.Authentication;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 using Infrastructure.StateMachine;
@@ -25,17 +24,13 @@ namespace Infrastructure.Controllers.Windows
                 OnPlayButtonClickAction = OnPlayButtonClick,
                 OnSettingsButtonClickAction = OnSettingsButtonClick,
                 OnShopButtonClickAction = OnShopButtonClick,
-                OnBoostersButtonClickAction = OnBoostersButtonClick
+                OnBoostersButtonClickAction = OnBoostersButtonClick,
+                BestScore = levelProgressUpdater.GetBestScore()
             };
-
-            _menuWindowModel.BestScore = levelProgressUpdater.GetBestScore();
         }
 
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            windowView.SetModel(_menuWindowModel);
-        }
+        protected override BaseWindowModel GetModel() =>
+            _menuWindowModel;
 
         private void OnSettingsButtonClick() =>
             _stateMachineService.TransitionTo(StateType.SettingsState);

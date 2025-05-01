@@ -16,16 +16,6 @@ namespace Infrastructure.Views.UI.Windows
         
         private LoseLevelWindowModel _loseLevelWindowModel;
 
-        public override void Init()
-        {
-            base.Init();
-            _totalScoreTextField.text = _loseLevelWindowModel.TotalScore.ToString();
-            _failItemsTextField.text = _loseLevelWindowModel.TotalFailItems.ToString();
-
-            _restartButton.OnButtonClickAction = _loseLevelWindowModel.OnRestartButtonClick;
-            _backToMenuButton.OnButtonClickAction = _loseLevelWindowModel.OnBackToMenuButtonClick;
-        }
-
         public override void SetModel(BaseWindowModel model)
         {
             base.SetModel(model);
@@ -33,6 +23,20 @@ namespace Infrastructure.Views.UI.Windows
         }
 
         public override Type GetWindowControllerType() => typeof(LoseLevelWindowController);
+
+        protected override void Draw()
+        {
+            base.Draw();
+            _totalScoreTextField.text = _loseLevelWindowModel.TotalScore.ToString();
+            _failItemsTextField.text = _loseLevelWindowModel.TotalFailItems.ToString();
+        }
+
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _restartButton.OnButtonClickAction = _loseLevelWindowModel.OnRestartButtonClick;
+            _backToMenuButton.OnButtonClickAction = _loseLevelWindowModel.OnBackToMenuButtonClick;
+        }
 
         protected override void Clear()
         {

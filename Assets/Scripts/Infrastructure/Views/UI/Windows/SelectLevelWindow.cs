@@ -14,15 +14,6 @@ namespace Infrastructure.Views.UI.Windows
 
         private SelectLevelWindowModel _selectLevelWindowModel;
 
-        public override void Init()
-        {
-            base.Init();
-
-            _backButton.OnButtonClickAction = OnBackButtonClick;
-            _levelsLoader.DrawLoader(_selectLevelWindowModel.GetLevelPreviews());
-            _levelsLoader.OnLevelSelectAction = _selectLevelWindowModel.OnLevelSelect;
-        }
-
         public override void SetModel(BaseWindowModel model)
         {
             base.SetModel(model);
@@ -31,6 +22,19 @@ namespace Infrastructure.Views.UI.Windows
 
         public override Type GetWindowControllerType() =>
             typeof(SelectLevelWindowController);
+
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _backButton.OnButtonClickAction = OnBackButtonClick;
+        }
+
+        protected override void Draw()
+        {
+            base.Draw();
+            _levelsLoader.DrawLoader(_selectLevelWindowModel.GetLevelPreviews());
+            _levelsLoader.OnLevelSelectAction = _selectLevelWindowModel.OnLevelSelect;
+        }
 
         protected override void Clear()
         {

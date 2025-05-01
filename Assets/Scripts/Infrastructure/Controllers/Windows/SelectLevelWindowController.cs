@@ -19,6 +19,7 @@ namespace Infrastructure.Controllers.Windows
         public SelectLevelWindowController(StateMachineService stateMachineService, ILevelsService levelsService)
         {
             _levelsService = levelsService;
+            _levelsService.OnWinLevelAction += OnWinLevel;
             _stateMachineService = stateMachineService;
 
             _selectLevelWindowModel = new SelectLevelWindowModel
@@ -26,14 +27,12 @@ namespace Infrastructure.Controllers.Windows
                 OnBackButtonClickAction = OnBackToMenu,
                 OnLevelSelectAction = OnLevelSelect
             };
+            
+            UpdateLevelPreviews();
         }
 
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            windowView.SetModel(_selectLevelWindowModel);
-            _selectLevelWindowModel.SetLevelPreviews(_levelsService.GetPreviewsModels());
-        }
+        protected override BaseWindowModel GetModel() =>
+            _selectLevelWindowModel;
 
         private void OnLevelSelect(int level)
         {
@@ -43,5 +42,11 @@ namespace Infrastructure.Controllers.Windows
 
         private void OnBackToMenu() =>
             _stateMachineService.TransitionTo(StateType.MenuState);
+
+        private void OnWinLevel() =>
+            UpdateLevelPreviews();
+
+        private void UpdateLevelPreviews() =>
+            _selectLevelWindowModel.SetLevelPreviews(_levelsService.GetPreviewsModels());
     }
 }

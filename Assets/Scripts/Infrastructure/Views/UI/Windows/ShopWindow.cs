@@ -15,15 +15,6 @@ namespace Infrastructure.Views.UI.Windows
 
         private ShopWindowModel _shopWindowModel;
 
-        public override void Init()
-        {
-            base.Init();
-            _backButton.OnButtonClickAction = _shopWindowModel.OnBackButtonClick;
-            _shopWindowModel.OnUpdateCurrencyAction = _currencyView.UpdateCurrency;
-            
-            _shopLoader.DrawLoader(_shopWindowModel.ShopProducts);
-        }
-
         public override void SetModel(BaseWindowModel model)
         {
             base.SetModel(model);
@@ -32,6 +23,19 @@ namespace Infrastructure.Views.UI.Windows
 
         public override Type GetWindowControllerType() => 
             typeof(ShopWindowController);
+
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _backButton.OnButtonClickAction = _shopWindowModel.OnBackButtonClick;
+            _shopWindowModel.OnUpdateCurrencyAction = _currencyView.UpdateCurrency;
+        }
+
+        protected override void Draw()
+        {
+            base.Draw();
+            _shopLoader.DrawLoader(_shopWindowModel.ShopProducts);
+        }
 
         protected override void Clear()
         {

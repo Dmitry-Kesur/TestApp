@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Infrastructure.Constants;
 using Infrastructure.Data.Preloader;
@@ -38,10 +39,14 @@ namespace Infrastructure.Services.Sound
 
         public bool MuteSounds => _audioSource.mute;
 
+        public Action<bool> OnChangeMuteSoundsAction { get; set; }
+
         public void ChangeMuteSounds(bool muteSounds)
         {
             _audioSource.mute = muteSounds;
             _settingsProgressUpdater.ChangeMuteSounds(muteSounds);
+            
+            OnChangeMuteSoundsAction.Invoke(muteSounds);
         }
 
         public void PlaySound(SoundId soundId)

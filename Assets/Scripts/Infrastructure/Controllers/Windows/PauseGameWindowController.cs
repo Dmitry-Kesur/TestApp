@@ -21,7 +21,8 @@ namespace Infrastructure.Controllers.Windows
             _stateMachineService = stateMachineService;
             _levelsService = levelsService;
             _soundService = soundService;
-
+            _soundService.OnChangeMuteSoundsAction += OnChangeMuteSounds;
+            
             _pauseGameWindowModel = new PauseGameWindowModel
             {
                 OnBackToMenuButtonClickAction = OnBackToMenuButtonClick,
@@ -30,17 +31,8 @@ namespace Infrastructure.Controllers.Windows
             };
         }
 
-        private void OnMuteSoundsStateChange(bool muteSounds)
-        {
-            _soundService.ChangeMuteSounds(muteSounds);
-        }
-
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            _pauseGameWindowModel.MuteSounds = _soundService.MuteSounds;
-            windowView.SetModel(_pauseGameWindowModel);
-        }
+        protected override BaseWindowModel GetModel() =>
+            _pauseGameWindowModel;
 
         private void OnResumeGameButtonClick()
         {
@@ -52,5 +44,13 @@ namespace Infrastructure.Controllers.Windows
             _levelsService.Stop();
             _stateMachineService.TransitionTo(StateType.MenuState);
         }
+
+        private void OnMuteSoundsStateChange(bool muteSounds)
+        {
+            _soundService.ChangeMuteSounds(muteSounds);
+        }
+
+        private void OnChangeMuteSounds(bool muteSounds) =>
+            _pauseGameWindowModel.MuteSounds = muteSounds;
     }
 }

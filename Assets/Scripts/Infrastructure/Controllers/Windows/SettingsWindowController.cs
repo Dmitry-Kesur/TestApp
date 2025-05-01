@@ -25,6 +25,7 @@ namespace Infrastructure.Controllers.Windows
             _stateMachineService = stateMachineService;
             _itemsProgressUpdater = itemsProgressUpdater;
             _soundService = soundService;
+            _soundService.OnChangeMuteSoundsAction += UpdateMuteSoundsState;
 
             _settingsWindowModel = new SettingsWindowModel()
             {
@@ -37,16 +38,12 @@ namespace Infrastructure.Controllers.Windows
             _settingsWindowModel.SelectedItemId = _itemsProgressUpdater.GetSelectedItemId();
         }
 
+        protected override BaseWindowModel GetModel() =>
+            _settingsWindowModel;
+
         private void OnChangeMuteSoundsState(bool muteSounds)
         {
             _soundService.ChangeMuteSounds(muteSounds);
-        }
-
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            _settingsWindowModel.MuteSounds = _soundService.MuteSounds;
-            windowView.SetModel(_settingsWindowModel);
         }
 
         private void OnItemSelect(int itemId)
@@ -57,6 +54,11 @@ namespace Infrastructure.Controllers.Windows
         private void OnReturnHandler()
         {
             _stateMachineService.TransitionTo(StateType.MenuState);
+        }
+
+        private void UpdateMuteSoundsState(bool muteSounds)
+        {
+            _settingsWindowModel.MuteSounds = muteSounds;
         }
     }
 }

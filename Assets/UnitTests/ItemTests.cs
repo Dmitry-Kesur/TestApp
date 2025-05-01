@@ -16,11 +16,9 @@ using Zenject;
 public class ItemTests : ZenjectUnitTestFixture
 {
     private ItemsSpawnService _itemsSpawnService;
-    private IItemsService _itemsService;
     private IExceptionLoggerService _exceptionLoggerService;
     private ILevelModel _levelModel;
     private ItemsSpawnController _itemsSpawnController;
-    private ItemsStrategyFactory _itemsStrategyFactory;
     private IItemViewsFactory _itemViewsFactory;
 
     private ItemView _itemView;
@@ -28,49 +26,57 @@ public class ItemTests : ZenjectUnitTestFixture
     public override void Setup()
     {
         base.Setup();
-        _itemsService = Substitute.For<IItemsService>();
         _exceptionLoggerService = Substitute.For<IExceptionLoggerService>();
         _levelModel = Substitute.For<ILevelModel>();
         _itemViewsFactory = Substitute.For<IItemViewsFactory>();
 
         Container.BindInterfacesAndSelfTo<ItemsSpawnService>().AsSingle();
-        Container.Bind<IItemsService>().FromInstance(_itemsService);
         Container.Bind<ILevelModel>().FromInstance(_levelModel);
         Container.Bind<ItemsSpawnController>().AsSingle();
         Container.Bind<IExceptionLoggerService>().To<EditorExceptionLoggerService>().AsSingle();
-        Container.BindInterfacesAndSelfTo<ItemsStrategyFactory>().AsSingle();
         Container.Bind<IItemViewsFactory>().FromInstance(_itemViewsFactory);
 
         _itemsSpawnController = Container.Resolve<ItemsSpawnController>();
-        _itemsStrategyFactory = Container.Resolve<ItemsStrategyFactory>();
         _itemsSpawnService = Container.Resolve<ItemsSpawnService>();
     }
 
     [Test]
-    public void SetModel_ShouldInitializeSpawnDelays()
+    public void SetModel_WhenModelHasValidDelays_ShouldInitializeSpawnDelays()
     {
-        _levelModel.DefaultItemsSpawnDelay.Returns(2.0f);
-        _levelModel.DefaultDropItemsDuration.Returns(5.0f);
+        const float expectedSpawnDelay = 2.0f;
+        const float expectedDropDuration = 5.0f;
+
+        _levelModel.DefaultItemsSpawnDelay.Returns(expectedSpawnDelay);
+        _levelModel.DefaultDropItemsDuration.Returns(expectedDropDuration);
+
         _itemsSpawnController.SetModel(_levelModel);
-        Assert.AreEqual(5.0f, _itemsSpawnController.GetDropItemsDuration());
+
+        Assert.AreEqual(expectedSpawnDelay, _itemsSpawnController.GetItemsSpawnDelay());
+        Assert.AreEqual(expectedDropDuration, _itemsSpawnController.GetDropItemsDuration());
     }
 
     [Test]
-    public void DecreaseDropDuration_WhenCatchThresholdReached()
+    public void DecreaseDropDuration_WhenCatchAmountReachesThreshold()
     {
         // Arrange
-        _levelModel.MinimalDropItemsDuration.Returns(2.2f);
-        _levelModel.DefaultDropItemsDuration.Returns(5.5f);
-        _levelModel.DropItemsDecreaseDurationValue.Returns(0.3f);
-        _levelModel.CatchItemsToDecreaseSpawnDelay.Returns(7);
+        const float defaultDuration = 5.5f;
+        const float minimalDuration = 2.2f;
+        const float decreaseValue = 0.3f;
+        const int decreaseThreshold = 7;
+
+        _levelModel.MinimalDropItemsDuration.Returns(minimalDuration);
+        _levelModel.DefaultDropItemsDuration.Returns(defaultDuration);
+        _levelModel.DropItemsDecreaseDurationValue.Returns(decreaseValue);
+        _levelModel.CatchItemsToDecreaseSpawnDelay.Returns(decreaseThreshold);
 
         _itemsSpawnController.SetModel(_levelModel);
 
         // Act
-        _itemsSpawnController.UpdateItemsByTotalCatchAmount(7);
+        _itemsSpawnController.UpdateItemsByTotalCatchAmount(decreaseThreshold);
 
         // Assert
-        Assert.Less(_itemsSpawnController.GetDropItemsDuration(), _levelModel.DefaultDropItemsDuration);
+        var actualDuration = _itemsSpawnController.GetDropItemsDuration();
+        Assert.Less(actualDuration, defaultDuration);
     }
 
     [Test]
@@ -87,7 +93,7 @@ public class ItemTests : ZenjectUnitTestFixture
 
         bool spawnCalled = false;
         _itemsSpawnService.OnSpawnItemAction = _ => { spawnCalled = true; };
-        
+
         _itemsSpawnService.SetItemModels(new List<ItemModel> { itemModel });
 
         // Act
@@ -115,7 +121,7 @@ public class ItemTests : ZenjectUnitTestFixture
     {
         // Act
         _itemsSpawnService.Clear();
-        
+
         // Assert
         _itemViewsFactory.Received(1).Clear();
     }
@@ -125,38 +131,38 @@ public class ItemTests : ZenjectUnitTestFixture
     {
         // Arrange
         _itemView = new GameObject().AddComponent<ItemView>();
-        
+
         // Act
         _itemsSpawnService.OnSpawnItemAction?.Invoke(_itemView);
         _itemsSpawnController.OnPause();
-        
+
         // Assert
         Assert.IsTrue(_itemView.Paused);
     }
-    
+
     [Test]
     public void OnResume_AllSpawnedItemsAreResumed()
     {
         // Arrange
         _itemView = new GameObject().AddComponent<ItemView>();
-        
+
         // Act
         _itemsSpawnService.OnSpawnItemAction?.Invoke(_itemView);
         _itemsSpawnController.OnPause();
-        
+
         _itemsSpawnController.OnResume();
-        
+
         // Assert
         Assert.IsFalse(_itemView.Paused);
     }
-    
+
     [TearDown]
     public void TearDown()
     {
         // Cleanup
         if (_itemView == null)
             return;
-        
+
         GameObject.DestroyImmediate(_itemView.gameObject);
         _itemView = null;
     }

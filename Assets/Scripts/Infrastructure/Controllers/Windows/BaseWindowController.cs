@@ -1,4 +1,5 @@
-﻿using Infrastructure.Views.UI.Windows;
+﻿using Infrastructure.Models.UI.Windows;
+using Infrastructure.Views.UI.Windows;
 
 namespace Infrastructure.Controllers.Windows
 {
@@ -6,14 +7,19 @@ namespace Infrastructure.Controllers.Windows
     {
         protected T windowView;
         
-        public override void OnWindowAdd(BaseWindow view)
+        public override void OnWindowCreate(BaseWindow view)
         {
             windowView = (T)view;
+            windowView.SetModel(GetModel());
+            windowView.OnCreate();
         }
+
+        protected virtual BaseWindowModel GetModel() =>
+            null;
     }
     
     public abstract class BaseWindowController
     {
-        public abstract void OnWindowAdd(BaseWindow view);
+        public abstract void OnWindowCreate(BaseWindow view);
     }
 }

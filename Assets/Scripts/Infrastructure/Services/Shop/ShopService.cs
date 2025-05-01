@@ -60,6 +60,7 @@ namespace Infrastructure.Services.InGamePurchase
         {
             _productStrategies = _productStrategiesFactory.CreateProductStrategies();
             CreateProducts(_products);
+            UpdatePurchasedProducts();
         }
         
         private void CreateProducts(List<ProductData> productsData)
@@ -69,8 +70,7 @@ namespace Infrastructure.Services.InGamePurchase
                 var products = productsStrategy.CreateProducts(productsData);
                 _shopProducts.AddRange(products);
             }
-
-            UpdatePurchasedProducts();
+            
             SubscribeListeners();
         }
 

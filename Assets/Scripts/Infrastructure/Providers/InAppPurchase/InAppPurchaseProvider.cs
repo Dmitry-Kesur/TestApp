@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Infrastructure.Constants;
 using Infrastructure.Data.Products;
 using Infrastructure.Services.Log;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 using Infrastructure.Services.RemoteConfig;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -20,7 +19,7 @@ namespace Infrastructure.Providers.InAppPurchase
         
         private readonly RemoteConfigService _remoteConfigService;
         private readonly IExceptionLoggerService _exceptionLoggerService;
-        private readonly PurchaseProgressUpdater _purchaseProgressUpdater;
+        private readonly PendingPurchaseStorage _pendingPurchaseStorage;
 
         private readonly Dictionary<string, TaskCompletionSource<bool>> _pendingTasks = new();
 
@@ -30,11 +29,11 @@ namespace Infrastructure.Providers.InAppPurchase
         private IExtensionProvider _extensions;
         private CrossPlatformValidator _validator;
 
-        public InAppPurchaseProvider(RemoteConfigService remoteConfigService, IExceptionLoggerService exceptionLoggerService, PurchaseProgressUpdater purchaseProgressUpdater)
+        public InAppPurchaseProvider(RemoteConfigService remoteConfigService, IExceptionLoggerService exceptionLoggerService, PendingPurchaseStorage pendingPurchaseStorage)
         {
             _remoteConfigService = remoteConfigService;
             _exceptionLoggerService = exceptionLoggerService;
-            _purchaseProgressUpdater = purchaseProgressUpdater;
+            _pendingPurchaseStorage = pendingPurchaseStorage;
         }
 
         public void Initialize()
@@ -66,7 +65,7 @@ namespace Infrastructure.Providers.InAppPurchase
             var tcs = new TaskCompletionSource<bool>();
             _pendingTasks[productId] = tcs;
             
-            _purchaseProgressUpdater.SetPendingInAppPurchaseProduct(productId);
+            _pendingPurchaseStorage.MarkAsPending(productId);
             
             _controller.InitiatePurchase(productId);
             
@@ -155,7 +154,7 @@ namespace Infrastructure.Providers.InAppPurchase
             if (!_pendingTasks.TryGetValue(productId, out var task)) return;
 
             task.SetResult(success);
-            _purchaseProgressUpdater.RemovePendingInAppPurchaseProduct(productId);
+            _pendingPurchaseStorage.RemovePending(productId);
             _pendingTasks.Remove(productId);
         }
 
@@ -165,12 +164,12 @@ namespace Infrastructure.Providers.InAppPurchase
             {
                 var productId = product.definition.id;
                 
-                if (_purchaseProgressUpdater.HasPendingInAppPurchaseProduct(productId))
+                if (_pendingPurchaseStorage.IsPending(productId))
                 {
                     if (product.hasReceipt && ValidatePurchase(product.receipt))
                     {
                         OnRestoreCompletePurchase?.Invoke(productId);
-                        _purchaseProgressUpdater.RemovePendingInAppPurchaseProduct(productId);
+                        _pendingPurchaseStorage.RemovePending(productId);
                     }
                     else
                     {

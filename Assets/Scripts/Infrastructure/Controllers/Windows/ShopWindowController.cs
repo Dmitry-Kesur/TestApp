@@ -27,11 +27,8 @@ namespace Infrastructure.Controllers.Windows
             SubscribeListeners();
         }
 
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            windowView.SetModel(_shopWindowModel);
-        }
+        protected override BaseWindowModel GetModel() =>
+            _shopWindowModel;
 
         private void SubscribeListeners()
         {

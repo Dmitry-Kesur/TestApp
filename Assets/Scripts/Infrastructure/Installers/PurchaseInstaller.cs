@@ -30,6 +30,7 @@ namespace Infrastructure.Installers
             BindInAppProductsService();
             BindPaymentShopService();
             BindShopService();
+            BindPendingPurchaseStorage();
         }
 
         private void BindInAppProductsService() =>
@@ -40,5 +41,8 @@ namespace Infrastructure.Installers
 
         private void BindShopService() =>
             Container.BindInterfacesAndSelfTo<ShopService>().AsSingle();
+
+        private void BindPendingPurchaseStorage() =>
+            Container.Bind<PendingPurchaseStorage>().AsSingle();
     }
 }

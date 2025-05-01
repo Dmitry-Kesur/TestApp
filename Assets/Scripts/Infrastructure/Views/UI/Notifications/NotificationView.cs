@@ -14,10 +14,10 @@ namespace Infrastructure.Views.UI.Notifications
 
         public virtual void OnShowNotification(NotificationModel notificationModel)
         {
-            this.NotificationModel = notificationModel;
+            NotificationModel = notificationModel;
             _closeNotificationButton.OnButtonClickAction = CloseNotificationAction;
             
-            _notificationTextField.text = this.NotificationModel.NotificationText;
+            _notificationTextField.text = NotificationModel.NotificationText;
         }
 
         private void CloseNotificationAction()

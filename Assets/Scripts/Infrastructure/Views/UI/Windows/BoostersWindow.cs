@@ -14,14 +14,6 @@ namespace Infrastructure.Views.UI.Windows
 
         private BoostersWindowModel _boostersWindowModel;
 
-        public override void Init()
-        {
-            base.Init();
-            _backToMenuButton.OnButtonClickAction = OnBackToMenuButtonClicked;
-            
-            _boostersLoader.DrawLoader(_boostersWindowModel.GetBoosters());
-        }
-        
         public override void SetModel(BaseWindowModel model)
         {
             base.SetModel(model);
@@ -30,6 +22,24 @@ namespace Infrastructure.Views.UI.Windows
 
         public override Type GetWindowControllerType() =>
             typeof(BoostersWindowController);
+
+        protected override void Draw()
+        {
+            base.Draw();
+            _boostersLoader.DrawLoader(_boostersWindowModel.GetBoosters());
+        }
+
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _backToMenuButton.OnButtonClickAction = OnBackToMenuButtonClicked;
+        }
+
+        protected override void Clear()
+        {
+            base.Clear();
+            _backToMenuButton.OnButtonClickAction = null;
+        }
 
         private void OnBackToMenuButtonClicked() =>
             _boostersWindowModel.OnBackToMenuButtonClicked();

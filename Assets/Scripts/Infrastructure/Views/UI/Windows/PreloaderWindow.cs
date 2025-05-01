@@ -1,5 +1,4 @@
 ﻿using System;
-using Infrastructure.Controllers;
 using Infrastructure.Controllers.Windows;
 using Infrastructure.Models.UI.Windows;
 using Infrastructure.Views.UI.Buttons;
@@ -12,21 +11,12 @@ namespace Infrastructure.Views.UI.Windows
     public class PreloaderWindow : BaseWindow
     {
         private const float MaxProgressValue = 1;
-        
+
         [SerializeField] private ButtonWithIcon _startGameButton;
         [SerializeField] private Image _fill;
         [SerializeField] private TextMeshProUGUI _loadingProgressTextField;
-        
-        private PreloaderWindowModel _preloaderWindowModel;
 
-        public override void Init()
-        {
-            base.Init();
-            _preloaderWindowModel.OnUpdateLoadingProgressAction = OnUpdateLoadingProgress;
-            _startGameButton.OnButtonClickAction = _preloaderWindowModel.StartGame;
-            _startGameButton.gameObject.SetActive(false);
-            _loadingProgressTextField.gameObject.SetActive(true);
-        }
+        private PreloaderWindowModel _preloaderWindowModel;
 
         public override void SetModel(BaseWindowModel model)
         {
@@ -35,6 +25,20 @@ namespace Infrastructure.Views.UI.Windows
         }
 
         public override Type GetWindowControllerType() => typeof(PreloaderWindowController);
+
+        protected override void Draw()
+        {
+            base.Draw();
+            _startGameButton.gameObject.SetActive(false);
+            _loadingProgressTextField.gameObject.SetActive(true);
+        }
+
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _preloaderWindowModel.OnUpdateLoadingProgressAction = OnUpdateLoadingProgress;
+            _startGameButton.OnButtonClickAction = _preloaderWindowModel.StartGame;
+        }
 
         protected override void Clear()
         {

@@ -15,25 +15,30 @@ namespace Infrastructure.Views.UI.Windows
         
         private CompleteLevelWindowModel _completeLevelWindowModel;
 
-        public override void Init()
+        public override void SetModel(BaseWindowModel model)
         {
-            base.Init();
+            base.SetModel(model);
+            _completeLevelWindowModel = windowModel as CompleteLevelWindowModel;
+        }
+
+        public override Type GetWindowControllerType() =>
+            typeof(CompleteLevelWindowController);
+
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _nextLevelButton.OnButtonClickAction = OnNextLevelButtonClick;
+            _menuButton.OnButtonClickAction = OnMenuButtonClick;
+        }
+
+        protected override void Draw()
+        {
+            base.Draw();
             var levelScore = _completeLevelWindowModel.LevelScore;
             _levelScore.text = levelScore.ToString();
 
             _nextLevelButton.gameObject.SetActive(_completeLevelWindowModel.CanStartNextLevel);
         }
-
-        public override void SetModel(BaseWindowModel model)
-        {
-            base.SetModel(model);
-            _completeLevelWindowModel = windowModel as CompleteLevelWindowModel;
-            _nextLevelButton.OnButtonClickAction = OnNextLevelButtonClick;
-            _menuButton.OnButtonClickAction = OnMenuButtonClick;
-        }
-
-        public override Type GetWindowControllerType() =>
-            typeof(CompleteLevelWindowController);
 
         protected override void Clear()
         {

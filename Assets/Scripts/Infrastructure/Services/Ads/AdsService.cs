@@ -9,8 +9,8 @@ namespace Infrastructure.Services.Ads
 {
     public class AdsService : IAdsService, IUnityAdsInitializationListener
     {
-        private static readonly string AndroidGameId = "5578461";
-        private static readonly bool EnabledTestMode = false;
+        private const string AndroidGameId = "5578461";
+        private const bool EnabledTestMode = false;
 
         private readonly List<BaseAdsProvider> _adsProviders = new();
 

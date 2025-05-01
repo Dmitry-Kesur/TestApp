@@ -9,29 +9,37 @@ namespace Infrastructure.Controllers.Windows
 {
     public class CompleteLevelWindowController : BaseWindowController<WinLevelWindow>
     {
-        private readonly CompleteLevelWindowModel _completeLevelWindowModel;
         private readonly ILevelsService _levelsService;
         private readonly StateMachineService _stateMachineService;
+        
+        private CompleteLevelWindowModel _completeLevelWindowModel;
 
         public CompleteLevelWindowController(ILevelsService levelsService,
             StateMachineService stateMachineService)
         {
             _levelsService = levelsService;
+            _levelsService.OnWinLevelAction += OnWinLevel;
             _stateMachineService = stateMachineService;
 
+            CreateWindowModel();
+        }
+
+        protected override BaseWindowModel GetModel() =>
+            _completeLevelWindowModel;
+
+        private void OnWinLevel()
+        {
+            _completeLevelWindowModel.SetWinLevel(_levelsService.GetCurrentLevel());
+            _completeLevelWindowModel.CanStartNextLevel = !_levelsService.ReachedMaxLevel;
+        }
+
+        private void CreateWindowModel()
+        {
             _completeLevelWindowModel = new CompleteLevelWindowModel
             {
                 OnNextLevelButtonClickAction = OnNextLevelButtonClick,
                 OnMenuButtonClickAction = OnMenuButtonClick
             };
-        }
-
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            _completeLevelWindowModel.SetWinLevel(_levelsService.GetCurrentLevel());
-            _completeLevelWindowModel.CanStartNextLevel = !_levelsService.ReachedMaxLevel;
-            windowView.SetModel(_completeLevelWindowModel);
         }
 
         private void OnMenuButtonClick()

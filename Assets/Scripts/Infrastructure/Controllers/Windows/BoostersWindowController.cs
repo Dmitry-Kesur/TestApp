@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
-using Infrastructure.Services;
 using Infrastructure.Services.Booster;
 using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.Windows;
@@ -23,11 +22,8 @@ namespace Infrastructure.Controllers.Windows
             };
         }
 
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            windowView.SetModel(_boostersWindowModel);
-        }
+        protected override BaseWindowModel GetModel() =>
+            _boostersWindowModel;
 
         private void OnBackToMenu() =>
             _stateMachineService.TransitionTo(StateType.MenuState);

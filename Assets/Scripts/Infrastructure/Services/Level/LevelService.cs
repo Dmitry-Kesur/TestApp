@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Infrastructure.Controllers.Levels;
 using Infrastructure.Enums;
 using Infrastructure.Factories.Level;
@@ -84,6 +85,8 @@ namespace Infrastructure.Services.Level
         public bool LevelStarted => 
             _currentLevelModel is { Started: true };
 
+        public Action OnWinLevelAction { get; set; }
+
         public List<LevelPreviewModel> GetPreviewsModels() =>
             _previewsController.GetPreviewsModels();
 
@@ -114,6 +117,8 @@ namespace Infrastructure.Services.Level
             _analyticsService.LogWinLevel(currentLevel);
             
             _previewsController.MarkPreviewAsComplete(currentLevel);
+
+            OnWinLevelAction?.Invoke();
             
             UpdateNextLevel();
 

@@ -14,16 +14,6 @@ namespace Infrastructure.Views.UI.Windows
         
         private PauseGameWindowModel _pauseGameWindowModel;
 
-        public override void Init()
-        {
-            base.Init();
-            _backToMenuButton.OnButtonClickAction = OnBackToMenuButtonClick;
-            _resumeGameButton.OnButtonClickAction = OnResumeGameButtonClick;
-            _muteSoundsToggle.OnToggleStateChange = OnChangeMuteSoundsState;
-            
-            _muteSoundsToggle.ChangeToggleState(_pauseGameWindowModel.MuteSounds);
-        }
-
         public override void SetModel(BaseWindowModel model)
         {
             base.SetModel(model);
@@ -31,6 +21,28 @@ namespace Infrastructure.Views.UI.Windows
         }
 
         public override Type GetWindowControllerType() => typeof(PauseGameWindowController);
+
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _backToMenuButton.OnButtonClickAction = OnBackToMenuButtonClick;
+            _resumeGameButton.OnButtonClickAction = OnResumeGameButtonClick;
+            _muteSoundsToggle.OnToggleStateChange = OnChangeMuteSoundsState;
+        }
+
+        protected override void Draw()
+        {
+            base.Draw();
+            _muteSoundsToggle.ChangeToggleState(_pauseGameWindowModel.MuteSounds);
+        }
+
+        protected override void Clear()
+        {
+            base.Clear();
+            _backToMenuButton.OnButtonClickAction = null;
+            _resumeGameButton.OnButtonClickAction = null;
+            _muteSoundsToggle.OnToggleStateChange = null;
+        }
 
         private void OnChangeMuteSoundsState(bool toggleState)
         {

@@ -19,22 +19,6 @@ namespace Infrastructure.Views.UI.Windows
 
         private MenuWindowModel _menuWindowModel;
 
-        public override void Init()
-        {
-            base.Init();
-
-            _playButton.OnButtonClickAction = _menuWindowModel.PlayButtonClick;
-            _settingsButton.OnButtonClickAction = _menuWindowModel.OnSettingsButtonClick;
-            _boostersButton.OnButtonClickAction = _menuWindowModel.OnBoostersButtonClick;
-            _shopButton.OnButtonClickAction = _menuWindowModel.OnShopButtonClick;
-
-            _bestScoreTextField.text = _menuWindowModel?.BestScore.ToString();
-            _scoreTitle.text = UIMessages.BestScoreAlias;
-
-            _playButton.SetButtonText(UIMessages.PlayGameAlias);
-            _settingsButton.SetButtonText(UIMessages.SettingsAlias);
-        }
-
         public override void SetModel(BaseWindowModel model)
         {
             base.SetModel(model);
@@ -43,11 +27,32 @@ namespace Infrastructure.Views.UI.Windows
 
         public override Type GetWindowControllerType() => typeof(MenuWindowController);
 
+        protected override void SubscribeListeners()
+        {
+            base.SubscribeListeners();
+            _playButton.OnButtonClickAction = _menuWindowModel.PlayButtonClick;
+            _settingsButton.OnButtonClickAction = _menuWindowModel.OnSettingsButtonClick;
+            _boostersButton.OnButtonClickAction = _menuWindowModel.OnBoostersButtonClick;
+            _shopButton.OnButtonClickAction = _menuWindowModel.OnShopButtonClick;
+        }
+
+        protected override void Draw()
+        {
+            base.Draw();
+            _bestScoreTextField.text = _menuWindowModel?.BestScore.ToString();
+            _scoreTitle.text = UIMessages.BestScoreAlias;
+
+            _playButton.SetButtonText(UIMessages.PlayGameAlias);
+            _settingsButton.SetButtonText(UIMessages.SettingsAlias);
+        }
+
         protected override void Clear()
         {
             base.Clear();
             _playButton.OnButtonClickAction = null;
             _settingsButton.OnButtonClickAction = null;
+            _boostersButton.OnButtonClickAction = null;
+            _shopButton.OnButtonClickAction = null;
         }
     }
 }

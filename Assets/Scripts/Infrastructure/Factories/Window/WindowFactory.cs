@@ -45,12 +45,13 @@ namespace Infrastructure.Factories.Window
             var windowPrefab = _windowPrefabs[windowId];
             var windowView = Object.Instantiate(windowPrefab, _uiProvider.WindowsLayer, false);
 
-            GetWindowController(windowView);
+            var controller = GetWindowController(windowView);
+            controller?.OnWindowCreate(windowView);
 
             return windowView;
         }
 
-        private void GetWindowController(BaseWindow windowView)
+        private BaseWindowController GetWindowController(BaseWindow windowView)
         {
             var controllerType = windowView.GetWindowControllerType();
             _controllers.TryGetValue(controllerType, out var windowController);
@@ -61,7 +62,7 @@ namespace Infrastructure.Factories.Window
                 _controllers.Add(controllerType, windowController);
             }
 
-            windowController?.OnWindowAdd(windowView);
+            return windowController;
         }
     }
 }

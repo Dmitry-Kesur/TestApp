@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
-using Infrastructure.Services;
 using Infrastructure.Services.Level;
 using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.Windows;
@@ -26,16 +25,13 @@ namespace Infrastructure.Controllers.Windows
             };
         }
 
+        protected override BaseWindowModel GetModel() =>
+            _loseLevelWindowModel;
+
         private void OnBackToMenuButtonClickAction() =>
             _stateMachineService.TransitionTo(StateType.MenuState);
 
         private void OnRestartButtonClick() =>
             _stateMachineService.TransitionTo(StateType.GameLoopState);
-
-        public override void OnWindowAdd(BaseWindow view)
-        {
-            base.OnWindowAdd(view);
-            windowView.SetModel(_loseLevelWindowModel);
-        }
     }
 }

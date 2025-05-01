@@ -15,7 +15,6 @@ namespace Infrastructure.Factories.Progress
                 CompleteLevelIds = new List<int>(),
                 UnlockedLevelItemIds = new List<int>(),
                 PurchasedShopProductIds = new List<int>(),
-                PendingInAppPurchaseProducts = new List<string>()
             };
 
             return playerProgress;
