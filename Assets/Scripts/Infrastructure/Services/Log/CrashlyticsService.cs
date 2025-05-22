@@ -1,5 +1,6 @@
 ﻿using System;
 using Firebase.Crashlytics;
+using Infrastructure.Services.Bootstrap;
 using UnityEngine;
 
 namespace Infrastructure.Services.Log

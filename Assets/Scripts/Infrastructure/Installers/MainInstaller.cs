@@ -8,6 +8,7 @@ using Infrastructure.Providers.Scene;
 using Infrastructure.Providers.UI;
 using Infrastructure.Services;
 using Infrastructure.Services.Addressable;
+using Infrastructure.Services.Application;
 using Infrastructure.Services.Booster;
 using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Currency;

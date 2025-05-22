@@ -50,10 +50,7 @@ namespace Infrastructure.Services.Authentication
         {
             if (task.IsFaulted)
             {
-                var taskException = task.Exception;
-                var exceptionMessage = "SignIn Failed: " + taskException;
-                Debug.Log(exceptionMessage);
-                _exceptionLoggerService.LogException(taskException);
+                _exceptionLoggerService.LogException(task.Exception);
             }
             else if (task.IsCompleted)
             {

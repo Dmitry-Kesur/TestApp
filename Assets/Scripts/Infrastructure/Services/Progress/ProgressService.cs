@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Infrastructure.Factories.Purchase;
+using Infrastructure.Factories.Progress;
+using Infrastructure.Services.Application;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
-using UnityEngine;
 
 namespace Infrastructure.Services.Progress
 {
@@ -23,7 +23,7 @@ namespace Infrastructure.Services.Progress
             _progressFactory = progressFactory;
             _applicationFocusWatcher = applicationFocusWatcher;
 
-            Application.quitting += SavePlayerProgress;
+            UnityEngine.Application.quitting += SavePlayerProgress;
             _applicationFocusWatcher.OnFocusOut = SavePlayerProgress;
         }
 

@@ -7,6 +7,7 @@ using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Models.UI.Items;
 using Infrastructure.Providers.Level;
 using Infrastructure.Services.Analytics;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Log;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 using Infrastructure.Services.Reward;
@@ -14,7 +15,7 @@ using Infrastructure.StateMachine;
 
 namespace Infrastructure.Services.Level
 {
-    public class LevelService : ILevelsService
+    public class LevelService : ILevelsService, IBootstrapTarget
     {
         private readonly List<LevelModel> _levelModels = new();
 
@@ -66,6 +67,8 @@ namespace Infrastructure.Services.Level
 
         public void Resume() =>
             _currentLevelModel.OnResume();
+
+        public int InitializationOrder => 4;
 
         public void Initialize()
         {

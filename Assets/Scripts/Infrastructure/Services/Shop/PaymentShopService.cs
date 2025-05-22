@@ -1,12 +1,12 @@
 ﻿using System;
 using Infrastructure.Constants;
 using Infrastructure.Data.Notifications;
-using Infrastructure.Models.GameEntities.Products.InGame;
+using Infrastructure.Models.GameEntities.Shop;
 using Infrastructure.Services.Ads;
 using Infrastructure.Services.Currency;
 using Infrastructure.Services.Notification;
 
-namespace Infrastructure.Services.InGamePurchase
+namespace Infrastructure.Services.Shop
 {
     public class PaymentShopService : IPaymentShopService
     {

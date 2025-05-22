@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-namespace Infrastructure.Services
+namespace Infrastructure.Services.Application
 {
     public class ApplicationFocusWatcher : IDisposable
     {
@@ -10,12 +9,12 @@ namespace Infrastructure.Services
         
         public ApplicationFocusWatcher()
         {
-            Application.focusChanged += OnApplicationFocusChanged;
+            UnityEngine.Application.focusChanged += OnApplicationFocusChanged;
         }
 
         public void Dispose()
         {
-            Application.focusChanged -= OnApplicationFocusChanged;
+            UnityEngine.Application.focusChanged -= OnApplicationFocusChanged;
         }
 
         private void OnApplicationFocusChanged(bool focused)

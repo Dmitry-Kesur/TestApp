@@ -1,9 +1,9 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Providers.InAppPurchase;
 using Infrastructure.Services.Bootstrap;
-using Infrastructure.Services.InGamePurchase;
 using Infrastructure.Services.Items;
 using Infrastructure.Services.Preloader;
+using Infrastructure.Services.Shop;
 using Infrastructure.Services.Window;
 
 namespace Infrastructure.StateMachine.States

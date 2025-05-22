@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Firebase.Database;
+using Infrastructure.Services.Bootstrap;
 using Newtonsoft.Json;
 
 namespace Infrastructure.Services.Progress

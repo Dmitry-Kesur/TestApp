@@ -26,7 +26,7 @@ namespace Infrastructure.Views.GameEntities
         private void Awake() =>
             _rectTransform ??= GetComponent<RectTransform>();
 
-        public bool Paused { get; set; }
+        public bool Paused { get; private set; }
         
         private void OnEnable()
         {
@@ -38,7 +38,7 @@ namespace Infrastructure.Views.GameEntities
         public void SetModel(ItemModel itemModel) =>
             _itemModel = itemModel;
 
-        public virtual void Draw()
+        public void OnSpawn()
         {
             DrawIcon();
             ChangeBubbleImageVisibility(true);

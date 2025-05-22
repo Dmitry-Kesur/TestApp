@@ -2,7 +2,7 @@
 using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services;
 using Infrastructure.Services.Currency;
-using Infrastructure.Services.InGamePurchase;
+using Infrastructure.Services.Shop;
 using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.Windows;
 

@@ -8,6 +8,5 @@ namespace Infrastructure.Services.Booster
         List<BoosterModel> Boosters { get; }
         int BoostValue { get; }
         BoosterModel ActiveBooster { get; }
-        void Initialize();
     }
 }

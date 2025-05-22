@@ -1,5 +1,4 @@
-﻿using Infrastructure.Models.GameEntities.Products;
-using Infrastructure.Models.GameEntities.Products.InGame;
+﻿using Infrastructure.Models.GameEntities.Shop;
 
 namespace Infrastructure.Views.UI.Loaders
 {

@@ -30,7 +30,6 @@ namespace Infrastructure.Views.GameEntities
         private void OnSpawnItem(ItemView itemView)
         {
             itemView.transform.SetParent(_containerRectTransform, false);
-            itemView.transform.localPosition = Vector3.zero;
             AlignItem(itemView);
             AnimateItem(itemView);
         }

@@ -44,7 +44,6 @@ namespace Infrastructure.Services.Ads
         public void OnInitializationFailed(UnityAdsInitializationError error, string message)
         {
             var errorMessage = $"[Ads-Service]: Ads initialize error. {error.ToString()} - {message}";
-            Debug.Log(errorMessage);
             _exceptionLoggerService.LogError(errorMessage);
         }
         

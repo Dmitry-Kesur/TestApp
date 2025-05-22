@@ -29,7 +29,7 @@ namespace Infrastructure.Data.Preloader
     {
         LoadingItems,
         LoadingGameLevels,
-        LoadingShopProducts,
+        LoadingShop,
         LoadingSounds,
         LoadingRewards,
         LoadingBoosters

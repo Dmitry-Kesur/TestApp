@@ -1,4 +1,4 @@
-﻿using Infrastructure.Models.GameEntities.Products.InGame;
+﻿using Infrastructure.Models.GameEntities.Shop;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

@@ -1,35 +1,39 @@
-using Infrastructure.Providers.InAppPurchase;
-using Infrastructure.Services.Booster;
-using Infrastructure.Services.InGamePurchase;
-using Infrastructure.Services.Items;
-using Infrastructure.Services.Level;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Infrastructure.Services.Log;
+using UnityEngine;
 
 namespace Infrastructure.Services.Bootstrap
 {
     public class BootstrapService
     {
-        private readonly InAppPurchaseProvider _inAppPurchaseProvider;
-        private readonly IItemsService _itemsService;
-        private readonly ShopService _shopService;
-        private readonly ILevelsService _levelsService;
-        private readonly IBoostersService _boostersService;
+        private readonly List<IBootstrapTarget> _targets;
+        
+        private readonly IExceptionLoggerService _loggerService;
 
-        public BootstrapService(InAppPurchaseProvider inAppPurchaseProvider, IItemsService itemsService, ShopService shopService, ILevelsService levelsService, IBoostersService boostersService)
+        public BootstrapService(List<IBootstrapTarget> targets, IExceptionLoggerService loggerService)
         {
-            _inAppPurchaseProvider = inAppPurchaseProvider;
-            _itemsService = itemsService;
-            _shopService = shopService;
-            _levelsService = levelsService;
-            _boostersService = boostersService;
+            _targets = targets.OrderBy(target => target.InitializationOrder).ToList();
+
+            _loggerService = loggerService;
         }
 
         public void Initialize()
         {
-            _inAppPurchaseProvider.Initialize();
-            _itemsService.Initialize();
-            _shopService.Initialize();
-            _levelsService.Initialize();
-            _boostersService.Initialize();
+            foreach (var target in _targets)
+            {
+                try
+                {
+                    target.Initialize();
+                    Debug.Log($"[Bootstrap] Initializing {target.GetType().Name} (Order: {target.InitializationOrder})");
+                }
+                catch (Exception e)
+                {
+                    _loggerService.LogException(e);
+                    throw;
+                }
+            }
         }
     }
 }

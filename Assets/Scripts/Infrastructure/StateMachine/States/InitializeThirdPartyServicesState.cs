@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Firebase;
 using Infrastructure.Enums;
 using Infrastructure.Providers.InAppPurchase;
-using Infrastructure.Services;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.RemoteConfig;
 using Unity.Services.Core;
 using UnityEngine;
@@ -28,10 +28,7 @@ namespace Infrastructure.StateMachine.States
         {
             try
             {
-                await UnityServices.InitializeAsync();
-                await CheckAndFixFirebaseDependencies();
-                await InitializeRemoteConfigService();
-                InitializeFirebaseServices();
+                await InitializeServices();
 
                 StateMachineService.TransitionTo(StateType.AuthenticationState);
             }
@@ -39,6 +36,14 @@ namespace Infrastructure.StateMachine.States
             {
                 Debug.LogError($"[InitializeThirdPartyServicesState] Exception: {e.Message}\n{e.StackTrace}");
             }
+        }
+
+        private async Task InitializeServices()
+        {
+            await UnityServices.InitializeAsync();
+            await CheckAndFixFirebaseDependencies();
+            await _remoteConfigService.Initialize();
+            InitializeFirebaseServices();
         }
 
         private async Task CheckAndFixFirebaseDependencies()
@@ -68,11 +73,6 @@ namespace Infrastructure.StateMachine.States
                     Debug.LogError($"Failed to initialize Firebase service {firebaseInitializeService.GetType().Name}: {e.Message}");
                 }
             }
-        }
-
-        private async Task InitializeRemoteConfigService()
-        {
-            await _remoteConfigService.Initialize();
         }
     }
 }

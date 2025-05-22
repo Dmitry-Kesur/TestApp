@@ -1,6 +1,4 @@
-using Infrastructure.Data.PlayerProgress;
-
-namespace Infrastructure.Factories.Purchase
+namespace Infrastructure.Factories.Progress
 {
     public interface IProgressFactory
     {

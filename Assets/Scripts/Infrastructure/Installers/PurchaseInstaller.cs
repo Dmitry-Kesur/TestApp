@@ -1,7 +1,7 @@
 using Infrastructure.Factories.Purchase;
 using Infrastructure.Providers.InAppPurchase;
 using Infrastructure.Services.InAppPurchase;
-using Infrastructure.Services.InGamePurchase;
+using Infrastructure.Services.Shop;
 using Zenject;
 
 namespace Infrastructure.Installers
@@ -27,11 +27,14 @@ namespace Infrastructure.Installers
 
         private void BindServices()
         {
+            BindCrossPlatformPurchaseValidator();
             BindInAppProductsService();
             BindPaymentShopService();
             BindShopService();
-            BindPendingPurchaseStorage();
         }
+
+        private void BindCrossPlatformPurchaseValidator() =>
+            Container.Bind<IPurchaseValidator>().To<CrossPlatformPurchaseValidator>().AsSingle();
 
         private void BindInAppProductsService() =>
             Container.BindInterfacesAndSelfTo<InAppPurchaseService>().AsSingle();
@@ -41,8 +44,5 @@ namespace Infrastructure.Installers
 
         private void BindShopService() =>
             Container.BindInterfacesAndSelfTo<ShopService>().AsSingle();
-
-        private void BindPendingPurchaseStorage() =>
-            Container.Bind<PendingPurchaseStorage>().AsSingle();
     }
 }

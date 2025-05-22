@@ -5,17 +5,18 @@ using Infrastructure.Data.Notifications;
 using Infrastructure.Data.Preloader;
 using Infrastructure.Data.Products;
 using Infrastructure.Factories.Purchase;
-using Infrastructure.Models.GameEntities.Products.InGame;
+using Infrastructure.Models.GameEntities.Shop;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Analytics;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Notification;
 using Infrastructure.Services.Preloader;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 using Infrastructure.Strategy;
 
-namespace Infrastructure.Services.InGamePurchase
+namespace Infrastructure.Services.Shop
 {
-    public class ShopService : ILoadableService
+    public class ShopService : ILoadableService, IBootstrapTarget
     {
         private readonly List<ProductModel> _shopProducts = new();
 
@@ -48,13 +49,15 @@ namespace Infrastructure.Services.InGamePurchase
             _shopProducts;
 
         public LoadingStage LoadingStage => 
-            LoadingStage.LoadingShopProducts;
+            LoadingStage.LoadingShop;
 
         public async Task Load()
         {
             _products = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<ProductData>(AddressableGroupNames
                     .ProductsGroup);
         }
+
+        public int InitializationOrder => 3;
 
         public void Initialize()
         {

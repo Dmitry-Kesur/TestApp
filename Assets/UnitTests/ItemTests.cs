@@ -6,8 +6,10 @@ using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Models.GameEntities.Level.Items;
 using Infrastructure.Services.Items;
 using Infrastructure.Services.Log;
+using Infrastructure.Strategy;
 using Infrastructure.Views.GameEntities;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
 using UnityEngine;
 using Zenject;
@@ -20,6 +22,8 @@ public class ItemTests : ZenjectUnitTestFixture
     private ILevelModel _levelModel;
     private ItemsSpawnController _itemsSpawnController;
     private IItemViewsFactory _itemViewsFactory;
+    private IItemsStrategyFactory _itemsStrategyFactory;
+    private IItemsService _itemsService;
 
     private ItemView _itemView;
 
@@ -29,15 +33,20 @@ public class ItemTests : ZenjectUnitTestFixture
         _exceptionLoggerService = Substitute.For<IExceptionLoggerService>();
         _levelModel = Substitute.For<ILevelModel>();
         _itemViewsFactory = Substitute.For<IItemViewsFactory>();
+        _itemsService = Substitute.For<IItemsService>();
 
         Container.BindInterfacesAndSelfTo<ItemsSpawnService>().AsSingle();
         Container.Bind<ILevelModel>().FromInstance(_levelModel);
         Container.Bind<ItemsSpawnController>().AsSingle();
         Container.Bind<IExceptionLoggerService>().To<EditorExceptionLoggerService>().AsSingle();
         Container.Bind<IItemViewsFactory>().FromInstance(_itemViewsFactory);
+        Container.Bind<IItemsStrategyFactory>().To<ItemsStrategyFactory>().AsSingle();
+        Container.Bind<IItemsService>().FromInstance(_itemsService).AsSingle();
 
         _itemsSpawnController = Container.Resolve<ItemsSpawnController>();
         _itemsSpawnService = Container.Resolve<ItemsSpawnService>();
+        _itemsStrategyFactory = Container.Resolve<IItemsStrategyFactory>();
+        _itemsService = Container.Resolve<IItemsService>();
     }
 
     [Test]
@@ -87,7 +96,7 @@ public class ItemTests : ZenjectUnitTestFixture
         itemData.SpawnChance = 0.5f;
         var itemModel = new ItemModel(itemData);
 
-        _itemView = new GameObject().AddComponent<ItemView>();
+        _itemView = CreateItemView();
 
         _itemViewsFactory.GetItem().Returns(_itemView);
 
@@ -107,30 +116,24 @@ public class ItemTests : ZenjectUnitTestFixture
     public void RemoveItem_ShouldCallReleaseItem()
     {
         // Arrange
-        _itemView = new GameObject().AddComponent<ItemView>();
-
+        _itemView = CreateItemView();
+        var itemData = ScriptableObject.CreateInstance<ItemData>();
+        var itemModel = new ItemModel(itemData);
+        var itemModels = new List<ItemModel> { itemModel };
+        _itemsSpawnController.SetItems(itemModels);
+        
         // Act
-        _itemsSpawnService.RemoveItem(_itemView);
+        itemModel.OnRemoveItem(_itemView);
 
         // Assert
         _itemViewsFactory.Received(1).ReleaseItem(_itemView);
     }
 
     [Test]
-    public void Clear_CallsClearOnItemViewsFactory()
-    {
-        // Act
-        _itemsSpawnService.Clear();
-
-        // Assert
-        _itemViewsFactory.Received(1).Clear();
-    }
-
-    [Test]
     public void OnPause_AllSpawnedItemsArePaused()
     {
         // Arrange
-        _itemView = new GameObject().AddComponent<ItemView>();
+        _itemView = CreateItemView();
 
         // Act
         _itemsSpawnService.OnSpawnItemAction?.Invoke(_itemView);
@@ -138,13 +141,14 @@ public class ItemTests : ZenjectUnitTestFixture
 
         // Assert
         Assert.IsTrue(_itemView.Paused);
+        Assert.IsFalse(_itemsSpawnService.Enabled);
     }
 
     [Test]
     public void OnResume_AllSpawnedItemsAreResumed()
     {
         // Arrange
-        _itemView = new GameObject().AddComponent<ItemView>();
+        _itemView = CreateItemView();
 
         // Act
         _itemsSpawnService.OnSpawnItemAction?.Invoke(_itemView);
@@ -154,6 +158,39 @@ public class ItemTests : ZenjectUnitTestFixture
 
         // Assert
         Assert.IsFalse(_itemView.Paused);
+        Assert.IsTrue(_itemsSpawnService.Enabled);
+    }
+
+    [Test]
+    public void ShouldReturnSingleItemStrategy_WhenMultipleItemIdsProvided()
+    {
+        // Arrange
+        var itemData = ScriptableObject.CreateInstance<ItemData>();
+        var itemModel = new ItemModel(itemData);
+        _itemsService.GetSelectedItem().Returns(itemModel);
+
+        var itemIds = new List<int> { 1, 5, 10 };
+        
+        // Act
+        var itemsStrategy = _itemsStrategyFactory.GetItemsStrategy(itemIds);
+
+        // Assert
+        Assert.That(itemsStrategy, Is.InstanceOf<SingleItemStrategy>());
+    }
+
+    [Test]
+    public void ShouldReturnMultipleItemsStrategy_WhenNoSelectedItem()
+    {
+        // Arrange
+        _itemsService.GetSelectedItem().ReturnsNull();
+    
+        var itemIds = new List<int> { 1, 5, 10 };
+
+        // Act
+        var itemsStrategy = _itemsStrategyFactory.GetItemsStrategy(itemIds);
+
+        // Assert
+        Assert.That(itemsStrategy, Is.InstanceOf<MultipleItemsStrategy>());
     }
 
     [TearDown]
@@ -166,4 +203,7 @@ public class ItemTests : ZenjectUnitTestFixture
         GameObject.DestroyImmediate(_itemView.gameObject);
         _itemView = null;
     }
+
+    private ItemView CreateItemView() =>
+        new GameObject().AddComponent<ItemView>();
 }

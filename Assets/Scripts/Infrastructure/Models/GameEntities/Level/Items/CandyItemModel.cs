@@ -1,5 +1,5 @@
 ﻿using Infrastructure.Data.Items;
-using Infrastructure.Models.GameEntities.Products.InGame;
+using Infrastructure.Models.GameEntities.Shop;
 
 namespace Infrastructure.Models.GameEntities.Level.Items
 {

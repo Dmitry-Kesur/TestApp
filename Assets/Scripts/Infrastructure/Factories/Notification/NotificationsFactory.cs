@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Constants;
 using Infrastructure.Data.Notifications;
 using Infrastructure.Services;
+using Infrastructure.Services.Addressable;
 using Infrastructure.Views.UI.Notifications;
 
 namespace Infrastructure.Factories.Notification

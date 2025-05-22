@@ -41,7 +41,7 @@ namespace Infrastructure.Installers
             Container.BindInterfacesAndSelfTo<LevelsStaticDataProvider>().AsSingle();
 
         private void BindLevelsService() =>
-            Container.Bind<ILevelsService>().To<LevelService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelService>().AsSingle();
 
         private void BindProgressController() =>
             Container.Bind<LevelProgressController>().AsSingle();

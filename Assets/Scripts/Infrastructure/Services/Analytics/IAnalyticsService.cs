@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Services.Analytics
+﻿using Infrastructure.Services.Bootstrap;
+
+namespace Infrastructure.Services.Analytics
 {
     public interface IAnalyticsService : IFirebaseInitialize
     {

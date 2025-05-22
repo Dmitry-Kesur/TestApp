@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Infrastructure.Models.GameEntities.Products.InGame
+namespace Infrastructure.Models.GameEntities.Shop
 {
     public interface IProductModel
     {

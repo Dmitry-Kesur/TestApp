@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Infrastructure.Data.Products;
 using Infrastructure.Enums;
-using Infrastructure.Models.GameEntities.Products.InGame;
+using Infrastructure.Models.GameEntities.Shop;
 using Infrastructure.Services.Items;
 
 namespace Infrastructure.Strategy

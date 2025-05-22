@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Infrastructure.Models.GameEntities.Products.InGame;
+using Infrastructure.Models.GameEntities.Shop;
 using Infrastructure.Services;
 using Infrastructure.Services.Currency;
 

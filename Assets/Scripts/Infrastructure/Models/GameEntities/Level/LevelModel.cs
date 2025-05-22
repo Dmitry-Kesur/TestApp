@@ -103,7 +103,7 @@ namespace Infrastructure.Models.GameEntities.Level
 
             _levelViewsFactory.CreateLevelView(this);
             
-            ApplyItemsToControllers();
+            SetItemsToControllers();
 
             _itemsSpawnController.OnStartLevel();
         }
@@ -159,7 +159,7 @@ namespace Infrastructure.Models.GameEntities.Level
         private void OnSpawnItem(ItemView itemView) =>
             OnSpawnItemAction?.Invoke(itemView);
 
-        private void ApplyItemsToControllers()
+        private void SetItemsToControllers()
         {
             var levelItemsStrategy = _itemsStrategyFactory.GetItemsStrategy(_levelStaticData.LevelItemIds);
             var items = levelItemsStrategy.GetItems();

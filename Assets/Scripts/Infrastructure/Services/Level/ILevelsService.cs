@@ -17,6 +17,5 @@ namespace Infrastructure.Services.Level
         void Stop();
         void Pause();
         void Resume();
-        void Initialize();
     }
 }

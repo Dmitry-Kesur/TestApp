@@ -7,12 +7,13 @@ using Infrastructure.Enums;
 using Infrastructure.Factories.Level;
 using Infrastructure.Models.GameEntities.Level.Items;
 using Infrastructure.Services.Addressable;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Preloader;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 
 namespace Infrastructure.Services.Items
 {
-    public class ItemsService : IItemsService, ILoadableService
+    public class ItemsService : IItemsService, ILoadableService, IBootstrapTarget
     {
         private readonly List<ItemModel> _items = new();
 
@@ -37,6 +38,8 @@ namespace Infrastructure.Services.Items
                     .LevelItemsGroup);
         }
 
+        public int InitializationOrder => 2;
+
         public void Initialize()
         {
             CreateItems();
@@ -55,11 +58,8 @@ namespace Infrastructure.Services.Items
             return itemModel;
         }
 
-        public ItemModel GetItemById(int itemId)
-        {
-            var itemById = _items.Find(model => model.Id == itemId);
-            return itemById;
-        }
+        public ItemModel GetItemById(int itemId) =>
+            _items.Find(model => model.Id == itemId);
 
         public List<ItemModel> GetItemsByIds(List<int> itemIds)
         {
@@ -68,23 +68,18 @@ namespace Infrastructure.Services.Items
             foreach (var itemId in itemIds)
             {
                 var itemModel = GetItemById(itemId);
-                items.Add(itemModel);
+                if (itemModel != null)
+                    items.Add(itemModel);
             }
 
             return items;
         }
 
-        public List<ItemModel> GetItemsByType(ItemsType itemsType)
-        {
-            var itemModels = _items.FindAll(model => model.ItemType == itemsType);
-            return itemModels;
-        }
+        public List<ItemModel> GetItemsByType(ItemsType itemsType) =>
+            _items.FindAll(model => model.ItemType == itemsType);
 
-        public List<ItemModel> GetUnlockedItems()
-        {
-            var unlockedItem = _items.FindAll(model => model.Unlocked);
-            return unlockedItem;
-        }
+        public List<ItemModel> GetUnlockedItems() =>
+            _items.FindAll(model => model.Unlocked);
 
         private void CreateItems()
         {
@@ -105,17 +100,15 @@ namespace Infrastructure.Services.Items
             foreach (var unlockedItemId in unlockedItemsIds)
             {
                 var itemModel = GetItemById(unlockedItemId);
-                UpdateUnlockedItem(itemModel);
+                if (itemModel != null)
+                    itemModel.Unlocked = true;
             }
         }
 
         private void OnUnlockItem(ItemModel itemModel)
         {
             _itemsProgressUpdater.SetUnlockedItem(itemModel.Id);
-            UpdateUnlockedItem(itemModel);
-        }
-
-        private void UpdateUnlockedItem(ItemModel itemModel) =>
             itemModel.Unlocked = true;
+        }
     }
 }

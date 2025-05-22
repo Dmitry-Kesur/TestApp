@@ -57,6 +57,8 @@ namespace Infrastructure.Services.Items
         public void DisableSpawn() =>
             _enableSpawn = false;
 
+        public bool Enabled => _enableSpawn;
+        
         public void Clear()
         {
             _spawnTimer = 0;
@@ -88,7 +90,7 @@ namespace Infrastructure.Services.Items
             var itemModel = GetItemBySpawnChance();
             var itemView = _itemsFactory.GetItem();
             itemView.SetModel(itemModel);
-            itemView.Draw();
+            itemView.OnSpawn();
             
             OnSpawnItemAction?.Invoke(itemView);
         }

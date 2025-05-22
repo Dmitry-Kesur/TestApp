@@ -6,6 +6,7 @@ using Infrastructure.Data.Notifications;
 using Infrastructure.Data.Preloader;
 using Infrastructure.Models.GameEntities.Boosters;
 using Infrastructure.Services.Addressable;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.InAppPurchase;
 using Infrastructure.Services.Notification;
 using Infrastructure.Services.Preloader;
@@ -13,7 +14,7 @@ using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 
 namespace Infrastructure.Services.Booster
 {
-    public class BoostersService : IBoostersService, ILoadableService
+    public class BoostersService : IBoostersService, ILoadableService, IBootstrapTarget
     {
         private readonly List<BoosterModel> _boosterModels = new();
         
@@ -49,6 +50,8 @@ namespace Infrastructure.Services.Booster
         {
             _boostersData = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<BoosterData>(AddressableGroupNames.BoostersGroup);
         }
+
+        public int InitializationOrder => 5;
 
         public void Initialize()
         {

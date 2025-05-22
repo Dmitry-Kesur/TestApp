@@ -1,7 +1,7 @@
 ﻿using System;
-using Infrastructure.Models.GameEntities.Products.InGame;
+using Infrastructure.Models.GameEntities.Shop;
 
-namespace Infrastructure.Services.InGamePurchase
+namespace Infrastructure.Services.Shop
 {
     public interface IPaymentShopService
     {

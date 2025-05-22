@@ -17,7 +17,6 @@ namespace Infrastructure.Controllers.Levels
 
         private int _totalFailItems;
         private int _totalLevelScore;
-        private int _totalCatchItems;
         
         private LevelModel _levelModel;
 
@@ -33,9 +32,6 @@ namespace Infrastructure.Controllers.Levels
 
         public int TotalFailItems =>
             _totalFailItems;
-
-        public int TotalCatchItems =>
-            _totalCatchItems;
 
         public void UpdateProgressByFailItem()
         {
@@ -54,7 +50,6 @@ namespace Infrastructure.Controllers.Levels
         {
             _totalLevelScore = 0;
             _totalFailItems = 0;
-            _totalCatchItems = 0;
         }
 
         public void SetModel(LevelModel levelModel) =>
@@ -67,7 +62,6 @@ namespace Infrastructure.Controllers.Levels
 
         public void UpdateProgressByCatchItem(int scorePoints)
         {
-            _totalCatchItems++;
             _totalLevelScore += GetUpdatedScore(scorePoints);
             
             _hudService.UpdateHud();

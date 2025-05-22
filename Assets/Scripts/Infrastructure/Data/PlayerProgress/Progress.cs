@@ -17,5 +17,6 @@ namespace Infrastructure.Data.PlayerProgress
         public List<int> CompleteLevelIds = new();
         public List<int> UnlockedLevelItemIds = new();
         public List<int> PurchasedShopProductIds = new();
+        public List<string> PendingInAppProducts = new();
     }
 }

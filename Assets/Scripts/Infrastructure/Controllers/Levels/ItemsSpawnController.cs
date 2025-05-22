@@ -42,7 +42,7 @@ namespace Infrastructure.Controllers.Levels
             {
                 var exceptionText = $"{nameof(SetModel)}: Level data is null";
                 _exceptionLoggerService.LogError(exceptionText);
-                throw new ArgumentNullException(exceptionText);
+                throw new ArgumentNullException(nameof(levelModel), exceptionText);
             }
 
             _levelModel = levelModel;
