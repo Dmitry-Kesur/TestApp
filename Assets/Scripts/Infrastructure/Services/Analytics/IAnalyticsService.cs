@@ -1,4 +1,5 @@
-﻿using Infrastructure.Services.Bootstrap;
+﻿using Infrastructure.Enums;
+using Infrastructure.Services.Bootstrap;
 
 namespace Infrastructure.Services.Analytics
 {
@@ -7,7 +8,9 @@ namespace Infrastructure.Services.Analytics
         void LogWinLevel(int level);
         void LogLoseLevel(int level);
         void LogPurchaseProduct(int productId);
-        void LogInAppPurchaseProduct(string productId);
+        void LogCompleteInAppPurchaseProduct(string productId);
+        void LogFailedInAppPurchaseProduct(string productId);
         void LogInAppPurchaseProductRestore(string productId);
+        void LogReceiveReward(RewardType rewardType);
     }
 }

@@ -9,7 +9,7 @@ namespace Infrastructure.Services.Items
     {
         void UpdateSpawnDelay(float spawnDelay);
         void SetItemModels(List<ItemModel> itemModels);
-        void Spawn();
+        void StartSpawnCycle();
         void RemoveItem(ItemView itemView);
         void DisableSpawn();
         void EnableSpawn();

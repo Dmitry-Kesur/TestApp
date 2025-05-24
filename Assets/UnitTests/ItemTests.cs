@@ -18,7 +18,6 @@ using Zenject;
 public class ItemTests : ZenjectUnitTestFixture
 {
     private ItemsSpawnService _itemsSpawnService;
-    private IExceptionLoggerService _exceptionLoggerService;
     private ILevelModel _levelModel;
     private ItemsSpawnController _itemsSpawnController;
     private IItemViewsFactory _itemViewsFactory;
@@ -30,7 +29,6 @@ public class ItemTests : ZenjectUnitTestFixture
     public override void Setup()
     {
         base.Setup();
-        _exceptionLoggerService = Substitute.For<IExceptionLoggerService>();
         _levelModel = Substitute.For<ILevelModel>();
         _itemViewsFactory = Substitute.For<IItemViewsFactory>();
         _itemsService = Substitute.For<IItemsService>();

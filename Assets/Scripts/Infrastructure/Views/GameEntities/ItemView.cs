@@ -62,7 +62,7 @@ namespace Infrastructure.Views.GameEntities
             _icon.sprite = _itemModel.GetSprite();
         }
 
-        public void PauseAnimations()
+        public void Pause()
         {
             Paused = true;
             _rotationTween.Pause();
@@ -70,7 +70,7 @@ namespace Infrastructure.Views.GameEntities
             _dissolveTween.Pause();
         }
 
-        public void ResumeAnimations()
+        public void Resume()
         {
             Paused = false;
             _rotationTween.Play();

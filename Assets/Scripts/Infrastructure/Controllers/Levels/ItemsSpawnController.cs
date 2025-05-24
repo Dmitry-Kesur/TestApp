@@ -75,7 +75,7 @@ namespace Infrastructure.Controllers.Levels
             _itemsSpawnService.DisableSpawn();
 
             foreach (var item in _items)
-                item.PauseAnimations();
+                item.Pause();
         }
 
         public void OnResume()
@@ -83,7 +83,7 @@ namespace Infrastructure.Controllers.Levels
             _itemsSpawnService.EnableSpawn();
 
             foreach (var item in _items)
-                item.ResumeAnimations();
+                item.Resume();
         }
 
         public float GetDropItemsDuration() =>
@@ -97,6 +97,9 @@ namespace Infrastructure.Controllers.Levels
 
         public void Clear()
         {
+            if (_levelModel == null)
+                return;
+            
             _itemsSpawnDelay = _levelModel.DefaultItemsSpawnDelay;
             _currentDropItemsDuration = _levelModel.DefaultDropItemsDuration;
 
@@ -107,7 +110,7 @@ namespace Infrastructure.Controllers.Levels
         private void SpawnItems()
         {
             _itemsSpawnService.UpdateSpawnDelay(_itemsSpawnDelay);
-            _itemsSpawnService.Spawn();
+            _itemsSpawnService.StartSpawnCycle();
         }
 
         private void CalculateNewDelay(ref float currentDelay, int totalCatchItems,

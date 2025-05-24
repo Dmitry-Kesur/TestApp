@@ -26,8 +26,11 @@ namespace Infrastructure.Controllers.Levels
 
         public void Clear()
         {
+            if (_itemModels == null)
+                return;
+            
             UnSubscribeListeners();
-            _itemModels?.Clear();
+            _itemModels.Clear();
             _itemModels = null;
         }
 

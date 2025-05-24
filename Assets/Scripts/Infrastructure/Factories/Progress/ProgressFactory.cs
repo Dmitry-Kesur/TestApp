@@ -12,7 +12,7 @@ namespace Infrastructure.Factories.Progress
             {
                 ActiveLevel = 1,
                 UserId = userId,
-                CompleteLevelIds = new List<int>(),
+                WinLevelIds = new List<int>(),
                 UnlockedLevelItemIds = new List<int>(),
                 PurchasedShopProductIds = new List<int>(),
             };

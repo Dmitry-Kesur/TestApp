@@ -82,10 +82,10 @@ public class ProgressTests : ZenjectUnitTestFixture
         _saveLoadProgress.LoadProgress(UserId).Returns(Task.FromResult(progress).Result);
         
         _applicationFocusWatcher.OnFocusOut = _progressService.SavePlayerProgress;
-        
-        _progressService.LoadPlayerProgress(UserId);
-        
+
+
         // Act
+        _progressService.LoadPlayerProgress(UserId);
         _applicationFocusWatcher.OnFocusOut?.Invoke();
 
         // Assert

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase;
 using Infrastructure.Enums;
-using Infrastructure.Providers.InAppPurchase;
 using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.RemoteConfig;
 using Unity.Services.Core;
@@ -16,7 +15,6 @@ namespace Infrastructure.StateMachine.States
         private readonly List<IFirebaseInitialize> _firebaseInitializeServices;
 
         private readonly RemoteConfigService _remoteConfigService;
-        private readonly InAppPurchaseProvider _inAppPurchaseProvider;
 
         public InitializeThirdPartyServicesState(List<IFirebaseInitialize> firebaseInitializeServices, RemoteConfigService remoteConfigService)
         {

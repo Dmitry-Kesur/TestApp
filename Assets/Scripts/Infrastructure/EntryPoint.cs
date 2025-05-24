@@ -13,10 +13,10 @@ namespace Infrastructure
 
         private void Start()
         {
-            PrepareGame();
+            InitializeStateMachine();
         }
 
-        private void PrepareGame()
+        private void InitializeStateMachine()
         {
             var states = _statesFactory.CreateStates();
             _stateMachine.SetStates(states);

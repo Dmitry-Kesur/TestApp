@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Infrastructure.Controllers.Levels;
 using Infrastructure.Enums;
 using Infrastructure.Factories.Level;
@@ -32,7 +33,7 @@ namespace Infrastructure.Services.Level
 
         public LevelService(LevelsStaticDataProvider levelsStaticDataProvider,
             LevelProgressUpdater levelProgressUpdater, IReceiveRewardsService receiveRewardsService,
-            AnalyticsService analyticsService, StateMachineService stateMachine, ILevelModelsFactory levelModelsFactory, IExceptionLoggerService exceptionLoggerService)
+            AnalyticsService analyticsService, StateMachineService stateMachine, ILevelModelsFactory levelModelsFactory, IExceptionLoggerService exceptionLoggerService, LevelPreviewsController levelPreviewsController)
         {
             _levelsStaticDataProvider = levelsStaticDataProvider;
             _levelProgressUpdater = levelProgressUpdater;
@@ -42,7 +43,7 @@ namespace Infrastructure.Services.Level
             _levelModelsFactory = levelModelsFactory;
             _exceptionLoggerService = exceptionLoggerService;
 
-            _previewsController = new LevelPreviewsController(_levelModelsFactory);
+            _previewsController = levelPreviewsController;
         }
 
         public void Start()
@@ -83,7 +84,7 @@ namespace Infrastructure.Services.Level
             _currentLevelModel;
 
         public bool ReachedMaxLevel =>
-            _currentLevelModel.Level == _levelsStaticDataProvider.MaxLevel;
+            _currentLevelModel != null && _currentLevelModel.Level == _levelsStaticDataProvider.MaxLevel;
 
         public bool LevelStarted => 
             _currentLevelModel is { Started: true };
@@ -99,8 +100,8 @@ namespace Infrastructure.Services.Level
             
             var nextLevel = GetNextLevel();
             CreateLevelModel(nextLevel);
-            _previewsController.MarkPreviewAsActive(nextLevel);
             
+            _previewsController.MarkPreviewAsActive(nextLevel);
             SetCurrentLevel(nextLevel);
         }
 
@@ -116,7 +117,7 @@ namespace Infrastructure.Services.Level
 
             var currentLevel = _currentLevelModel.Level;
 
-            _levelProgressUpdater.SetCompleteLevel(currentLevel);
+            _levelProgressUpdater.SetWinLevel(currentLevel);
             _analyticsService.LogWinLevel(currentLevel);
             
             _previewsController.MarkPreviewAsComplete(currentLevel);
@@ -142,10 +143,25 @@ namespace Infrastructure.Services.Level
 
         private void CreateLevelModel(int level)
         {
+            if (IsLevelAlreadyCreated(level))
+            {
+                _exceptionLoggerService.LogError($"[level-service] Level {level} already exists");
+                return;
+            }
+            
             var levelData = _levelsStaticDataProvider.GetDataByLevel(level);
+            if (levelData == null)
+            {
+                _exceptionLoggerService.LogError($"No static data for level {level}");
+                return;
+            }
+            
             var levelModel = _levelModelsFactory.CreateModel(levelData);
             SubscribeListeners(levelModel);
             _levelModels.Add(levelModel);
         }
+        
+        private bool IsLevelAlreadyCreated(int level) =>
+            _levelModels.Any(model => model.Level == level);
     }
 }

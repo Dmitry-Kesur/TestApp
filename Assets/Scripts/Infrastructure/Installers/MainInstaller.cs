@@ -1,12 +1,10 @@
 ﻿using Infrastructure.Data.Preloader;
 using Infrastructure.Factories.Notification;
-using Infrastructure.Factories.Reward;
 using Infrastructure.Factories.State;
 using Infrastructure.Factories.Window;
 using Infrastructure.Providers.Device;
 using Infrastructure.Providers.Scene;
 using Infrastructure.Providers.UI;
-using Infrastructure.Services;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Application;
 using Infrastructure.Services.Booster;
@@ -44,7 +42,6 @@ namespace Infrastructure.Installers
             Container.Bind<IStatesFactory>().To<StatesFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<WindowFactory>().AsSingle();
             Container.Bind<NotificationsFactory>().AsSingle();
-            Container.Bind<IReceiveRewardsControllersFactory>().To<ReceiveRewardsControllersFactory>().AsSingle();
         }
 
         private void BindSettings()

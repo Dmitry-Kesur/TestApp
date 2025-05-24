@@ -14,7 +14,7 @@ namespace Infrastructure.Data.PlayerProgress
         public int ActiveBoosterId;
         public string UserId;
         public bool MuteSounds;
-        public List<int> CompleteLevelIds = new();
+        public List<int> WinLevelIds = new();
         public List<int> UnlockedLevelItemIds = new();
         public List<int> PurchasedShopProductIds = new();
         public List<string> PendingInAppProducts = new();

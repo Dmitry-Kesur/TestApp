@@ -8,6 +8,7 @@ using Infrastructure.Models.GameEntities.Boosters;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.InAppPurchase;
+using Infrastructure.Services.Log;
 using Infrastructure.Services.Notification;
 using Infrastructure.Services.Preloader;
 using Infrastructure.Services.Progress.PlayerProgressUpdaters;
@@ -22,17 +23,19 @@ namespace Infrastructure.Services.Booster
         private readonly IInAppPurchaseService _inAppPurchaseService;
         private readonly ResourceProgressUpdater _resourceProgressUpdater;
         private readonly INotificationService _notificationService;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
 
         private List<BoosterData> _boostersData = new();
         
         private BoosterModel _activeBoosterModel;
 
-        public BoostersService(LocalAddressableService localAddressableService, IInAppPurchaseService inAppPurchaseService, ResourceProgressUpdater resourceProgressUpdater, INotificationService notificationService)
+        public BoostersService(LocalAddressableService localAddressableService, IInAppPurchaseService inAppPurchaseService, ResourceProgressUpdater resourceProgressUpdater, INotificationService notificationService, IExceptionLoggerService exceptionLoggerService)
         {
             _localAddressableService = localAddressableService;
             _inAppPurchaseService = inAppPurchaseService;
             _resourceProgressUpdater = resourceProgressUpdater;
             _notificationService = notificationService;
+            _exceptionLoggerService = exceptionLoggerService;
 
             _inAppPurchaseService.OnCompletePurchase = OnCompletePurchaseBooster;
         }
@@ -66,7 +69,10 @@ namespace Infrastructure.Services.Booster
         {
             var booster = GetBoosterByProductId(boosterProductId);
             if (booster == null)
+            {
+                _exceptionLoggerService.LogError($"[BoostersService] Booster not found for product id: {boosterProductId}");
                 return;
+            }
             
             _resourceProgressUpdater.SetActiveBoosterId(booster.Id);
             SetActiveBooster();

@@ -18,9 +18,9 @@ namespace Infrastructure.Services.Progress.PlayerProgressUpdaters
             progress.ActiveLevel = level;
         }
 
-        public void SetCompleteLevel(int level)
+        public void SetWinLevel(int level)
         {
-            progress.CompleteLevelIds.Add(level);
+            progress.WinLevelIds.Add(level);
         }
 
         public void UpdateBestScore(int scoreValue)

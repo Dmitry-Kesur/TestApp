@@ -13,6 +13,7 @@ namespace Infrastructure.Installers
             BindFactories();
             BindProviders();
             BindServices();
+            BindControllers();
         }
 
         private void BindFactories()
@@ -32,9 +33,14 @@ namespace Infrastructure.Installers
         private void BindServices()
         {
             BindLevelsService();
+        }
+
+        private void BindControllers()
+        {
             BindProgressController();
             BindItemsInteractionController();
             BindItemsSpawnController();
+            BindLevelPreviewsController();
         }
 
         private void BindLevelsStaticDataProvider() =>
@@ -51,5 +57,8 @@ namespace Infrastructure.Installers
 
         private void BindItemsSpawnController() =>
             Container.Bind<ItemsSpawnController>().AsSingle();
+
+        private void BindLevelPreviewsController() =>
+            Container.Bind<LevelPreviewsController>().AsSingle();
     }
 }

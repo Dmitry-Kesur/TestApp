@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Infrastructure.Factories.Level;
 using Infrastructure.Models.GameEntities.Level.Items;
+using Infrastructure.Services.Log;
 using Infrastructure.Views.GameEntities;
 using UnityEngine;
 using Zenject;
@@ -12,6 +13,7 @@ namespace Infrastructure.Services.Items
     public class ItemsSpawnService : IItemsSpawnService, ITickable
     {
         private readonly IItemViewsFactory _itemsFactory;
+        private readonly IExceptionLoggerService _exceptionLoggerService;
 
         private float _itemsSpawnDelay;
         private float _spawnTimer;
@@ -19,8 +21,11 @@ namespace Infrastructure.Services.Items
 
         private List<ItemModel> _itemModels;
 
-        public ItemsSpawnService(IItemViewsFactory itemsFactory) =>
+        public ItemsSpawnService(IItemViewsFactory itemsFactory, IExceptionLoggerService exceptionLoggerService)
+        {
             _itemsFactory = itemsFactory;
+            _exceptionLoggerService = exceptionLoggerService;
+        }
 
         public void UpdateSpawnDelay(float spawnDelay) =>
             _itemsSpawnDelay = spawnDelay;
@@ -28,10 +33,10 @@ namespace Infrastructure.Services.Items
         public void SetItemModels(List<ItemModel> itemModels) =>
             _itemModels = itemModels;
 
-        public void Spawn()
+        public void StartSpawnCycle()
         {
-            SpawnItem();
             EnableSpawn();
+            SpawnItem();
         }
 
         public void RemoveItem(ItemView itemView) =>
@@ -70,6 +75,12 @@ namespace Infrastructure.Services.Items
 
         private ItemModel GetItemBySpawnChance()
         {
+            if (_itemModels == null)
+            {
+                _exceptionLoggerService.LogError($"[ItemsSpawnService] Item models not set for spawn");
+                return null;
+            }
+            
             float randomChanceValue = Random.Range(0f, 1f);
             float cumulativeChance = 0;
 
@@ -82,12 +93,13 @@ namespace Infrastructure.Services.Items
                 }
             }
 
-            return GetItemBySpawnChance();
+            return _itemModels[Random.Range(0, _itemModels.Count)];
         }
 
         private void SpawnItem()
         {
             var itemModel = GetItemBySpawnChance();
+            
             var itemView = _itemsFactory.GetItem();
             itemView.SetModel(itemModel);
             itemView.OnSpawn();

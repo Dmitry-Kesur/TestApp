@@ -86,20 +86,15 @@ namespace Infrastructure.Models.GameEntities.Level
         public void SetData(LevelStaticData levelStaticData)
         {
             _levelStaticData = levelStaticData;
-
-            AfterSetData();
-        }
-
-        private void AfterSetData()
-        {
-            SetupProgressController();
-            SetupItemsSpawnController();
         }
 
         public void Start()
         {
             _started = true;
             ClearAllControllers();
+            
+            SetupProgressController();
+            SetupItemsSpawnController();
 
             _levelViewsFactory.CreateLevelView(this);
             
