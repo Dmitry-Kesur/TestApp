@@ -1,4 +1,5 @@
-﻿using Infrastructure.Enums;
+﻿using System;
+using Infrastructure.Enums;
 using Infrastructure.Services.Sound;
 using Infrastructure.Services.Window;
 
@@ -17,8 +18,16 @@ namespace Infrastructure.StateMachine.States
         
         public override void Enter()
         {
-            _windowService.ShowWindow(WindowId.WinLevelWindow);
-            _soundService.PlaySound(SoundId.Win);
+            try
+            {
+                _windowService.ShowWindow(WindowId.WinLevelWindow);
+                _soundService.PlaySound(SoundId.Win);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

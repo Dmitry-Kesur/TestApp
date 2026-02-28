@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Infrastructure.Services.Log
 {
-    public class CrashlyticsService : IExceptionLoggerService, IFirebaseInitialize
+    public class CrashlyticsService : IExceptionLoggerService, IThirdPartyInitializable
     {
         public void Initialize()
         {

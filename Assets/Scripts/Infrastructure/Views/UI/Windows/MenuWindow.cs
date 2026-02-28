@@ -11,9 +11,11 @@ namespace Infrastructure.Views.UI.Windows
     public class MenuWindow : BaseWindow
     {
         [SerializeField] private ButtonWithLabel _playButton;
-        [SerializeField] private ButtonWithLabel _settingsButton;
         [SerializeField] private ButtonWithLabel _boostersButton;
+        [SerializeField] private ButtonWithLabel _luckySpinButton;
         [SerializeField] private ButtonWithIcon _shopButton;
+        [SerializeField] private ButtonWithIcon _dailyRewardButton;
+        [SerializeField] private BaseButton _settingsButton;
         [SerializeField] private TextMeshProUGUI _scoreTitle;
         [SerializeField] private TextMeshProUGUI _bestScoreTextField;
 
@@ -34,6 +36,8 @@ namespace Infrastructure.Views.UI.Windows
             _settingsButton.OnButtonClickAction = _menuWindowModel.OnSettingsButtonClick;
             _boostersButton.OnButtonClickAction = _menuWindowModel.OnBoostersButtonClick;
             _shopButton.OnButtonClickAction = _menuWindowModel.OnShopButtonClick;
+            _dailyRewardButton.OnButtonClickAction = _menuWindowModel.OnDailyRewardButtonClick;
+            _luckySpinButton.OnButtonClickAction = _menuWindowModel.OnLuckySpinButtonClick;
         }
 
         protected override void Draw()
@@ -43,7 +47,6 @@ namespace Infrastructure.Views.UI.Windows
             _scoreTitle.text = UIMessages.BestScoreAlias;
 
             _playButton.SetButtonText(UIMessages.PlayGameAlias);
-            _settingsButton.SetButtonText(UIMessages.SettingsAlias);
         }
 
         protected override void Clear()
@@ -53,6 +56,8 @@ namespace Infrastructure.Views.UI.Windows
             _settingsButton.OnButtonClickAction = null;
             _boostersButton.OnButtonClickAction = null;
             _shopButton.OnButtonClickAction = null;
+            _dailyRewardButton.OnButtonClickAction = null;
+            _luckySpinButton.OnButtonClickAction = null;
         }
     }
 }

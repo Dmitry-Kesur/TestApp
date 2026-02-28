@@ -5,17 +5,16 @@ using UnityEngine.UI;
 
 namespace Infrastructure.Views.UI.Items
 {
-    public class ShopItem : DrawableItem<ProductModel>
+    public class ShopItem : DrawableItem<ShopProductModel>
     {
         [SerializeField] private Image _purchasedMark;
         [SerializeField] private TextMeshProUGUI _priceTextField;
         [SerializeField] private Button _buyButton;
 
-        public override void SetModel(ProductModel drawableModel)
+        public override void SetModel(ShopProductModel drawableModel)
         {
             base.SetModel(drawableModel);
             _buyButton.onClick.AddListener(OnBuyButtonClick);
-            drawableModel.UpdateProductAction = UpdateState;
         }
 
         public override void Draw()
@@ -41,7 +40,7 @@ namespace Infrastructure.Views.UI.Items
 
         private void DrawPrice()
         {
-            _priceTextField.text = drawableModel.Price.ToString();
+            _priceTextField.text = drawableModel.CostAmount.ToString();
         }
 
         private void OnBuyButtonClick()

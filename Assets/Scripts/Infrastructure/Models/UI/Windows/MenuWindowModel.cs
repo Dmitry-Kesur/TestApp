@@ -7,13 +7,14 @@ namespace Infrastructure.Models.UI.Windows
 {
     public class MenuWindowModel : BaseWindowModel
     {
-        private readonly IProgressService _iProgressService;
         private readonly IAuthenticationService _authenticationService;
 
         public Action OnPlayButtonClickAction;
         public Action OnSettingsButtonClickAction;
         public Action OnShopButtonClickAction;
         public Action OnBoostersButtonClickAction;
+        public Action OnDailyRewardButtonClickAction;
+        public Action OnLuckySpinButtonClickAction;
 
         public MenuWindowModel(IAuthenticationService authenticationService)
         {
@@ -33,5 +34,11 @@ namespace Infrastructure.Models.UI.Windows
 
         public void OnBoostersButtonClick() =>
             OnBoostersButtonClickAction?.Invoke();
+        
+        public void OnDailyRewardButtonClick() =>
+            OnDailyRewardButtonClickAction?.Invoke();
+
+        public void OnLuckySpinButtonClick() =>
+            OnLuckySpinButtonClickAction?.Invoke();
     }
 }

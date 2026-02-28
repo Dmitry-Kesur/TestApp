@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Models.UI.Items;
 
@@ -8,14 +7,13 @@ namespace Infrastructure.Services.Level
     public interface ILevelsService
     {
         bool ReachedMaxLevel { get; }
-        bool LevelStarted { get; }
-        Action OnWinLevelAction { get; set; }
+        LevelResult LevelResult { get; }
         List<LevelPreviewModel> GetPreviewsModels();
-        LevelModel GetCurrentLevel();
-        void SetCurrentLevel(int level);
-        void Start();
+        LevelSession GetCurrentLevel();
+        void SelectLevel(int level);
         void Stop();
         void Pause();
-        void Resume();
+        void OnEnterGameLoop();
+        void Revive();
     }
 }

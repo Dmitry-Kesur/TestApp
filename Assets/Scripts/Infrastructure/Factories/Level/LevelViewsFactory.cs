@@ -9,21 +9,17 @@ namespace Infrastructure.Factories.Level
     {
         private readonly SceneProvider _sceneProvider;
 
-        private LevelView _levelView;
-
         public LevelViewsFactory(SceneProvider sceneProvider)
         {
             _sceneProvider = sceneProvider;
         }
 
-        public void CreateLevelView(LevelModel levelModel)
+        public LevelView CreateLevelView(LevelSession levelSession)
         {
             var levelPrefab = Resources.Load<LevelView>("Prefabs/Level/LevelView");
-            _levelView = Object.Instantiate(levelPrefab, _sceneProvider.GameLevelLayer, false);
-            _levelView.SetModel(levelModel);
+            var levelView = Object.Instantiate(levelPrefab, _sceneProvider.GameLevelLayer, false);
+            levelView.SetModel(levelSession);
+            return levelView;
         }
-
-        public void DestroyLevelView() =>
-            GameObject.Destroy(_levelView.gameObject);
     }
 }

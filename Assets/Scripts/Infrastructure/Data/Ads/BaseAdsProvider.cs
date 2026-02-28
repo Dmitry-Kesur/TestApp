@@ -4,31 +4,26 @@ using UnityEngine.Advertisements;
 
 namespace Infrastructure.Data.Ads
 {
-    public class BaseAdsProvider : IUnityAdsLoadListener, IUnityAdsShowListener
+    public abstract class BaseAdsProvider : IUnityAdsLoadListener, IUnityAdsShowListener
     {
-        public Action OnAdsShowCompleteAction;
+        public Action<string, string> OnAdsShowStartAction;
+        public Action<string> OnAdsShowCompleted;
 
-        public virtual string AdsId => "";
+        public abstract string AdsId { get; }
         
-        public void OnUnityAdsAdLoaded(string placementId)
-        {
+        public void OnUnityAdsAdLoaded(string placementId) =>
             Debug.Log("[Ads-Service]: Ads loaded.");
-        }
 
-        public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
-        {
+        public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message) =>
             Debug.Log($"[Ads-Service]: Ads failed to load. {error.ToString()} - {message}");
-        }
 
         public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
         {
             
         }
 
-        public void OnUnityAdsShowStart(string placementId)
-        {
-           
-        }
+        public void OnUnityAdsShowStart(string placementId) =>
+            OnAdsShowStartAction?.Invoke(placementId, AdsId);  
 
         public void OnUnityAdsShowClick(string placementId)
         {
@@ -37,26 +32,31 @@ namespace Infrastructure.Data.Ads
 
         public virtual void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
         {
-            OnAdsShowCompleteAction?.Invoke();
+            if (showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
+            {
+                OnAdsShowCompleted?.Invoke(AdsId);
+            }
         }
 
-        public void ShowAds()
-        {
+        public virtual void ShowAds() =>
             Advertisement.Show(GetPlacementId(), this);
-        }
 
-        public void Load()
-        {
-           Advertisement.Load(GetPlacementId(), this);
-        }
+        public virtual void Load() =>
+            Advertisement.Load(GetPlacementId(), this);
 
-        protected virtual string GetAndroidPlacementId() =>
-            "";
+        protected abstract string GetAndroidPlacementId();
 
-        protected virtual string GetIOSPlacementId() =>
-            "";
+        protected abstract string GetIOSPlacementId();
         
-        private string GetPlacementId() =>
-            Application.platform == RuntimePlatform.Android ? GetAndroidPlacementId() : GetIOSPlacementId();
+        protected string GetPlacementId()
+        {
+            #if UNITY_ANDROID
+                        return GetAndroidPlacementId();
+            #elif UNITY_IOS
+                return GetIOSPlacementId();
+            #else
+                return GetAndroidPlacementId();
+            #endif
+        }
     }
 }

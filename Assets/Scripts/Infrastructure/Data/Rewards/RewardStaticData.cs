@@ -1,5 +1,4 @@
-﻿using Infrastructure.Enums;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Infrastructure.Data.Rewards
 {
@@ -7,7 +6,6 @@ namespace Infrastructure.Data.Rewards
     public class RewardStaticData : ScriptableObject
     {
         public int Id;
-        public RewardType Type;
         public Sprite Sprite;
     }
 }

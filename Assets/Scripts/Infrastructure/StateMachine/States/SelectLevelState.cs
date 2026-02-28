@@ -16,5 +16,10 @@ namespace Infrastructure.StateMachine.States
         {
             _windowService.ShowWindow(WindowId.SelectLevelWindow);
         }
+
+        public override void Exit()
+        {
+            _windowService.HideActiveWindow();
+        }
     }
 }

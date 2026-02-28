@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Firebase;
 using Infrastructure.Enums;
 using Infrastructure.Services.Bootstrap;
-using Infrastructure.Services.RemoteConfig;
 using Unity.Services.Core;
 using UnityEngine;
 
@@ -12,14 +11,11 @@ namespace Infrastructure.StateMachine.States
 {
     public class InitializeThirdPartyServicesState : State
     {
-        private readonly List<IFirebaseInitialize> _firebaseInitializeServices;
+        private readonly List<IThirdPartyInitializable> _firebaseInitializeServices;
 
-        private readonly RemoteConfigService _remoteConfigService;
-
-        public InitializeThirdPartyServicesState(List<IFirebaseInitialize> firebaseInitializeServices, RemoteConfigService remoteConfigService)
+        public InitializeThirdPartyServicesState(List<IThirdPartyInitializable> firebaseInitializeServices)
         {
             _firebaseInitializeServices = firebaseInitializeServices;
-            _remoteConfigService = remoteConfigService;
         }
 
         public override async void Enter()
@@ -38,10 +34,14 @@ namespace Infrastructure.StateMachine.States
 
         private async Task InitializeServices()
         {
+            await InitAsyncServices();
+            InitializeFirebaseServices();
+        }
+
+        private async Task InitAsyncServices()
+        {
             await UnityServices.InitializeAsync();
             await CheckAndFixFirebaseDependencies();
-            await _remoteConfigService.Initialize();
-            InitializeFirebaseServices();
         }
 
         private async Task CheckAndFixFirebaseDependencies()

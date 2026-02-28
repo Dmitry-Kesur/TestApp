@@ -5,7 +5,7 @@ namespace Infrastructure.Services.Shop
 {
     public interface IPaymentShopService
     {
-        void PaymentProduct(IProductModel product);
-        Action<IProductModel> OnCompletePaymentProduct { get; set; }
+        void PaymentProduct(IShopProductModel iShopProduct);
+        Action<IShopProductModel> OnCompletePaymentProduct { get; set; }
     }
 }

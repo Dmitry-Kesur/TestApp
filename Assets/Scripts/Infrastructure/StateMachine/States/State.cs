@@ -6,12 +6,11 @@ namespace Infrastructure.StateMachine.States
     {
         [Inject] protected StateMachineService StateMachineService;
 
-        public virtual void Enter()
-        {
-        }
+        public abstract void Enter();
 
         public virtual void Exit()
         {
+            
         }
     }
 }

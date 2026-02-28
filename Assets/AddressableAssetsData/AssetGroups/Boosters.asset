@@ -17,26 +17,24 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: ce22ebf0e18857b418c8bb29ce65a997
   m_SerializeEntries:
-  - m_GUID: ec3871eec62efd74ba7a58cbc217185d
-    m_Address: Assets/Scripts/ScriptableObjects/Boosters/BoosterData.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - boosters
   - m_GUID: 9a8be720210a1434484bcb01d3f5295d
     m_Address: Assets/Scripts/ScriptableObjects/Boosters/BoosterData 1.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - boosters
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c4d5e83de87ed18409dff7220b49e068
     m_Address: Assets/Scripts/ScriptableObjects/Boosters/BoosterData 2.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - boosters
-  - m_GUID: 9629b03fa96eaf64fb60089c37964051
-    m_Address: Assets/Scripts/ScriptableObjects/Boosters/BoosterData 3.asset
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec3871eec62efd74ba7a58cbc217185d
+    m_Address: Assets/Scripts/ScriptableObjects/Boosters/BoosterData.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - boosters
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6436b313d4066a24281bf3fc99b894d0, type: 2}
   m_SchemaSet:

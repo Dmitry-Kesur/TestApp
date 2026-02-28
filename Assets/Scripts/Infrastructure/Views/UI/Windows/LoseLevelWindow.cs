@@ -11,8 +11,8 @@ namespace Infrastructure.Views.UI.Windows
     {
         [SerializeField] private ButtonWithLabel _restartButton;
         [SerializeField] private ButtonWithLabel _backToMenuButton;
+        [SerializeField] private ButtonWithLabel _continueButton;
         [SerializeField] private TextMeshProUGUI _totalScoreTextField;
-        [SerializeField] private TextMeshProUGUI _failItemsTextField;
         
         private LoseLevelWindowModel _loseLevelWindowModel;
 
@@ -28,7 +28,6 @@ namespace Infrastructure.Views.UI.Windows
         {
             base.Draw();
             _totalScoreTextField.text = _loseLevelWindowModel.TotalScore.ToString();
-            _failItemsTextField.text = _loseLevelWindowModel.TotalFailItems.ToString();
         }
 
         protected override void SubscribeListeners()
@@ -36,6 +35,7 @@ namespace Infrastructure.Views.UI.Windows
             base.SubscribeListeners();
             _restartButton.OnButtonClickAction = _loseLevelWindowModel.OnRestartButtonClick;
             _backToMenuButton.OnButtonClickAction = _loseLevelWindowModel.OnBackToMenuButtonClick;
+            _continueButton.OnButtonClickAction = _loseLevelWindowModel.OnContinueButtonClick;
         }
 
         protected override void Clear()

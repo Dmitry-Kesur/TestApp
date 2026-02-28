@@ -2,7 +2,7 @@
 using Infrastructure.Models.GameEntities.Level;
 using Infrastructure.Services.Booster;
 using Infrastructure.Services.Hud;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
 
 namespace Infrastructure.Controllers.Levels
 {
@@ -10,23 +10,24 @@ namespace Infrastructure.Controllers.Levels
     {
         private readonly IHudService _hudService;
         private readonly IBoostersService _boostersService;
-        private readonly LevelProgressUpdater _levelProgressUpdater;
+        private readonly SaveLoadProgressService _saveLoadProgressService;
 
         public Action OnReachScoreToWin;
         public Action OnReachedMaximumFailItems;
 
         private int _totalFailItems;
         private int _totalLevelScore;
-        
-        private LevelModel _levelModel;
 
-        public LevelProgressController(IHudService hudService, IBoostersService boostersService, LevelProgressUpdater levelProgressUpdater)
+        private LevelSession _levelSession;
+
+        public LevelProgressController(IHudService hudService, IBoostersService boostersService,
+            SaveLoadProgressService saveLoadProgressService)
         {
             _hudService = hudService;
             _boostersService = boostersService;
-            _levelProgressUpdater = levelProgressUpdater;
+            _saveLoadProgressService = saveLoadProgressService;
         }
-        
+
         public int TotalLevelScore =>
             _totalLevelScore;
 
@@ -36,10 +37,10 @@ namespace Infrastructure.Controllers.Levels
         public void UpdateProgressByFailItem()
         {
             _totalFailItems++;
-            
+
             _hudService.UpdateHud();
 
-            if (_totalFailItems == _levelModel.MaximumFailItems)
+            if (_totalFailItems == _levelSession.MaximumFailItems)
             {
                 UpdateBestScore();
                 OnReachedMaximumFailItems?.Invoke();
@@ -49,11 +50,11 @@ namespace Infrastructure.Controllers.Levels
         public void Clear()
         {
             _totalLevelScore = 0;
-            _totalFailItems = 0;
+            ClearFailedProgress();
         }
 
-        public void SetModel(LevelModel levelModel) =>
-            _levelModel = levelModel;
+        public void SetModel(LevelSession levelSession) =>
+            _levelSession = levelSession;
 
         public void Refresh()
         {
@@ -63,21 +64,24 @@ namespace Infrastructure.Controllers.Levels
         public void UpdateProgressByCatchItem(int scorePoints)
         {
             _totalLevelScore += GetUpdatedScore(scorePoints);
-            
+
             _hudService.UpdateHud();
 
-            if (TotalLevelScore >= _levelModel.ScorePointsToWin)
+            if (TotalLevelScore >= _levelSession.ScorePointsToWin)
             {
                 UpdateBestScore();
                 OnReachScoreToWin?.Invoke();
             }
         }
 
+        public void ClearFailedProgress() =>
+            _totalFailItems = 0;
+
         private void UpdateBestScore()
         {
-            var currentBestScore = _levelProgressUpdater.GetBestScore();
+            var currentBestScore = _saveLoadProgressService.Read(progress => progress.BestScore);
             if (currentBestScore < _totalLevelScore)
-                _levelProgressUpdater.UpdateBestScore(_totalLevelScore);
+                _saveLoadProgressService.Write(progress => progress.BestScore = _totalLevelScore);
         }
 
         private int GetUpdatedScore(int scorePoints)
@@ -86,7 +90,7 @@ namespace Infrastructure.Controllers.Levels
 
             if (boostValue == 0)
                 return scorePoints;
-            
+
             return scorePoints * boostValue;
         }
     }

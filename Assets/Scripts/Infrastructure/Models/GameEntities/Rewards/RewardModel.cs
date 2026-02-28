@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Data.Rewards;
-using Infrastructure.Enums;
 using Infrastructure.Models.UI.Items;
 using UnityEngine;
 
@@ -17,10 +16,10 @@ namespace Infrastructure.Models.GameEntities.Rewards
             _amount = rewardAmount;
         }
 
+        public int Id => _rewardStaticData.Id;
+
         public int Amount => 
             _amount;
-
-        public RewardType Type => _rewardStaticData.Type;
 
         public Sprite IconSprite =>
             _rewardStaticData.Sprite;

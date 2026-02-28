@@ -1,26 +1,51 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Infrastructure.Data.Notifications;
+using Infrastructure.Data.Products;
+using Infrastructure.Models.UI.Items;
 using Infrastructure.Providers.InAppPurchase;
 using Infrastructure.Services.Analytics;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Log;
+using Infrastructure.Services.Notification;
 
 namespace Infrastructure.Services.InAppPurchase
 {
-    public class InAppPurchaseService : IInAppPurchaseService
+    public class InAppPurchaseService : IInAppPurchaseService, IBootstrapTarget
     {
         private readonly InAppPurchaseProvider _purchaseProvider;
         private readonly IAnalyticsService _analyticsService;
         private readonly IExceptionLoggerService _exceptionLoggerService;
+        private readonly IInAppProductsSource _inAppProductsSource;
+        private readonly INotificationService _notificationService;
 
-        public InAppPurchaseService(InAppPurchaseProvider purchaseProvider, IAnalyticsService analyticsService, IExceptionLoggerService exceptionLoggerService)
+        private List<InAppProductModel> _inAppProductModels;
+
+        public InAppPurchaseService(InAppPurchaseProvider purchaseProvider, IAnalyticsService analyticsService,
+            IExceptionLoggerService exceptionLoggerService, IInAppProductsSource inAppProductsSource, INotificationService notificationService)
         {
             _purchaseProvider = purchaseProvider;
             _analyticsService = analyticsService;
             _exceptionLoggerService = exceptionLoggerService;
+            _inAppProductsSource = inAppProductsSource;
+            _notificationService = notificationService;
             _purchaseProvider.OnRestoreCompletePurchase += OnRestoreCompletePurchase;
         }
 
-        public Action<string> OnCompletePurchase { get; set; }
+        public int InitializationOrder => 1;
+
+        public async void Initialize()
+        {
+            var productsData = await _inAppProductsSource.GetProducts();
+            _purchaseProvider.OnInitializedAction = () => CreateProductModels(productsData);
+            _purchaseProvider.SetProducts(productsData);
+            CreateProductModels(productsData);
+        }
+
+        public Action<PurchaseReward> OnCompletePurchaseAction { get; set; }
+
+        public List<InAppProductModel> GetProductModels() => _inAppProductModels;
 
         public async Task PurchaseProduct(string productId)
         {
@@ -31,16 +56,15 @@ namespace Infrastructure.Services.InAppPurchase
                     _exceptionLoggerService.LogError("PurchaseProduct: productId is null or empty.");
                     return;
                 }
-                
+
                 var purchaseState = await _purchaseProvider.Purchase(productId);
                 if (purchaseState)
                 {
-                    OnCompletePurchase?.Invoke(productId);
-                    _analyticsService.LogCompleteInAppPurchaseProduct(productId);
+                    OnCompletePurchase(productId);
                     return;
                 }
-                
-                
+
+
                 _analyticsService.LogFailedInAppPurchaseProduct(productId);
             }
             catch (Exception e)
@@ -49,10 +73,45 @@ namespace Infrastructure.Services.InAppPurchase
             }
         }
 
+        private void OnCompletePurchase(string productId)
+        {
+            var product = GetProductModelById(productId);
+
+            OnCompletePurchaseAction?.Invoke(product.PurchaseReward);
+            _analyticsService.LogCompleteInAppPurchaseProduct(productId);
+            
+            var notificationModel = new NotificationWithIconModel
+            {
+                NotificationText = "Purchase successful",
+                NotificationIcon = product.IconSprite
+            };
+
+            _notificationService.ShowNotification(notificationModel);
+        }
+
         private void OnRestoreCompletePurchase(string productId)
         {
-            OnCompletePurchase?.Invoke(productId);
+            var productModel = GetProductModelById(productId);
+            OnCompletePurchaseAction?.Invoke(productModel.PurchaseReward);
             _analyticsService.LogInAppPurchaseProductRestore(productId);
         }
+        
+        private InAppProductModel GetProductModelById(string productId) =>
+            _inAppProductModels.Find(model => model.ProductId == productId);
+
+        private void CreateProductModels(List<InAppProductData> productsData)
+        {
+            _inAppProductModels = new();
+            foreach (var product in productsData)
+            {
+                var productModel = new InAppProductModel(product);
+                productModel.OnPurchaseAction = OnPurchaseProduct;
+                productModel.Price = _purchaseProvider.GetLocalizedPriceString(product.productId);
+                _inAppProductModels.Add(productModel);
+            }
+        }
+
+        private async void OnPurchaseProduct(string productId) =>
+            await PurchaseProduct(productId);
     }
 }

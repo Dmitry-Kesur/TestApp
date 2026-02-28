@@ -9,7 +9,7 @@ namespace Infrastructure.Views.UI.Loaders
     {
         [SerializeField] protected List<DrawableItem<T>> cachedItems;
 
-        public void DrawLoader(List<T> loaderData)
+        public void DrawLoader(IReadOnlyList<T> loaderData)
         {
             HideItems();
             

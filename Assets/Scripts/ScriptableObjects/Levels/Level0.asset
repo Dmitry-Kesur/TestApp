@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Level: 1
   MaximumFailItems: 3
-  ScorePointsToWin: 425
+  ScorePointsToWin: 20
   CatchItemsToDecreaseSpawnDelay: 7
   DefaultItemsSpawnDelay: 1.2
   MinimalItemsSpawnDelay: 0.5

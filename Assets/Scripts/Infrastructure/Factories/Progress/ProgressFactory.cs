@@ -1,20 +1,21 @@
 using System.Collections.Generic;
+using Infrastructure.Data;
 using Infrastructure.Data.PlayerProgress;
-using Infrastructure.Factories.Purchase;
 
 namespace Infrastructure.Factories.Progress
 {
     public class ProgressFactory : IProgressFactory
     {
-        public Data.PlayerProgress.Progress CreateNewProgress(string userId)
+        public ProgressData CreateProgress(string userId)
         {
-            var playerProgress = new Data.PlayerProgress.Progress
+            var playerProgress = new ProgressData
             {
                 ActiveLevel = 1,
                 UserId = userId,
                 WinLevelIds = new List<int>(),
                 UnlockedLevelItemIds = new List<int>(),
                 PurchasedShopProductIds = new List<int>(),
+                Resources = new List<ProgressResourceData>()
             };
 
             return playerProgress;

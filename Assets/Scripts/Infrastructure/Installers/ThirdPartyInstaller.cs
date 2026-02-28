@@ -3,7 +3,7 @@ using Infrastructure.Services.Ads;
 using Infrastructure.Services.Analytics;
 using Infrastructure.Services.Authentication;
 using Infrastructure.Services.Log;
-using Infrastructure.Services.RemoteConfig;
+using Infrastructure.Services.Reward;
 using Zenject;
 
 namespace Infrastructure.Installers
@@ -19,9 +19,9 @@ namespace Infrastructure.Installers
         {
             BindAnalyticsService();
             BindExceptionLoggerService();
-            BindRemoteConfigService();
             BindAdsService();
             BindAuthenticationService();
+            BindDailyAdRewardService();
         }
 
         private void BindAnalyticsService() =>
@@ -29,26 +29,26 @@ namespace Infrastructure.Installers
 
         private void BindExceptionLoggerService()
         {
-            #if !UNITY_EDITOR
+#if !UNITY_EDITOR
             Container.BindInterfacesAndSelfTo<CrashlyticsService>().AsSingle();
-            #else
+#else
             Container.BindInterfacesAndSelfTo<EditorExceptionLoggerService>().AsSingle();
-            #endif
+#endif
         }
-
-        private void BindRemoteConfigService() =>
-            Container.BindInterfacesAndSelfTo<RemoteConfigService>().AsSingle();
 
         private void BindAdsService() =>
             Container.BindInterfacesAndSelfTo<AdsService>().AsSingle();
 
         private void BindAuthenticationService()
         {
-            #if UNITY_EDITOR
-                Container.BindInterfacesAndSelfTo<EditorAuthenticationService>().AsSingle();
-            #else
+#if UNITY_EDITOR
+            Container.BindInterfacesAndSelfTo<EditorAuthenticationService>().AsSingle();
+#else
                 Container.BindInterfacesAndSelfTo<GoogleAuthenticationService>().AsSingle();
-            #endif
+#endif
         }
+
+        private void BindDailyAdRewardService() =>
+            Container.BindInterfacesAndSelfTo<DailyAdRewardService>().AsSingle();
     }
 }

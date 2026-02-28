@@ -1,4 +1,5 @@
-﻿using UnityEngine.Advertisements;
+﻿using Infrastructure.Constants;
+using UnityEngine.Advertisements;
 
 namespace Infrastructure.Data.Ads
 {
@@ -8,17 +9,9 @@ namespace Infrastructure.Data.Ads
             Constants.AdsId.Rewarded;
 
         protected override string GetAndroidPlacementId() =>
-            "Rewarded_Android";
+            AdsPlacementId.RewardedAndroid;
 
         protected override string GetIOSPlacementId() =>
-            "Rewarded_iOS";
-
-        public override void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
-        {
-            if (showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
-            {
-                OnAdsShowCompleteAction?.Invoke();
-            }
-        }
+            AdsPlacementId.RewardedIOS;
     }
 }

@@ -9,7 +9,7 @@ using Infrastructure.Models.GameEntities.Level.Items;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Preloader;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
 
 namespace Infrastructure.Services.Items
 {
@@ -18,16 +18,16 @@ namespace Infrastructure.Services.Items
         private readonly List<ItemModel> _items = new();
 
         private readonly LocalAddressableService _addressableService;
-        private readonly ItemsProgressUpdater _itemsProgressUpdater;
+        private readonly SaveLoadProgressService _progressService;
         private readonly ItemModelsFactory _itemModelsFactory;
 
         private List<ItemData> _itemsData;
 
-        public ItemsService(LocalAddressableService localAddressableService, ItemsProgressUpdater itemsProgressUpdater,
+        public ItemsService(LocalAddressableService localAddressableService, SaveLoadProgressService progressService,
             ItemModelsFactory itemModelsFactory)
         {
             _addressableService = localAddressableService;
-            _itemsProgressUpdater = itemsProgressUpdater;
+            _progressService = progressService;
             _itemModelsFactory = itemModelsFactory;
         }
 
@@ -47,10 +47,17 @@ namespace Infrastructure.Services.Items
         }
 
         public LoadingStage LoadingStage => LoadingStage.LoadingItems;
+        
+        public void UnlockItem(int itemId)
+        {
+            var model = GetItemById(itemId);
+            _progressService.Write(progress => progress.AddUnlockedLevelItem(itemId));
+            model.Unlocked = true;
+        }
 
         public ItemModel GetSelectedItem()
         {
-            var selectedItemId = _itemsProgressUpdater.GetSelectedItemId();
+            var selectedItemId = _progressService.Read(progress => progress.SelectedItemId);
             if (selectedItemId == 0)
                 return null;
 
@@ -86,14 +93,13 @@ namespace Infrastructure.Services.Items
             foreach (var itemData in _itemsData)
             {
                 var itemModel = _itemModelsFactory.CreateItem(itemData);
-                itemModel.OnUnlockItemAction = OnUnlockItem;
                 _items.Add(itemModel);
             }
         }
 
         private void UpdateUnlockedItems()
         {
-            var unlockedItemsIds = _itemsProgressUpdater.GetUnlockedItemIds();
+            var unlockedItemsIds = _progressService.Read(progress => progress.UnlockedLevelItemIds);
             if (unlockedItemsIds is { Count: 0 })
                 return;
 
@@ -103,12 +109,6 @@ namespace Infrastructure.Services.Items
                 if (itemModel != null)
                     itemModel.Unlocked = true;
             }
-        }
-
-        private void OnUnlockItem(ItemModel itemModel)
-        {
-            _itemsProgressUpdater.SetUnlockedItem(itemModel.Id);
-            itemModel.Unlocked = true;
         }
     }
 }

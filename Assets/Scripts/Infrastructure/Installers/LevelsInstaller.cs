@@ -22,7 +22,7 @@ namespace Infrastructure.Installers
             Container.Bind<ItemModelsFactory>().AsSingle();
             Container.Bind<LevelViewsFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemViewsFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<LevelModelsFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelFactory>().AsSingle();
         }
 
         private void BindProviders()

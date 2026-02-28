@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 3
   BoostValue: 4
+  DurationSeconds: 90
   IconSprite: {fileID: 21300000, guid: 12b26c75266de5e4c9da9870c4f9f719, type: 3}
-  ProductId: booster_x_4
+  RequiredResourceId: 4

@@ -4,6 +4,7 @@ using Infrastructure.Models.UI.Windows;
 using Infrastructure.Views.UI.Buttons;
 using Infrastructure.Views.UI.Loaders;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Infrastructure.Views.UI.Windows
 {
@@ -11,7 +12,7 @@ namespace Infrastructure.Views.UI.Windows
     {
         [SerializeField] private ButtonWithLabel _backButton;
         [SerializeField] private ShopLoader _shopLoader;
-        [SerializeField] private CurrencyView _currencyView;
+        [SerializeField] private CoinsView _coinsView;
 
         private ShopWindowModel _shopWindowModel;
 
@@ -27,13 +28,20 @@ namespace Infrastructure.Views.UI.Windows
         protected override void SubscribeListeners()
         {
             base.SubscribeListeners();
-            _backButton.OnButtonClickAction = _shopWindowModel.OnBackButtonClick;
-            _shopWindowModel.OnUpdateCurrencyAction = _currencyView.UpdateCurrency;
+            _backButton.OnButtonClickAction += _shopWindowModel.OnBackButtonClick;
+            _shopWindowModel.OnUpdateCoinsAction += UpdateCoins;
+            _shopWindowModel.OnCompletePurchaseAction += DrawProducts;
         }
 
         protected override void Draw()
         {
             base.Draw();
+            DrawProducts();
+            UpdateCoins();
+        }
+
+        private void DrawProducts()
+        {
             _shopLoader.DrawLoader(_shopWindowModel.ShopProducts);
         }
 
@@ -41,8 +49,14 @@ namespace Infrastructure.Views.UI.Windows
         {
             base.Clear();
 
-            _backButton.OnButtonClickAction = null;
-            _shopWindowModel.OnUpdateCurrencyAction = null;
+            _backButton.OnButtonClickAction -= _shopWindowModel.OnBackButtonClick;
+            _shopWindowModel.OnUpdateCoinsAction -= UpdateCoins;
+            _shopWindowModel.OnCompletePurchaseAction -= DrawProducts;
+        }
+
+        private void UpdateCoins()
+        {
+            _coinsView.UpdateCoins(_shopWindowModel.CoinsAmount);
         }
     }
 }

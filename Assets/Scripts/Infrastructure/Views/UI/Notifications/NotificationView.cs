@@ -7,7 +7,6 @@ namespace Infrastructure.Views.UI.Notifications
 {
     public class NotificationView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _notificationTextField;
         [SerializeField] private ButtonWithIcon _closeNotificationButton;
 
         protected NotificationModel NotificationModel;
@@ -16,8 +15,6 @@ namespace Infrastructure.Views.UI.Notifications
         {
             NotificationModel = notificationModel;
             _closeNotificationButton.OnButtonClickAction = CloseNotificationAction;
-            
-            _notificationTextField.text = NotificationModel.NotificationText;
         }
 
         private void CloseNotificationAction()

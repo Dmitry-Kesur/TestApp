@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Infrastructure.Data.Notifications
 {
-    public class NotificationWithIconModel : NotificationModel
+    public class NotificationWithIconModel : NotificationWithTextModel
     {
         public Sprite NotificationIcon;
         

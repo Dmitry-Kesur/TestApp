@@ -10,6 +10,12 @@ namespace Infrastructure.Views.UI.Buttons
         
         [SerializeField] private Button button;
 
+        public bool Interactable
+        {
+            get => button.interactable;
+            set => button.interactable = value;
+        }
+
         private void OnEnable()
         {
             button.onClick.AddListener(OnButtonClickHandler);

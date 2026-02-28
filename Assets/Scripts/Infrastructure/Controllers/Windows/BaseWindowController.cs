@@ -7,19 +7,29 @@ namespace Infrastructure.Controllers.Windows
     {
         protected T windowView;
         
-        public override void OnWindowCreate(BaseWindow view)
+        public override void SetWindowView(BaseWindow view)
         {
             windowView = (T)view;
             windowView.SetModel(GetModel());
-            windowView.OnCreate();
         }
 
-        protected virtual BaseWindowModel GetModel() =>
-            null;
+        public override void AfterWindowCreate()
+        {
+            InitParameters();
+        }
+
+        protected virtual void InitParameters()
+        {
+           
+        }
+
+        protected abstract BaseWindowModel GetModel();
     }
     
     public abstract class BaseWindowController
     {
-        public abstract void OnWindowCreate(BaseWindow view);
+        public abstract void SetWindowView(BaseWindow view);
+
+        public abstract void AfterWindowCreate();
     }
 }

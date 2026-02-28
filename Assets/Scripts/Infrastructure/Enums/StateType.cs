@@ -13,6 +13,8 @@
         PauseGameLoopState,
         SelectLevelState,
         ShopState,
-        BoostersState
+        BoostersState,
+        DailyBonusState,
+        LuckySpinState
     }
 }

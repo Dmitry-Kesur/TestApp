@@ -5,26 +5,27 @@ namespace Infrastructure.Models.UI.Windows
 {
     public class LoseLevelWindowModel : BaseWindowModel
     {
-        private readonly LevelModel _levelModel;
+        private readonly LevelSession _levelSession;
         
         public Action OnRestartButtonClickAction;
         public Action OnBackToMenuButtonClickAction;
+        public Action OnContinueButtonClickAction;
         
-        public LoseLevelWindowModel(LevelModel levelModel)
+        public LoseLevelWindowModel(LevelSession levelSession)
         {
-            _levelModel = levelModel;
+            _levelSession = levelSession;
         }
 
         public int TotalScore =>
-            _levelModel.TotalLevelScore;
-
-        public int TotalFailItems =>
-            _levelModel.TotalFailItems;
+            _levelSession.TotalLevelScore;
 
         public void OnRestartButtonClick() =>
             OnRestartButtonClickAction?.Invoke();
 
         public void OnBackToMenuButtonClick() =>
             OnBackToMenuButtonClickAction?.Invoke();
+
+        public void OnContinueButtonClick() =>
+            OnContinueButtonClickAction?.Invoke();
     }
 }

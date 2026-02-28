@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Infrastructure.Data.PlayerProgress;
 
 namespace Infrastructure.Services.Progress
 {
     public interface ISaveLoadProgressService
     {
-        Task<Data.PlayerProgress.Progress> LoadProgress(string userId);
-        void SaveProgress(Data.PlayerProgress.Progress progress);
+        TResult Read<TResult>(Func<ProgressData, TResult> read);
+        void Write(Action<ProgressData> edit);
+        Task OnReadyToLoadProgress(string userId);
     }
 }

@@ -1,11 +1,9 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
-using Infrastructure.Services;
 using Infrastructure.Services.Items;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
 using Infrastructure.Services.Sound;
 using Infrastructure.StateMachine;
-using Infrastructure.StateMachine.States;
 using Infrastructure.Views.UI.Windows;
 
 namespace Infrastructure.Controllers.Windows
@@ -14,16 +12,16 @@ namespace Infrastructure.Controllers.Windows
     {
         private readonly IItemsService _itemsService;
         private readonly StateMachineService _stateMachineService;
-        private readonly ItemsProgressUpdater _itemsProgressUpdater;
+        private readonly SaveLoadProgressService _saveLoadProgressService;
         private readonly SettingsWindowModel _settingsWindowModel;
         private readonly ISoundService _soundService;
 
         public SettingsWindowController(IItemsService itemsService, StateMachineService stateMachineService,
-            ItemsProgressUpdater itemsProgressUpdater, ISoundService soundService)
+            SaveLoadProgressService saveLoadProgressService, ISoundService soundService)
         {
             _itemsService = itemsService;
             _stateMachineService = stateMachineService;
-            _itemsProgressUpdater = itemsProgressUpdater;
+            _saveLoadProgressService = saveLoadProgressService;
             _soundService = soundService;
             _soundService.OnChangeMuteSoundsAction += UpdateMuteSoundsState;
 
@@ -33,9 +31,9 @@ namespace Infrastructure.Controllers.Windows
                 OnItemSelectAction = OnItemSelect,
                 OnChangeMuteSoundsStateAction = OnChangeMuteSoundsState,
             };
-            
+
             _settingsWindowModel.SetItems(_itemsService.GetItemsByType(ItemsType.Candy));
-            _settingsWindowModel.SelectedItemId = _itemsProgressUpdater.GetSelectedItemId();
+            _settingsWindowModel.SelectedItemId = _saveLoadProgressService.Read(progress => progress.SelectedItemId);
         }
 
         protected override BaseWindowModel GetModel() =>
@@ -48,7 +46,7 @@ namespace Infrastructure.Controllers.Windows
 
         private void OnItemSelect(int itemId)
         {
-            _itemsProgressUpdater.SetSelectedItemId(itemId);
+            _saveLoadProgressService.Write(progress => progress.SelectedItemId = itemId);
         }
 
         private void OnReturnHandler()

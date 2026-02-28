@@ -13,18 +13,23 @@ namespace Infrastructure.Views.GameEntities
         [SerializeField] private Image _levelBackground;
         [SerializeField] private RectTransform _containerRectTransform;
         
-        private LevelModel _levelModel;
+        private LevelSession _levelSession;
 
-        public void SetModel(LevelModel levelModel)
+        public void SetModel(LevelSession levelSession)
         {
-            _levelModel = levelModel;
+            _levelSession = levelSession;
             AfterSetModel();
+        }
+
+        public void BeforeDestroy()
+        {
+            _levelSession.OnSpawnItemAction -= OnSpawnItem;
         }
 
         private void AfterSetModel()
         {
-            _levelModel.OnSpawnItemAction = OnSpawnItem;
-            _levelBackground.sprite = _levelModel.LevelBackground;
+            _levelSession.OnSpawnItemAction += OnSpawnItem;
+            _levelBackground.sprite = _levelSession.LevelBackground;
         }
 
         private void OnSpawnItem(ItemView itemView)
@@ -39,7 +44,7 @@ namespace Infrastructure.Views.GameEntities
             itemView.StartRotation();
             
             var finishPositionY = _containerRectTransform.rect.yMin - itemView.Height / 2;
-            var animateDuration = _levelModel.DropItemsDuration;
+            var animateDuration = _levelSession.DropItemsDuration;
             var animationTween = itemView.MoveToPosition(new Vector2(itemView.PositionX, finishPositionY),
                 animateDuration);
             animationTween.OnUpdate(() => OnUpdateItem(itemView));
@@ -62,7 +67,7 @@ namespace Infrastructure.Views.GameEntities
 
         private void OnUpdateItem(ItemView itemView)
         {
-            if (!_levelModel.Started)
+            if (!_levelSession.Started)
                 return;
             
             if (CheckReachCatchArea(itemView))
@@ -70,7 +75,7 @@ namespace Infrastructure.Views.GameEntities
             else
                 itemView.OnReachedFailArea();
         }
-        
+
         private bool CheckReachCatchArea(ItemView itemView)
         {
             var itemY = itemView.PositionY;
@@ -79,10 +84,5 @@ namespace Infrastructure.Views.GameEntities
 
         private bool CheckReachFailArea(ItemView itemView) =>
             itemView.PositionY < _failAreaTransform.localPosition.y;
-
-        private void OnDisable()
-        {
-            _levelModel.OnSpawnItemAction = null;
-        }
     }
 }

@@ -1,59 +1,64 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Infrastructure.Constants;
 using Infrastructure.Data.Notifications;
 using Infrastructure.Data.Preloader;
 using Infrastructure.Data.Products;
-using Infrastructure.Factories.Purchase;
+using Infrastructure.Factories.Shop;
 using Infrastructure.Models.GameEntities.Shop;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Analytics;
 using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Notification;
 using Infrastructure.Services.Preloader;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
-using Infrastructure.Strategy;
+using Infrastructure.Services.Progress;
+using Infrastructure.Services.Resource;
 
 namespace Infrastructure.Services.Shop
 {
     public class ShopService : ILoadableService, IBootstrapTarget
     {
-        private readonly List<ProductModel> _shopProducts = new();
+        private readonly List<ShopProductModel> _productModels = new();
 
         private readonly LocalAddressableService _localAddressableService;
         private readonly IPaymentShopService _paymentProductService;
         private readonly IAnalyticsService _analyticsService;
-        private readonly PurchaseProgressUpdater _purchaseProgressUpdater;
+        private readonly ISaveLoadProgressService _saveLoadProgressService;
         private readonly INotificationService _notificationService;
-        private readonly IShopProductStrategiesFactory _productStrategiesFactory;
+        private readonly ShopProductFactory _productFactory;
+        private readonly ResourcesService _resourcesService;
+        private readonly ShopProductRewardResolver _productRewardResolver;
 
-        private List<IProductStrategy> _productStrategies;
-        private List<ProductData> _products;
+        public Action OnPurchaseCompleted;
+        
+        private List<ShopProductData> _productsData;
 
         public ShopService(LocalAddressableService localAddressableService,
             IPaymentShopService paymentProductService, IAnalyticsService analyticsService,
-            PurchaseProgressUpdater purchaseProgressUpdater, INotificationService notificationService,
-            IShopProductStrategiesFactory productStrategiesFactory)
+            ISaveLoadProgressService saveLoadProgressService, INotificationService notificationService,
+            ShopProductFactory productFactory, ResourcesService resourcesService, ShopProductRewardResolver productRewardResolver)
         {
             _localAddressableService = localAddressableService;
             _paymentProductService = paymentProductService;
             _analyticsService = analyticsService;
-            _purchaseProgressUpdater = purchaseProgressUpdater;
+            _saveLoadProgressService = saveLoadProgressService;
             _notificationService = notificationService;
-            _productStrategiesFactory = productStrategiesFactory;
-
-            SubscribeListeners();
+            _productFactory = productFactory;
+            _resourcesService = resourcesService;
+            _productRewardResolver = productRewardResolver;
         }
 
-        public List<ProductModel> GetProducts() =>
-            _shopProducts;
+        public IReadOnlyList<ShopProductModel> GetProducts() =>
+            _productModels;
 
-        public LoadingStage LoadingStage => 
+        public LoadingStage LoadingStage =>
             LoadingStage.LoadingShop;
 
         public async Task Load()
         {
-            _products = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<ProductData>(AddressableGroupNames
+            _productsData = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<ShopProductData>(
+                AddressableGroupNames
                     .ProductsGroup);
         }
 
@@ -61,58 +66,78 @@ namespace Infrastructure.Services.Shop
 
         public void Initialize()
         {
-            _productStrategies = _productStrategiesFactory.CreateProductStrategies();
-            CreateProducts(_products);
+            CreateProducts(_productsData);
             UpdatePurchasedProducts();
         }
-        
-        private void CreateProducts(List<ProductData> productsData)
+
+        private void CreateProducts(List<ShopProductData> productsData)
         {
-            foreach (var productsStrategy in _productStrategies)
+            foreach (var productData in productsData)
             {
-                var products = productsStrategy.CreateProducts(productsData);
-                _shopProducts.AddRange(products);
+                var productModel = _productFactory.CreateProductModel(productData);
+                _productModels.Add(productModel);
             }
-            
+
             SubscribeListeners();
         }
 
         private void UpdatePurchasedProducts()
         {
-            var purchasedProductIds = _purchaseProgressUpdater.GetPurchasedShopProductIds();
+            var purchasedProductIds = _saveLoadProgressService.Read(progress => progress.PurchasedShopProductIds);
 
             foreach (var productId in purchasedProductIds)
             {
-                var productById = _shopProducts.Find(model => model.Id == productId);
+                var productById = _productModels.Find(model => model.Id == productId);
+                if (productById == null)
+                    continue;
+                
                 productById.Purchased = true;
             }
         }
 
-        private void OnPurchaseProduct(ProductModel product) =>
-            _paymentProductService.PaymentProduct(product);
-
-        private void OnCompletePurchaseProduct(IProductModel product)
+        private void OnPurchaseProduct(ShopProductModel shopProduct)
         {
-            HandleProductPurchaseCompletion(product);
-            _purchaseProgressUpdater.SetPurchasedShopProductId(product.Id);
-            _analyticsService.LogPurchaseProduct(product.Id);
+            if (shopProduct.PurchaseType == ShopProductPurchaseType.NonConsumable)
+            {
+                var purchasedProducts = _saveLoadProgressService.Read(progress => progress.PurchasedShopProductIds);
+                if (purchasedProducts.Contains(shopProduct.Id))
+                {
+                    var notificationModel = new NotificationWithTextModel
+                    {
+                        NotificationText = UIMessages.ProductAlreadyPurchasedAlias
+                    };
+
+                    _notificationService.ShowNotification(notificationModel);
+                    return;
+                }
+            }
+            
+            _paymentProductService.PaymentProduct(shopProduct);
+        }
+
+        private void OnCompletePurchaseProduct(IShopProductModel product)
+        {
+            _productRewardResolver.Resolve(product);
+
+            if (product.PurchaseType == ShopProductPurchaseType.NonConsumable)
+            {
+                product.Purchased = true;
+                _saveLoadProgressService.Write(progress => progress.AddPurchasedShopProduct(product.Id));
+            }
+           
+            _analyticsService.LogPurchaseInGameProduct(product.Id);
 
             ShowPurchaseProductNotification(product);
+            
+            OnPurchaseCompleted?.Invoke();
         }
 
-        private static void HandleProductPurchaseCompletion(IProductModel product)
-        {
-            var purchaseTarget = product.GetPurchaseTarget();
-            purchaseTarget.OnPurchaseComplete();
-            product.UpdateProductAction?.Invoke();
-        }
-
-        private void ShowPurchaseProductNotification(IProductModel product)
+        private void ShowPurchaseProductNotification(IShopProductModel iShopProduct)
         {
             var notificationModel = new NotificationWithIconModel
             {
                 NotificationText = UIMessages.SuccessfulPurchaseAlias,
-                NotificationIcon = product.ProductIcon
+                NotificationIcon = iShopProduct.ProductIcon
             };
 
             _notificationService.ShowNotification(notificationModel);
@@ -120,7 +145,7 @@ namespace Infrastructure.Services.Shop
 
         private void SubscribeListeners()
         {
-            foreach (var shopProduct in _shopProducts)
+            foreach (var shopProduct in _productModels)
             {
                 shopProduct.OnPurchaseProductAction = OnPurchaseProduct;
             }

@@ -15,7 +15,7 @@ MonoBehaviour:
   _preloaderDatas:
   - LoadingStage: 2
     SortValue: 1
-    ProgressValue: 0.2
+    ProgressValue: 0.1
     StageText: Loading shop..
   - LoadingStage: 0
     SortValue: 2
@@ -27,13 +27,25 @@ MonoBehaviour:
     StageText: Loading Sounds...
   - LoadingStage: 1
     SortValue: 4
-    ProgressValue: 0.7
+    ProgressValue: 0.5
     StageText: Loading Game Levels..
   - LoadingStage: 4
     SortValue: 5
-    ProgressValue: 0.8
+    ProgressValue: 0.6
     StageText: Loading Rewards...
   - LoadingStage: 5
     SortValue: 6
-    ProgressValue: 1
+    ProgressValue: 0.7
     StageText: Loading Boosters..
+  - LoadingStage: 6
+    SortValue: 7
+    ProgressValue: 0.8
+    StageText: Loading Resources
+  - LoadingStage: 7
+    SortValue: 8
+    ProgressValue: 0.9
+    StageText: Loading DailyBonus
+  - LoadingStage: 8
+    SortValue: 9
+    ProgressValue: 1
+    StageText: Loading FortuneWheel

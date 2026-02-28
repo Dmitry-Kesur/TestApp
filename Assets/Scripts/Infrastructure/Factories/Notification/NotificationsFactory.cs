@@ -18,20 +18,18 @@ namespace Infrastructure.Factories.Notification
         public NotificationView CreateNotification(NotificationModel notificationModel)
         {
             NotificationView notificationView = null;
-
-            if (notificationModel.Id == NotificationsId.NotificationWithAds)
-            {
-                notificationView =
-                    _prefabInstantiationService.GetPrefabInstance<NotificationWithAdsView>(NotificationPrefabsPath.NotificationWithAdsPath);
-            }
-
-            else if (notificationModel.Id == NotificationsId.NotificationWithIcon)
+            
+            if (notificationModel.Id == NotificationsId.NotificationWithIcon)
             {
                 notificationView = _prefabInstantiationService.GetPrefabInstance<NotificationWithIconView>(NotificationPrefabsPath.NotificationWithIcon);
             }
             else if (notificationModel.Id == NotificationsId.NotificationWithRewards)
             {
                 notificationView = _prefabInstantiationService.GetPrefabInstance<NotificationWithRewardsView>(NotificationPrefabsPath.NotificationWithRewards);
+            }
+            else if (notificationModel.Id == NotificationsId.NotificationWithText)
+            {
+                notificationView = _prefabInstantiationService.GetPrefabInstance<NotificationWithTextView>(NotificationPrefabsPath.NotificationWithText);
             }
 
             return notificationView;

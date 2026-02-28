@@ -10,8 +10,6 @@ namespace Infrastructure.Models.GameEntities.Level.Items
     {
         private readonly ItemData _itemData;
 
-        public Action<ItemModel> OnUnlockItemAction;
-
         public ItemModel(ItemData itemData) =>
             _itemData = itemData;
 

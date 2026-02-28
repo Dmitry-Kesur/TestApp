@@ -4,7 +4,6 @@ using Infrastructure.Enums;
 using Infrastructure.Services.Log;
 using Infrastructure.Services.Progress;
 using Infrastructure.StateMachine;
-using UnityEngine;
 using Zenject;
 
 namespace Infrastructure.Services.Authentication
@@ -14,15 +13,15 @@ namespace Infrastructure.Services.Authentication
         private static readonly string WebClientId = "687813169709-hmu5qv0mpekcaq7hq8sbjft7u8k2iut0.apps.googleusercontent.com";
         
         private readonly StateMachineService _stateMachineService;
-        private readonly IProgressService _progressService;
+        private readonly ISaveLoadProgressService _saveLoadProgressService;
         private readonly IExceptionLoggerService _exceptionLoggerService;
 
         private GoogleSignInConfiguration _configuration;
 
-        public GoogleAuthenticationService(StateMachineService stateMachineService, IProgressService progressService, IExceptionLoggerService exceptionLoggerService)
+        public GoogleAuthenticationService(StateMachineService stateMachineService, ISaveLoadProgressService saveLoadProgressService, IExceptionLoggerService exceptionLoggerService)
         {
             _stateMachineService = stateMachineService;
-            _progressService = progressService;
+            _saveLoadProgressService = saveLoadProgressService;
             _exceptionLoggerService = exceptionLoggerService;
         }
 
@@ -61,7 +60,7 @@ namespace Infrastructure.Services.Authentication
 
         private async void SuccessfullyAuthenticated(string userId)
         {
-            await _progressService.LoadPlayerProgress(userId);
+            await _saveLoadProgressService.OnReadyToLoadProgress(userId);
             _stateMachineService.TransitionTo(StateType.LoadingState);
         }
     }

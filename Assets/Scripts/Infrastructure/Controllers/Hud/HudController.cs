@@ -12,6 +12,7 @@ namespace Infrastructure.Controllers.Hud
     {
         private readonly HudModel _hudModel;
         private readonly ILevelsService _levelsService;
+        private readonly IBoostersService _boostersService;
         private readonly StateMachineService _stateMachineService;
 
         private HudView _hudView;
@@ -20,6 +21,8 @@ namespace Infrastructure.Controllers.Hud
         {
             _stateMachineService = stateMachineService;
             _levelsService = levelsService;
+            _boostersService = boostersService;
+            _boostersService.OnBoosterDeactivatedAction += OnBoosterDeactivated;
 
             _hudModel = new HudModel(_levelsService)
             {
@@ -38,7 +41,6 @@ namespace Infrastructure.Controllers.Hud
         public void OnUpdate()
         {
             OnUpdateLevelProgress();
-            UpdateActiveBooster();
         }
 
         private void UpdateActiveBooster()
@@ -49,6 +51,12 @@ namespace Infrastructure.Controllers.Hud
         private void OnUpdateLevelProgress()
         {
             _hudView.UpdateLevelProgress();
+        }
+        
+        private void OnBoosterDeactivated()
+        {
+            _hudModel.ActiveBoosterModel = null;
+            UpdateActiveBooster();
         }
 
         private void OnPauseGameButtonClickHandler()

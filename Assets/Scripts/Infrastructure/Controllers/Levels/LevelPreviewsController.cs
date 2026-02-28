@@ -10,12 +10,12 @@ namespace Infrastructure.Controllers.Levels
     {
         private readonly List<LevelPreviewModel> _levelPreviews = new();
         
-        private readonly ILevelModelsFactory _levelModelsFactory;
+        private readonly LevelFactory _levelFactory;
         private readonly IExceptionLoggerService _exceptionLoggerService;
 
-        public LevelPreviewsController(ILevelModelsFactory levelModelsFactory, IExceptionLoggerService exceptionLoggerService)
+        public LevelPreviewsController(LevelFactory levelFactory, IExceptionLoggerService exceptionLoggerService)
         {
-            _levelModelsFactory = levelModelsFactory;
+            _levelFactory = levelFactory;
             _exceptionLoggerService = exceptionLoggerService;
         }
 
@@ -26,7 +26,7 @@ namespace Infrastructure.Controllers.Levels
         {
             foreach (var levelData in levelsData)
             {
-                var previewModel = _levelModelsFactory.CreatePreviewModel(levelData);
+                var previewModel = _levelFactory.CreatePreviewModel(levelData);
                 _levelPreviews.Add(previewModel);
             }
         }

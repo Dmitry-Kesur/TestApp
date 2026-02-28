@@ -2,6 +2,7 @@
 {
     public class AdsId
     {
-        public static readonly string Rewarded = "Rewarded";
+        public const string Rewarded = "Rewarded";
+        public const string Banner = "Banner";
     }
 }

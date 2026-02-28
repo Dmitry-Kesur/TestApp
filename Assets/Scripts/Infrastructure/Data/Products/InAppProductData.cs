@@ -1,12 +1,15 @@
-﻿using Infrastructure.Enums;
+﻿using UnityEngine;
 using UnityEngine.Purchasing;
+using UnityEngine.Serialization;
 
 namespace Infrastructure.Data.Products
 {
-    public class InAppProductData
+    [CreateAssetMenu(fileName = "InAppProductData", menuName = "ScriptableObjects/CreateInAppProductData")]
+    public class InAppProductData : ScriptableObject
     {
         public string productId;
+        public Sprite productIcon;
         public ProductType productLifetimeType;
-        public InAppProductType productType;
+        public PurchaseReward purchaseReward;
     }
 }

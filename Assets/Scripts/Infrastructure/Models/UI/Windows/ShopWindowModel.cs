@@ -1,36 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using Infrastructure.Models.GameEntities.Resources;
 using Infrastructure.Models.GameEntities.Shop;
-using Infrastructure.Services;
-using Infrastructure.Services.Currency;
 
 namespace Infrastructure.Models.UI.Windows
 {
     public class ShopWindowModel : BaseWindowModel
     {
         public Action OnBackButtonClickAction;
-        public Action<int> OnUpdateCurrencyAction;
-        
-        private readonly ICurrencyService _currencyService;
+        public Action OnUpdateCoinsAction;
+        public Action OnCompletePurchaseAction;
 
-        private List<ProductModel> _shopProducts;
+        private IReadOnlyList<ShopProductModel> _shopProducts;
 
-        public ShopWindowModel(ICurrencyService currencyService)
+        private ResourceModel _coinResource;
+
+        public ShopWindowModel(ResourceModel coinResource)
         {
-            _currencyService = currencyService;
-            _currencyService.OnUpdateCurrencyAction = OnUpdateCurrency;
+            _coinResource = coinResource;
+            _coinResource.OnAmountChange += OnUpdateCoins;
         }
+
+        public int CoinsAmount => _coinResource.Amount;
 
         public void OnBackButtonClick() =>
             OnBackButtonClickAction?.Invoke();
 
-        public void SetProducts(List<ProductModel> shopProducts) =>
+        public void SetProducts(IReadOnlyList<ShopProductModel> shopProducts) =>
             _shopProducts = shopProducts;
 
-        public List<ProductModel> ShopProducts => 
+        public IReadOnlyList<ShopProductModel> ShopProducts =>
             _shopProducts;
 
-        private void OnUpdateCurrency() =>
-            OnUpdateCurrencyAction?.Invoke(_currencyService.CurrencyAmount);
+        public void OnCompletePurchase() =>
+            OnCompletePurchaseAction?.Invoke();
+
+        private void OnUpdateCoins() =>
+            OnUpdateCoinsAction?.Invoke();
     }
 }

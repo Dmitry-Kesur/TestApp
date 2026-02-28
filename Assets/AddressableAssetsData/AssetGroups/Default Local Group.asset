@@ -17,33 +17,122 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 6042d327a9a5d1a4f8971da1965972bb
   m_SerializeEntries:
+  - m_GUID: 05761b67089774877a135ed3207be8b8
+    m_Address: Assets/Scripts/ScriptableObjects/InAppProducts/SmallCoinsBag/InAppProductData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - inappproducts
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2173bfa3ccdb14c4eaac727ffc2f0d90
     m_Address: HudView
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: b1df7c5ed95f98c4880fe71535128120
-    m_Address: LoseSoundData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e1445d5d044f479bab0427e3029b11b
+    m_Address: Assets/Scripts/ScriptableObjects/InAppProducts/MiddleCoinsBag/InAppProductData.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - sounds
-  - m_GUID: d0a72094ff0b97648881e9eb8b39120d
-    m_Address: CatchSoundData
+    - inappproducts
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 455a029c3c86e4809a0e746433f4ca9a
+    m_Address: Assets/Scripts/ScriptableObjects/InAppProducts/BigCoinsBag/InAppProductData.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - sounds
+    - inappproducts
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5795f77f011e04805aecf9ce00d03fae
+    m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 3.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 709685b01f9228647bf86121387e26e7
     m_Address: WinSoundData
     m_ReadOnly: 0
     m_SerializedLabels:
     - sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a4460340083b49a8ba49e04ec306c0d
+    m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a64b36b740c7460690b5da26624774e
+    m_Address: Assets/Scripts/ScriptableObjects/Resource/CandyCurrency.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - resource
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80717dd598b524accac3d4af6e7865e6
+    m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87e1771cf83af458e97a531eefa8fa1f
+    m_Address: Assets/Scripts/ScriptableObjects/Resource/BoosterX3.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - resource
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8ae17cf049bd4384189817bf9c02b9b1
     m_Address: FailSoundData
     m_ReadOnly: 0
     m_SerializedLabels:
     - sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a01f1d90f5a374c97977983998cc1e72
+    m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 6.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a043ba46baea747ddbe821b10f931ec9
+    m_Address: Assets/Scripts/ScriptableObjects/Resource/BoosterX4.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - resource
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af1517e71f05e490994b4d60c0f493dd
+    m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1df7c5ed95f98c4880fe71535128120
+    m_Address: LoseSoundData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0a72094ff0b97648881e9eb8b39120d
+    m_Address: CatchSoundData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de06b9b72d67240ae97b1972f3feb9e8
+    m_Address: Assets/Scripts/ScriptableObjects/Resource/BoosterX2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - resource
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e4454861a3def43bb874658aa2f11c9a
+    m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 4.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fce083cb55b954471935ef433c5faebe
+    m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 5.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6436b313d4066a24281bf3fc99b894d0, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: b2ddfe03c0c52c748b5818ba2088b1bf, type: 2}
     - {fileID: 11400000, guid: 6ee9f1ed9caa9c44cbc010fce6f04f82, type: 2}
+    - {fileID: 11400000, guid: b2ddfe03c0c52c748b5818ba2088b1bf, type: 2}

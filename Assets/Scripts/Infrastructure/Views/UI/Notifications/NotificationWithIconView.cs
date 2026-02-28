@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Infrastructure.Views.UI.Notifications
 {
-    public class NotificationWithIconView : NotificationView
+    public class NotificationWithIconView : NotificationWithTextView
     {
         [SerializeField] private IconLoader _icon;
 

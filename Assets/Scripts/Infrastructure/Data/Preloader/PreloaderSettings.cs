@@ -32,6 +32,9 @@ namespace Infrastructure.Data.Preloader
         LoadingShop,
         LoadingSounds,
         LoadingRewards,
-        LoadingBoosters
+        LoadingBoosters,
+        LoadingResources,
+        LoadingDailyBonus,
+        LoadingLuckySpin
     }
 }

@@ -27,9 +27,11 @@ namespace Infrastructure.Factories.State
                 {StateType.PauseGameLoopState, _diContainer.Instantiate<PauseGameLoopState>()},
                 {StateType.SelectLevelState, _diContainer.Instantiate<SelectLevelState>()},
                 {StateType.ShopState, _diContainer.Instantiate<ShopState>()},
-                {StateType.BoostersState, _diContainer.Instantiate<BoostersState>()},
+                {StateType.BoostersState, _diContainer.Instantiate<PremiumShopState>()},
                 {StateType.AuthenticationState, _diContainer.Instantiate<AuthenticationState>()},
-                {StateType.InitializeThirdPartyServicesState, _diContainer.Instantiate<InitializeThirdPartyServicesState>()}
+                {StateType.InitializeThirdPartyServicesState, _diContainer.Instantiate<InitializeThirdPartyServicesState>()},
+                {StateType.DailyBonusState, _diContainer.Instantiate<DailyBonusState>()},
+                {StateType.LuckySpinState, _diContainer.Instantiate<LuckySpinState>()}
             };
 
             return states;

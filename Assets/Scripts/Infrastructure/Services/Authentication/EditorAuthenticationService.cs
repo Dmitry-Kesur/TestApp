@@ -9,13 +9,13 @@ namespace Infrastructure.Services.Authentication
     {
         private readonly StateMachineService _stateMachineService;
         private readonly DeviceInfoProvider _deviceInfoProvider;
-        private readonly IProgressService _progressService;
+        private readonly ISaveLoadProgressService _saveLoadProgressService;
 
-        public EditorAuthenticationService(StateMachineService stateMachineService, DeviceInfoProvider deviceInfoProvider, IProgressService progressService)
+        public EditorAuthenticationService(StateMachineService stateMachineService, DeviceInfoProvider deviceInfoProvider, ISaveLoadProgressService saveLoadProgressService)
         {
             _stateMachineService = stateMachineService;
             _deviceInfoProvider = deviceInfoProvider;
-            _progressService = progressService;
+            _saveLoadProgressService = saveLoadProgressService;
         }
         
         public void SignIn()
@@ -25,7 +25,7 @@ namespace Infrastructure.Services.Authentication
         
         private async void SuccessfullyAuthenticated(string userId)
         {
-            await _progressService.LoadPlayerProgress(userId);
+            await _saveLoadProgressService.OnReadyToLoadProgress(userId);
             _stateMachineService.TransitionTo(StateType.LoadingState);
         }
     }

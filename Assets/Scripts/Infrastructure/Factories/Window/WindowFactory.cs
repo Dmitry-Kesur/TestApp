@@ -12,7 +12,6 @@ namespace Infrastructure.Factories.Window
 {
     public class WindowFactory
     {
-        private readonly Dictionary<Type, BaseWindowController> _controllers = new();
         private readonly Dictionary<WindowId, BaseWindow> _windowPrefabs = new();
         
         private readonly UIProvider _uiProvider;
@@ -21,7 +20,7 @@ namespace Infrastructure.Factories.Window
         private static readonly List<WindowId> WindowIds = new()
         {
             WindowId.MenuWindow, WindowId.PreloaderWindow, WindowId.SettingsWindow, WindowId.WinLevelWindow,
-            WindowId.LoseLevelWindow, WindowId.PauseGameWindow, WindowId.SelectLevelWindow, WindowId.ShopWindow, WindowId.BoostersWindow, WindowId.AuthenticationWindow
+            WindowId.LoseLevelWindow, WindowId.PauseGameWindow, WindowId.SelectLevelWindow, WindowId.ShopWindow, WindowId.PremiumShopWindow, WindowId.AuthenticationWindow, WindowId.DailyBonusWindow, WindowId.BoosterActivationWindow, WindowId.LuckySpinWindow
         };
 
         public WindowFactory(DiContainer diContainer)
@@ -44,24 +43,13 @@ namespace Infrastructure.Factories.Window
         {
             var windowPrefab = _windowPrefabs[windowId];
             var windowView = Object.Instantiate(windowPrefab, _uiProvider.WindowsLayer, false);
-
-            var controller = GetWindowController(windowView);
-            controller?.OnWindowCreate(windowView);
-
             return windowView;
         }
 
-        private BaseWindowController GetWindowController(BaseWindow windowView)
+        public BaseWindowController CreateController(BaseWindow windowView)
         {
             var controllerType = windowView.GetWindowControllerType();
-            _controllers.TryGetValue(controllerType, out var windowController);
-
-            if (windowController == null)
-            {
-                windowController = (BaseWindowController) _diContainer.Instantiate(controllerType);
-                _controllers.Add(controllerType, windowController);
-            }
-
+            var windowController = (BaseWindowController) _diContainer.Instantiate(controllerType);
             return windowController;
         }
     }

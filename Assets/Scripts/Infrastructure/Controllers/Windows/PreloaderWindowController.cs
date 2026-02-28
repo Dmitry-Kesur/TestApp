@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services;
+using Infrastructure.Services.DailyBonus;
 using Infrastructure.Services.Preloader;
 using Infrastructure.StateMachine;
 using Infrastructure.StateMachine.States;
@@ -13,13 +14,15 @@ namespace Infrastructure.Controllers.Windows
         private readonly IPreloaderService _preloaderService;
         private readonly PreloaderWindowModel _preloaderWindowModel;
         private readonly StateMachineService _stateMachineService;
+        private readonly DailyBonusService _dailyBonusService;
 
-        public PreloaderWindowController(IPreloaderService preloaderService, StateMachineService stateMachineService)
+        public PreloaderWindowController(IPreloaderService preloaderService, StateMachineService stateMachineService, DailyBonusService dailyBonusService)
         {
             _preloaderService = preloaderService;
             _preloaderService.UpdateLoadingProgressAction = OnUpdateLoadingProgress;
 
             _stateMachineService = stateMachineService;
+            _dailyBonusService = dailyBonusService;
 
             _preloaderWindowModel = new PreloaderWindowModel();
             _preloaderWindowModel.StartGameAction = OnStartGame;
@@ -30,7 +33,8 @@ namespace Infrastructure.Controllers.Windows
 
         private void OnStartGame()
         {
-            _stateMachineService.TransitionTo(StateType.MenuState);
+            var nextState = _dailyBonusService.CanTakeReward ? StateType.DailyBonusState : StateType.MenuState;
+            _stateMachineService.TransitionTo(nextState);
         }
 
         private void OnUpdateLoadingProgress(float progress, string stageText)

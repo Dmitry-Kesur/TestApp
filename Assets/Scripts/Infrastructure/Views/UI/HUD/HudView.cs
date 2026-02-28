@@ -19,8 +19,7 @@ namespace Infrastructure.Views.UI.HUD
         public void SetModel(HudModel hudModel)
         {
             _hudModel = hudModel;
-
-            _activeBoosterView.SetModel(_hudModel.ActiveBoosterModel);
+            
             _pauseGameButton.OnButtonClickAction = _hudModel.OnPauseGameButtonClick;
         }
 
@@ -61,6 +60,7 @@ namespace Infrastructure.Views.UI.HUD
             }
             
             _activeBoosterView.gameObject.SetActive(true);
+            _activeBoosterView.SetModel(_hudModel.ActiveBoosterModel);
             _activeBoosterView.Draw();
         }
 

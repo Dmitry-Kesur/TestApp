@@ -1,7 +1,5 @@
 ﻿using Infrastructure.Factories.Progress;
-using Infrastructure.Services;
 using Infrastructure.Services.Progress;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
 using Zenject;
 
 namespace Infrastructure.Installers
@@ -16,27 +14,17 @@ namespace Infrastructure.Installers
 
         private void BindServices()
         {
-            BindProgressUpdaters();
+            BindFirebaseProgressRepository();
             BindSaveLoadProgressService();
-            BindProgressService();
         }
+
+        private void BindFirebaseProgressRepository() =>
+            Container.Bind<IProgressRepository>().To<FirebaseProgressRepository>().AsSingle();
 
         private void BindProgressFactory() =>
             Container.BindInterfacesAndSelfTo<ProgressFactory>().AsSingle();
 
         private void BindSaveLoadProgressService() =>
             Container.BindInterfacesAndSelfTo<SaveLoadProgressService>().AsSingle();
-
-        private void BindProgressService() =>
-            Container.BindInterfacesAndSelfTo<ProgressService>().AsSingle();
-
-        private void BindProgressUpdaters()
-        {
-            Container.BindInterfacesAndSelfTo<SettingsProgressUpdater>().AsSingle();
-            Container.BindInterfacesAndSelfTo<ItemsProgressUpdater>().AsSingle();
-            Container.BindInterfacesAndSelfTo<LevelProgressUpdater>().AsSingle();
-            Container.BindInterfacesAndSelfTo<ResourceProgressUpdater>().AsSingle();
-            Container.BindInterfacesAndSelfTo<PurchaseProgressUpdater>().AsSingle();
-        }
     }
 }

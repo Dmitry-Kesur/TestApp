@@ -1,7 +1,9 @@
 ﻿using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
+using Infrastructure.Services;
 using Infrastructure.Services.Authentication;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
+using Infrastructure.Services.Reward;
 using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.Windows;
 
@@ -12,12 +14,14 @@ namespace Infrastructure.Controllers.Windows
         private readonly MenuWindowModel _menuWindowModel;
         private readonly StateMachineService _stateMachineService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly DailyAdRewardService _dailyAdRewardService;
 
-        public MenuWindowController(LevelProgressUpdater levelProgressUpdater,
-            StateMachineService stateMachineService, IAuthenticationService authenticationService)
+        public MenuWindowController(SaveLoadProgressService saveLoadProgressService,
+            StateMachineService stateMachineService, IAuthenticationService authenticationService, DailyAdRewardService dailyAdRewardService)
         {
             _stateMachineService = stateMachineService;
             _authenticationService = authenticationService;
+            _dailyAdRewardService = dailyAdRewardService;
 
             _menuWindowModel = new MenuWindowModel(_authenticationService)
             {
@@ -25,7 +29,9 @@ namespace Infrastructure.Controllers.Windows
                 OnSettingsButtonClickAction = OnSettingsButtonClick,
                 OnShopButtonClickAction = OnShopButtonClick,
                 OnBoostersButtonClickAction = OnBoostersButtonClick,
-                BestScore = levelProgressUpdater.GetBestScore()
+                OnDailyRewardButtonClickAction = OnDailyRewardButtonClick,
+                OnLuckySpinButtonClickAction = OnLuckySpinButtonClick,
+                BestScore = saveLoadProgressService.Read(progress => progress.BestScore)
             };
         }
 
@@ -43,5 +49,11 @@ namespace Infrastructure.Controllers.Windows
 
         private void OnBoostersButtonClick() =>
             _stateMachineService.TransitionTo(StateType.BoostersState);
+
+        private void OnDailyRewardButtonClick() =>
+            _dailyAdRewardService.ShowRewardedAds();
+
+        private void OnLuckySpinButtonClick() =>
+            _stateMachineService.TransitionTo(StateType.LuckySpinState);
     }
 }

@@ -8,7 +8,7 @@ using Infrastructure.Enums;
 using Infrastructure.Providers.Scene;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Preloader;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
 using UnityEngine;
 
 namespace Infrastructure.Services.Sound
@@ -18,13 +18,14 @@ namespace Infrastructure.Services.Sound
         private readonly Dictionary<SoundId, AudioClip> _soundClips = new();
         private readonly AudioSource _audioSource;
         private readonly LocalAddressableService _localAddressableService;
-        private readonly SettingsProgressUpdater _settingsProgressUpdater;
+        private readonly ISaveLoadProgressService _saveLoadProgressService;
 
-        public SoundService(SceneProvider sceneProvider, LocalAddressableService localAddressableService, SettingsProgressUpdater settingsProgressUpdater)
+        public SoundService(SceneProvider sceneProvider, LocalAddressableService localAddressableService,
+            ISaveLoadProgressService saveLoadProgressService)
         {
             _audioSource = sceneProvider.AudioSource;
             _localAddressableService = localAddressableService;
-            _settingsProgressUpdater = settingsProgressUpdater;
+            _saveLoadProgressService = saveLoadProgressService;
         }
 
         public async Task Load()
@@ -32,7 +33,7 @@ namespace Infrastructure.Services.Sound
             var soundsData =
                 await _localAddressableService.LoadScriptableCollectionFromGroupAsync<SoundData>(AddressableGroupNames
                     .SoundsGroup);
-            
+
             CreateSounds(soundsData);
             Update();
         }
@@ -44,8 +45,8 @@ namespace Infrastructure.Services.Sound
         public void ChangeMuteSounds(bool muteSounds)
         {
             _audioSource.mute = muteSounds;
-            _settingsProgressUpdater.ChangeMuteSounds(muteSounds);
-            
+            _saveLoadProgressService.Write(progress => progress.MuteSounds = muteSounds);
+
             OnChangeMuteSoundsAction.Invoke(muteSounds);
         }
 
@@ -56,7 +57,7 @@ namespace Infrastructure.Services.Sound
         }
 
         public LoadingStage LoadingStage => LoadingStage.LoadingSounds;
-        
+
         private void CreateSounds(List<SoundData> soundClips)
         {
             foreach (var soundClip in soundClips)
@@ -67,7 +68,7 @@ namespace Infrastructure.Services.Sound
 
         private void Update()
         {
-            _audioSource.mute = _settingsProgressUpdater.MuteSounds;
+            _audioSource.mute = _saveLoadProgressService.Read(progress => progress.MuteSounds);
         }
     }
 }

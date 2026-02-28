@@ -10,27 +10,28 @@ namespace Infrastructure.Controllers.Windows
     {
         private readonly ILevelsService _levelsService;
         private readonly StateMachineService _stateMachineService;
-        
+
         private CompleteLevelWindowModel _completeLevelWindowModel;
 
         public CompleteLevelWindowController(ILevelsService levelsService,
             StateMachineService stateMachineService)
         {
             _levelsService = levelsService;
-            _levelsService.OnWinLevelAction += OnWinLevel;
             _stateMachineService = stateMachineService;
 
             CreateWindowModel();
         }
 
-        protected override BaseWindowModel GetModel() =>
-            _completeLevelWindowModel;
-
-        private void OnWinLevel()
+        protected override void InitParameters()
         {
-            _completeLevelWindowModel.SetWinLevel(_levelsService.GetCurrentLevel());
+            base.InitParameters();
+            var levelResult = _levelsService.LevelResult;
+            _completeLevelWindowModel.LevelScore = levelResult.Score;
             _completeLevelWindowModel.CanStartNextLevel = !_levelsService.ReachedMaxLevel;
         }
+
+        protected override BaseWindowModel GetModel() =>
+            _completeLevelWindowModel;
 
         private void CreateWindowModel()
         {

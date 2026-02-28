@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Infrastructure.Views.UI.Notifications
 {
-    public class NotificationWithRewardsView : NotificationView
+    public class NotificationWithRewardsView : NotificationWithTextView
     {
         [SerializeField] private RewardsLoader _rewardsLoader;
 

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Infrastructure.Controllers.Levels;
+using Infrastructure.Data.Level;
 using Infrastructure.Enums;
 using Infrastructure.Factories.Level;
 using Infrastructure.Models.GameEntities.Level;
@@ -10,145 +9,65 @@ using Infrastructure.Providers.Level;
 using Infrastructure.Services.Analytics;
 using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Log;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
 using Infrastructure.Services.Reward;
 using Infrastructure.StateMachine;
+using Infrastructure.Views.GameEntities;
+using UnityEngine;
 
 namespace Infrastructure.Services.Level
 {
     public class LevelService : ILevelsService, IBootstrapTarget
     {
-        private readonly List<LevelModel> _levelModels = new();
-
         private readonly LevelsStaticDataProvider _levelsStaticDataProvider;
-        private readonly LevelProgressUpdater _levelProgressUpdater;
+        private readonly SaveLoadProgressService _saveLoadProgressService;
         private readonly IReceiveRewardsService _receiveRewardsService;
         private readonly AnalyticsService _analyticsService;
         private readonly IExceptionLoggerService _exceptionLoggerService;
         private readonly StateMachineService _stateMachine;
-        private readonly ILevelModelsFactory _levelModelsFactory;
+        private readonly LevelFactory _levelFactory;
         private readonly LevelPreviewsController _previewsController;
+        private readonly LevelViewsFactory _levelViewsFactory;
 
-        private LevelModel _currentLevelModel;
+        private LevelStaticData _selectedLevelData;
+        private LevelSession _currentLevelSession;
+        private LevelResult _levelResult;
+
+        private LevelView _levelView;
 
         public LevelService(LevelsStaticDataProvider levelsStaticDataProvider,
-            LevelProgressUpdater levelProgressUpdater, IReceiveRewardsService receiveRewardsService,
-            AnalyticsService analyticsService, StateMachineService stateMachine, ILevelModelsFactory levelModelsFactory, IExceptionLoggerService exceptionLoggerService, LevelPreviewsController levelPreviewsController)
+            SaveLoadProgressService saveLoadProgressService, IReceiveRewardsService receiveRewardsService,
+            AnalyticsService analyticsService, StateMachineService stateMachine, LevelFactory levelFactory,
+            IExceptionLoggerService exceptionLoggerService, LevelPreviewsController levelPreviewsController, LevelViewsFactory levelViewsFactory)
         {
             _levelsStaticDataProvider = levelsStaticDataProvider;
-            _levelProgressUpdater = levelProgressUpdater;
+            _saveLoadProgressService = saveLoadProgressService;
             _receiveRewardsService = receiveRewardsService;
             _analyticsService = analyticsService;
             _stateMachine = stateMachine;
-            _levelModelsFactory = levelModelsFactory;
+            _levelFactory = levelFactory;
             _exceptionLoggerService = exceptionLoggerService;
 
             _previewsController = levelPreviewsController;
+            _levelViewsFactory = levelViewsFactory;
         }
 
-        public void Start()
+        public void OnEnterGameLoop()
         {
-            _currentLevelModel?.Start();
-        }
+            EnsureLevelSession();
 
-        public void SetCurrentLevel(int level)
-        {
-            _currentLevelModel = GetLevel(level);
-            if (_currentLevelModel == null)
+            if (_currentLevelSession.CanResume)
             {
-                _exceptionLoggerService.LogError($"[level-service] Failed to get {level} level model at select");
+                _currentLevelSession.Resume();
                 return;
             }
             
-            _levelProgressUpdater.ChangeActiveLevel(level);
+            _currentLevelSession.SetData(_selectedLevelData);
+            _currentLevelSession.Start();
         }
 
-        public void Pause() =>
-            _currentLevelModel.OnPause();
-
-        public void Resume() =>
-            _currentLevelModel.OnResume();
-
-        public int InitializationOrder => 4;
-
-        public void Initialize()
+        public void SelectLevel(int level)
         {
-            _previewsController.CreatePreviews(_levelsStaticDataProvider.GetLevelsData());
-            CreateLevelModel(_levelProgressUpdater.GetActiveLevel());
-        }
-
-        public void Stop() =>
-            _currentLevelModel.Stop();
-
-        public LevelModel GetCurrentLevel() =>
-            _currentLevelModel;
-
-        public bool ReachedMaxLevel =>
-            _currentLevelModel != null && _currentLevelModel.Level == _levelsStaticDataProvider.MaxLevel;
-
-        public bool LevelStarted => 
-            _currentLevelModel is { Started: true };
-
-        public Action OnWinLevelAction { get; set; }
-
-        public List<LevelPreviewModel> GetPreviewsModels() =>
-            _previewsController.GetPreviewsModels();
-
-        private void UpdateNextLevel()
-        {
-            if (ReachedMaxLevel) return;
-            
-            var nextLevel = GetNextLevel();
-            CreateLevelModel(nextLevel);
-            
-            _previewsController.MarkPreviewAsActive(nextLevel);
-            SetCurrentLevel(nextLevel);
-        }
-
-        private void SubscribeListeners(LevelModel levelModel)
-        {
-            levelModel.OnLoseAction = OnLose;
-            levelModel.OnWinAction = OnWin;
-        }
-
-        private void OnWin()
-        {
-            _receiveRewardsService.ReceiveRewards(_currentLevelModel.GetRewards());
-
-            var currentLevel = _currentLevelModel.Level;
-
-            _levelProgressUpdater.SetWinLevel(currentLevel);
-            _analyticsService.LogWinLevel(currentLevel);
-            
-            _previewsController.MarkPreviewAsComplete(currentLevel);
-
-            OnWinLevelAction?.Invoke();
-            
-            UpdateNextLevel();
-
-            _stateMachine.TransitionTo(StateType.WinLevelState);
-        }
-
-        private int GetNextLevel() =>
-            _currentLevelModel.Level + 1;
-
-        private void OnLose()
-        {
-            _analyticsService.LogLoseLevel(_currentLevelModel.Level);
-            _stateMachine.TransitionTo(StateType.LoseLevelState);
-        }
-
-        private LevelModel GetLevel(int level) =>
-            _levelModels.Find(model => model.Level == level);
-
-        private void CreateLevelModel(int level)
-        {
-            if (IsLevelAlreadyCreated(level))
-            {
-                _exceptionLoggerService.LogError($"[level-service] Level {level} already exists");
-                return;
-            }
-            
             var levelData = _levelsStaticDataProvider.GetDataByLevel(level);
             if (levelData == null)
             {
@@ -156,12 +75,103 @@ namespace Infrastructure.Services.Level
                 return;
             }
             
-            var levelModel = _levelModelsFactory.CreateModel(levelData);
-            SubscribeListeners(levelModel);
-            _levelModels.Add(levelModel);
+            _selectedLevelData = levelData;
+
+            _saveLoadProgressService.Write(progress => progress.ActiveLevel = level);
+        }
+
+        public void Pause() =>
+            _currentLevelSession.Pause();
+
+        public void Revive() =>
+            _currentLevelSession.Revive();
+
+        public int InitializationOrder => 4;
+
+        public void Initialize()
+        {
+            _previewsController.CreatePreviews(_levelsStaticDataProvider.GetLevelsData());
+        }
+
+        public void Stop() =>
+            _currentLevelSession.Stop();
+
+        public LevelSession GetCurrentLevel() =>
+            _currentLevelSession;
+
+        public bool ReachedMaxLevel =>
+            _currentLevelSession != null && _currentLevelSession.Level == _levelsStaticDataProvider.MaxLevel;
+        
+        public LevelResult LevelResult => _levelResult;
+
+        public List<LevelPreviewModel> GetPreviewsModels() =>
+            _previewsController.GetPreviewsModels();
+
+        private void UpdateNextLevel()
+        {
+            if (ReachedMaxLevel) return;
+
+            var nextLevel =  _selectedLevelData.Level + 1;
+            SelectLevel(nextLevel);
+
+            _previewsController.MarkPreviewAsActive(nextLevel);
+        }
+
+        private void SubscribeListeners(LevelSession levelSession)
+        {
+            levelSession.OnLoseAction += OnLose;
+            levelSession.OnWinAction += OnWin;
+            levelSession.OnStartedAction += OnStarted;
+            levelSession.OnStoppedAction += OnStopped;
+        }
+
+        private void OnStarted()
+        {
+            _levelView = _levelViewsFactory.CreateLevelView(_currentLevelSession);
+        }
+
+        private void OnStopped()
+        {
+            if (_levelView == null)
+                return;
+
+            _levelView.BeforeDestroy();
+            Object.Destroy(_levelView.gameObject);
+            _levelView = null;
+        }
+
+        private void OnWin()
+        {
+            _receiveRewardsService.ReceiveRewards(_currentLevelSession.GetRewards());
+
+            var currentLevel = _selectedLevelData.Level;
+
+            _saveLoadProgressService.Write(progress => progress.AddWinLevel(currentLevel));
+            _analyticsService.LogWinLevel(currentLevel);
+
+            _previewsController.MarkPreviewAsComplete(currentLevel);
+
+            _levelResult = new LevelResult(_currentLevelSession.TotalLevelScore);
+            
+            _stateMachine.TransitionTo(StateType.WinLevelState);
+            
+            UpdateNextLevel();
+        }
+
+        private void OnLose()
+        {
+            _analyticsService.LogLoseLevel(_selectedLevelData.Level);
+            _stateMachine.TransitionTo(StateType.LoseLevelState);
         }
         
-        private bool IsLevelAlreadyCreated(int level) =>
-            _levelModels.Any(model => model.Level == level);
+        private void EnsureLevelSession()
+        {
+            if (_currentLevelSession != null)
+                return;
+
+            var levelSession = _levelFactory.CreateLevelSession();
+            SubscribeListeners(levelSession);
+            _currentLevelSession = levelSession;
+        }
     }
 }

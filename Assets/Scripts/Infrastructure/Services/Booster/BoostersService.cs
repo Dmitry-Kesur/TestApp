@@ -1,47 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Constants;
 using Infrastructure.Data.Boosters;
-using Infrastructure.Data.Notifications;
 using Infrastructure.Data.Preloader;
+using Infrastructure.Factories.Booster;
 using Infrastructure.Models.GameEntities.Boosters;
 using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Bootstrap;
-using Infrastructure.Services.InAppPurchase;
-using Infrastructure.Services.Log;
-using Infrastructure.Services.Notification;
 using Infrastructure.Services.Preloader;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
+using Infrastructure.Services.Progress;
+using Infrastructure.Services.Resource;
 
 namespace Infrastructure.Services.Booster
 {
     public class BoostersService : IBoostersService, ILoadableService, IBootstrapTarget
     {
         private readonly List<BoosterModel> _boosterModels = new();
-        
+
         private readonly LocalAddressableService _localAddressableService;
-        private readonly IInAppPurchaseService _inAppPurchaseService;
-        private readonly ResourceProgressUpdater _resourceProgressUpdater;
-        private readonly INotificationService _notificationService;
-        private readonly IExceptionLoggerService _exceptionLoggerService;
+        private readonly ISaveLoadProgressService _saveLoadProgressService;
+        private readonly ResourcesService _resourcesService;
+        private readonly BoosterFactory _boosterFactory;
+        private readonly Timer _activeBoosterTimer;
 
         private List<BoosterData> _boostersData = new();
-        
+
         private BoosterModel _activeBoosterModel;
 
-        public BoostersService(LocalAddressableService localAddressableService, IInAppPurchaseService inAppPurchaseService, ResourceProgressUpdater resourceProgressUpdater, INotificationService notificationService, IExceptionLoggerService exceptionLoggerService)
+        public BoostersService(LocalAddressableService localAddressableService,
+            ISaveLoadProgressService saveLoadProgressService,
+            ResourcesService resourcesService, BoosterFactory boosterFactory, Timer activeBoosterTimer)
         {
             _localAddressableService = localAddressableService;
-            _inAppPurchaseService = inAppPurchaseService;
-            _resourceProgressUpdater = resourceProgressUpdater;
-            _notificationService = notificationService;
-            _exceptionLoggerService = exceptionLoggerService;
-
-            _inAppPurchaseService.OnCompletePurchase = OnCompletePurchaseBooster;
+            _saveLoadProgressService = saveLoadProgressService;
+            _resourcesService = resourcesService;
+            _boosterFactory = boosterFactory;
+            _activeBoosterTimer = activeBoosterTimer;
         }
-
-        public List<BoosterModel> Boosters =>
-            _boosterModels;
 
         public int BoostValue =>
             _activeBoosterModel?.BoostValue ?? 0;
@@ -49,9 +46,18 @@ namespace Infrastructure.Services.Booster
         public BoosterModel ActiveBooster =>
             _activeBoosterModel;
 
+        public IReadOnlyList<BoosterModel> GetAvailableBoosters() =>
+            _boosterModels.FindAll(model => model.IsEnough);
+
+        public Action OnBoosterActivatedAction { get; set; }
+        
+        public Action OnBoosterDeactivatedAction { get; set; }
+
         public async Task Load()
         {
-            _boostersData = await _localAddressableService.LoadScriptableCollectionFromGroupAsync<BoosterData>(AddressableGroupNames.BoostersGroup);
+            _boostersData =
+                await _localAddressableService.LoadScriptableCollectionFromGroupAsync<BoosterData>(AddressableGroupNames
+                    .BoostersGroup);
         }
 
         public int InitializationOrder => 5;
@@ -59,73 +65,92 @@ namespace Infrastructure.Services.Booster
         public void Initialize()
         {
             CreateBoosterModels();
-            SetActiveBooster();
+            UpdateBoosterState();
         }
-        
+
         public LoadingStage LoadingStage =>
             LoadingStage.LoadingBoosters;
 
-        private void OnCompletePurchaseBooster(string boosterProductId)
-        {
-            var booster = GetBoosterByProductId(boosterProductId);
-            if (booster == null)
-            {
-                _exceptionLoggerService.LogError($"[BoostersService] Booster not found for product id: {boosterProductId}");
-                return;
-            }
-            
-            _resourceProgressUpdater.SetActiveBoosterId(booster.Id);
-            SetActiveBooster();
-            ShowActiveBoosterNotification($"Purchased booster: x{_activeBoosterModel.BoostValue}");
-        }
+        public bool HasBoosterToActivate =>
+            _boosterModels.Any(model => model.IsEnough) &&
+            _activeBoosterModel == null;
 
         private void CreateBoosterModels()
         {
             foreach (var boosterData in _boostersData)
             {
-                var boosterModel = new BoosterModel(boosterData)
-                {
-                    OnBuyBoosterAction = OnBuyBooster
-                };
+                var boosterResource = _resourcesService.GetResourceById(boosterData.RequiredResourceId);
+                var boosterModel = _boosterFactory.Create(boosterData, boosterResource);
+                boosterModel.ActivateBoosterAction += ActivateBooster;
                 _boosterModels.Add(boosterModel);
             }
         }
 
-        private BoosterModel GetBoosterByProductId(string productId) =>
-            _boosterModels.Find(model => model.ProductId == productId);
-
-        private BoosterModel GetBoosterById(int boosterId) =>
-            _boosterModels.Find(model => model.Id == boosterId);
-
-        private void OnBuyBooster(string boosterProductId)
+        private void UpdateBoosterState()
         {
-            if (ActiveBooster != null)
-            {
-                ShowActiveBoosterNotification("You have active booster!");
-                return;
-            }
-            
-            _inAppPurchaseService.PurchaseProduct(boosterProductId);
-        }
-
-        private void SetActiveBooster()
-        {
-            var activeBoosterId = _resourceProgressUpdater.GetActiveBoosterId();
+            var activeBoosterId = _saveLoadProgressService.Read(progress => progress.ActiveBoosterId);
             if (activeBoosterId == 0)
                 return;
-            
-            _activeBoosterModel = GetBoosterById(activeBoosterId);
+
+            var endUnixSeconds = _saveLoadProgressService.Read(progress => progress.ActiveBoosterEndUnixSeconds);
+            var nowUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            if (nowUnix >= endUnixSeconds)
+            {
+                DeactivateBooster();
+                return;
+            }
+
+            var boosterModel = _boosterModels.Find(model => model.Id == activeBoosterId);
+            _activeBoosterModel = boosterModel;
+            OnBoosterActivatedAction?.Invoke();
+
+            ScheduleBoosterEnd(endUnixSeconds);
         }
 
-        private void ShowActiveBoosterNotification(string notificationText)
+        private void ScheduleBoosterEnd(long endUnixSeconds)
         {
-            var notificationModel = new NotificationWithIconModel
-            {
-                NotificationText = notificationText,
-                NotificationIcon = _activeBoosterModel.IconSprite
-            };
-                
-            _notificationService.ShowNotification(notificationModel);
+            _activeBoosterTimer.OnTimerEnd += OnBoosterTimeEnd;
+            var remainingSeconds = endUnixSeconds - DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            _activeBoosterTimer.Start(remainingSeconds);
         }
+
+        private void OnBoosterTimeEnd()
+        {
+            _activeBoosterTimer.OnTimerEnd -= OnBoosterTimeEnd;
+            DeactivateBooster();
+        }
+
+        private void ActivateBooster(BoosterModel boosterModel)
+        {
+            _resourcesService.SpendResource(boosterModel.RequiredResourceId, 1);
+
+            var endUnixSeconds = CalculateEndUnixSeconds(boosterModel.DurationSeconds);
+
+            _saveLoadProgressService.Write(progress =>
+            {
+                progress.ActiveBoosterId = boosterModel.Id;
+                progress.ActiveBoosterEndUnixSeconds = endUnixSeconds;
+            });
+
+            _activeBoosterModel = boosterModel;
+            ScheduleBoosterEnd(endUnixSeconds);
+
+            OnBoosterActivatedAction?.Invoke();
+        }
+
+        private void DeactivateBooster()
+        {
+            _activeBoosterModel = null;
+            _saveLoadProgressService.Write(progress =>
+            {
+                progress.ActiveBoosterId = 0;
+                progress.ActiveBoosterEndUnixSeconds = 0;
+            });
+            
+            OnBoosterDeactivatedAction?.Invoke();
+        }
+
+        private long CalculateEndUnixSeconds(int durationSeconds) =>
+            DateTimeOffset.UtcNow.ToUnixTimeSeconds() + durationSeconds;
     }
 }

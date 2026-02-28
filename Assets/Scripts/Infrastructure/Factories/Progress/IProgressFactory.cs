@@ -1,7 +1,9 @@
+using Infrastructure.Data.PlayerProgress;
+
 namespace Infrastructure.Factories.Progress
 {
     public interface IProgressFactory
     {
-        Data.PlayerProgress.Progress CreateNewProgress(string userId);
+        ProgressData CreateProgress(string userId);
     }
 }

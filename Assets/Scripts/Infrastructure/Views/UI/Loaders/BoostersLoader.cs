@@ -1,4 +1,4 @@
-﻿using Infrastructure.Models.GameEntities.Boosters;
+using Infrastructure.Models.GameEntities.Boosters;
 
 namespace Infrastructure.Views.UI.Loaders
 {

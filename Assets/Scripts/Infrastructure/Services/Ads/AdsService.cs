@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Infrastructure.Constants;
 using Infrastructure.Data.Ads;
+using Infrastructure.Services.Analytics;
 using Infrastructure.Services.Log;
 using UnityEngine;
 using UnityEngine.Advertisements;
@@ -10,15 +12,17 @@ namespace Infrastructure.Services.Ads
     public class AdsService : IAdsService, IUnityAdsInitializationListener
     {
         private const string AndroidGameId = "5578461";
-        private const bool EnabledTestMode = false;
+        private const bool EnabledTestMode = true;
 
         private readonly List<BaseAdsProvider> _adsProviders = new();
 
         private readonly IExceptionLoggerService _exceptionLoggerService;
+        private readonly IAnalyticsService _analyticsService;
 
-        public AdsService(IExceptionLoggerService exceptionLoggerService)
+        public AdsService(IExceptionLoggerService exceptionLoggerService, IAnalyticsService analyticsService)
         {
             _exceptionLoggerService = exceptionLoggerService;
+            _analyticsService = analyticsService;
             InitializeAds();
         }
 
@@ -28,14 +32,21 @@ namespace Infrastructure.Services.Ads
             adsProvider.ShowAds();
         }
 
-        public Action OnShowCompleteAdsAction { get; set; }
+        public void HideBanner()
+        {
+            var adsProvider = GetAdsProviderById(AdsId.Banner) as BannerAdsProvider;
+            adsProvider?.Hide();
+        }
+
+        public Action<string> OnAdsShowCompletedAction { get; set; }
 
         public void OnInitializationComplete()
         {
             foreach (var adsProvider in _adsProviders)
             {
                 adsProvider.Load();
-                adsProvider.OnAdsShowCompleteAction = OnAdsShowComplete;
+                adsProvider.OnAdsShowCompleted = OnAdsShowCompleted;
+                adsProvider.OnAdsShowStartAction = OnAdsShowStart;
             }
 
             Debug.Log("[Ads-Service]: Ads initialized.");
@@ -62,17 +73,16 @@ namespace Infrastructure.Services.Ads
         private void CreateAdsProviders()
         {
             _adsProviders.Add(new RewardedAdsProvider());
+            _adsProviders.Add(new BannerAdsProvider());
         }
         
-        private void OnAdsShowComplete()
-        {
-            OnShowCompleteAdsAction?.Invoke();
-        }
+        private void OnAdsShowCompleted(string adsId) =>
+            OnAdsShowCompletedAction?.Invoke(adsId);
 
-        private BaseAdsProvider GetAdsProviderById(string adsId)
-        {
-            var adsProvider = _adsProviders.Find(ads => ads.AdsId == adsId);
-            return adsProvider;
-        }
+        private void OnAdsShowStart(string placementId, string adsId) =>
+            _analyticsService.LogAdsImpression(placementId, adsId);
+
+        private BaseAdsProvider GetAdsProviderById(string adsId) =>
+            _adsProviders.Find(ads => ads.AdsId == adsId);
     }
 }

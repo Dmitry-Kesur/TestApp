@@ -11,7 +11,10 @@
         PauseGameWindow,
         SelectLevelWindow,
         ShopWindow,
-        BoostersWindow,
-        AuthenticationWindow
+        PremiumShopWindow,
+        AuthenticationWindow,
+        DailyBonusWindow,
+        BoosterActivationWindow,
+        LuckySpinWindow
     }
 }

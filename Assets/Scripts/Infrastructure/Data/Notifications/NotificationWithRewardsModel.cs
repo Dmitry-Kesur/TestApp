@@ -4,7 +4,7 @@ using Infrastructure.Models.GameEntities.Rewards;
 
 namespace Infrastructure.Data.Notifications
 {
-    public class NotificationWithRewardsModel : NotificationModel
+    public class NotificationWithRewardsModel : NotificationWithTextModel
     {
         private readonly List<RewardModel> _rewards;
 

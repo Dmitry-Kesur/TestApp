@@ -1,26 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Infrastructure.Constants;
 using Infrastructure.Data.Products;
-using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.InAppPurchase;
 using Infrastructure.Services.Log;
-using Infrastructure.Services.Progress.PlayerProgressUpdaters;
-using Infrastructure.Services.RemoteConfig;
-using Newtonsoft.Json;
+using Infrastructure.Services.Progress;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
 
 namespace Infrastructure.Providers.InAppPurchase
 {
-    public class InAppPurchaseProvider : IDetailedStoreListener, IBootstrapTarget
+    public class InAppPurchaseProvider : IDetailedStoreListener
     {
+        public Action OnInitializedAction;
         public Action<string> OnRestoreCompletePurchase;
 
-        private readonly RemoteConfigService _remoteConfigService;
         private readonly IExceptionLoggerService _exceptionLoggerService;
-        private readonly PurchaseProgressUpdater _progressUpdater;
+        private readonly ISaveLoadProgressService _saveLoadProgressService;
         private readonly IPurchaseValidator _purchaseValidator;
 
         private readonly Dictionary<string, TaskCompletionSource<bool>> _pendingTasks = new();
@@ -30,27 +26,19 @@ namespace Infrastructure.Providers.InAppPurchase
         private IStoreController _controller;
         private IExtensionProvider _extensions;
 
-        public InAppPurchaseProvider(RemoteConfigService remoteConfigService,
-            IExceptionLoggerService exceptionLoggerService, PurchaseProgressUpdater progressUpdater,
+        public InAppPurchaseProvider(IExceptionLoggerService exceptionLoggerService,
+            ISaveLoadProgressService saveLoadProgressService,
             IPurchaseValidator purchaseValidator)
         {
-            _remoteConfigService = remoteConfigService;
             _exceptionLoggerService = exceptionLoggerService;
-            _progressUpdater = progressUpdater;
+            _saveLoadProgressService = saveLoadProgressService;
             _purchaseValidator = purchaseValidator;
         }
 
-        public int InitializationOrder => 1;
-
-        public void Initialize()
+        public void SetProducts(List<InAppProductData> products)
         {
-            ConfigurationBuilder builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
-            _products = LoadProductsFromConfig();
-
-            foreach (var product in _products)
-                builder.AddProduct(product.productId, product.productLifetimeType);
-
-            UnityPurchasing.Initialize(this, builder);
+            _products = products;
+            AfterSetProducts();
         }
 
         public async Task<bool> Purchase(string productId)
@@ -67,7 +55,7 @@ namespace Infrastructure.Providers.InAppPurchase
             var tcs = new TaskCompletionSource<bool>();
             _pendingTasks[productId] = tcs;
 
-            _progressUpdater.MarkProductAsPending(productId);
+            _saveLoadProgressService.Write(progress => progress.MarkProductAsPending(productId));
 
             _controller.InitiatePurchase(productId);
 
@@ -79,6 +67,7 @@ namespace Infrastructure.Providers.InAppPurchase
             _controller = controller;
             _extensions = extensions;
 
+            OnInitializedAction?.Invoke();
             RestorePendingPurchases();
         }
 
@@ -128,21 +117,14 @@ namespace Infrastructure.Providers.InAppPurchase
                 $"[InAppPurchase] PurchaseFailed : {product.definition.id} | failureDescription: {failureDescription} | transactionId: {product.transactionID}";
             _exceptionLoggerService.LogError(logMessage);
         }
+        
+        public string GetLocalizedPriceString(string productId)
+        {
+            var product = _controller?.products?.WithID(productId);
+            return product?.metadata?.localizedPriceString;
+        }
 
         private bool Initialized => _controller != null && _extensions != null;
-
-        private List<InAppProductData> LoadProductsFromConfig()
-        {
-            var json = _remoteConfigService.GetValue(RemoteConfigIds.Products);
-            if (string.IsNullOrEmpty(json))
-            {
-                var exceptionText = "[InAppPurchase] Failed to get products data";
-                _exceptionLoggerService.LogError(exceptionText);
-                throw new InvalidOperationException(exceptionText);
-            }
-
-            return JsonConvert.DeserializeObject<List<InAppProductData>>(json);
-        }
 
         private string GetProductId(Product product) =>
             product.definition.id;
@@ -152,7 +134,7 @@ namespace Infrastructure.Providers.InAppPurchase
             if (!_pendingTasks.TryGetValue(productId, out var task)) return;
 
             task.SetResult(success);
-            _progressUpdater.RemovePendingProduct(productId);
+            _saveLoadProgressService.Write(progress => progress.RemoveProductFromPending(productId));
             _pendingTasks.Remove(productId);
         }
 
@@ -161,13 +143,21 @@ namespace Infrastructure.Providers.InAppPurchase
             foreach (var product in _controller.products.all)
             {
                 var productId = product.definition.id;
+                bool isPending =
+                    _saveLoadProgressService.Read(progress => progress.PendingInAppProducts.Contains(productId));
 
-                if (_progressUpdater.CheckPending(productId))
+                if (isPending)
                 {
+                    #if UNITY_EDITOR
+                        _saveLoadProgressService.Write(progress => progress.RemoveProductFromPending(productId));
+                        OnRestoreCompletePurchase?.Invoke(productId);
+                        return;
+                    #endif
+                    
                     if (product.hasReceipt && _purchaseValidator.Validate(product.receipt))
                     {
+                        _saveLoadProgressService.Write(progress => progress.RemoveProductFromPending(productId));
                         OnRestoreCompletePurchase?.Invoke(productId);
-                        _progressUpdater.RemovePendingProduct(productId);
                     }
                     else
                     {
@@ -175,6 +165,16 @@ namespace Infrastructure.Providers.InAppPurchase
                     }
                 }
             }
+        }
+
+        private void AfterSetProducts()
+        {
+            ConfigurationBuilder builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
+
+            foreach (var product in _products)
+                builder.AddProduct(product.productId, product.productLifetimeType);
+
+            UnityPurchasing.Initialize(this, builder);
         }
     }
 }

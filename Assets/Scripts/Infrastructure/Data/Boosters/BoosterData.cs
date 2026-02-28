@@ -7,7 +7,8 @@ namespace Infrastructure.Data.Boosters
     {
         public int Id;
         public int BoostValue;
+        public int DurationSeconds;
         public Sprite IconSprite;
-        public string ProductId;
+        public int RequiredResourceId;
     }
 }

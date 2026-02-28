@@ -2,25 +2,24 @@
 using Infrastructure.Constants;
 using Infrastructure.Data.Notifications;
 using Infrastructure.Data.Rewards;
-using Infrastructure.Enums;
 using Infrastructure.Models.GameEntities.Rewards;
 using Infrastructure.Services.Analytics;
-using Infrastructure.Services.Currency;
 using Infrastructure.Services.Notification;
+using Infrastructure.Services.Resource;
 
 namespace Infrastructure.Services.Reward
 {
     public class ReceiveRewardsService : IReceiveRewardsService
     {
+        private readonly ResourcesService _resourcesService;
         private readonly IRewardsService _rewardsService;
         private readonly INotificationService _notificationService;
         private readonly IAnalyticsService _analyticsService;
-        private readonly ICurrencyService _currencyService;
 
-        public ReceiveRewardsService(ICurrencyService currencyService, IRewardsService rewardsService,
+        public ReceiveRewardsService(ResourcesService resourcesService, IRewardsService rewardsService,
             INotificationService notificationService, IAnalyticsService analyticsService)
         {
-            _currencyService = currencyService;
+            _resourcesService = resourcesService;
             _rewardsService = rewardsService;
             _notificationService = notificationService;
             _analyticsService = analyticsService;
@@ -35,12 +34,9 @@ namespace Infrastructure.Services.Reward
             
             foreach (var rewardModel in rewardModels)
             {
-                if (rewardModel.Type == RewardType.Currency)
-                {
-                    _currencyService.IncreaseCurrency(rewardModel.Amount);
-                }
+                _resourcesService.AddResource(rewardModel.Id, rewardModel.Amount);
                 
-                _analyticsService.LogReceiveReward(rewardModel.Type);
+                _analyticsService.LogReceiveReward(rewardModel.Id);
             }
 
             ShowRewardsNotification(rewardModels);

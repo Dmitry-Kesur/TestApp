@@ -1,7 +1,8 @@
-﻿using Infrastructure.Enums;
+﻿using Infrastructure.Constants;
+using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services;
-using Infrastructure.Services.Currency;
+using Infrastructure.Services.Resource;
 using Infrastructure.Services.Shop;
 using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.Windows;
@@ -13,16 +14,14 @@ namespace Infrastructure.Controllers.Windows
         private readonly ShopWindowModel _shopWindowModel;
         private readonly StateMachineService _stateMachineService;
         private readonly ShopService _shopService;
-        private readonly ICurrencyService _currencyService;
 
-        public ShopWindowController(StateMachineService stateMachineService, ShopService shopService,
-            ICurrencyService currencyService)
+        public ShopWindowController(StateMachineService stateMachineService, ShopService shopService, ResourcesService resourcesService)
         {
             _stateMachineService = stateMachineService;
             _shopService = shopService;
-            _currencyService = currencyService;
 
-            _shopWindowModel = new ShopWindowModel(_currencyService);
+            var coinResource = resourcesService.GetResourceByType(ResourceType.Coin);
+            _shopWindowModel = new ShopWindowModel(coinResource);
             _shopWindowModel.SetProducts(_shopService.GetProducts());
             SubscribeListeners();
         }
@@ -33,7 +32,11 @@ namespace Infrastructure.Controllers.Windows
         private void SubscribeListeners()
         {
             _shopWindowModel.OnBackButtonClickAction = OnBackButtonClick;
+            _shopService.OnPurchaseCompleted = OnCompletePurchase;
         }
+
+        private void OnCompletePurchase() =>
+            _shopWindowModel.OnCompletePurchase();
 
         private void OnBackButtonClick() =>
             _stateMachineService.TransitionTo(StateType.MenuState);
