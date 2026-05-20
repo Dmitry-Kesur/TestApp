@@ -64,26 +64,9 @@ namespace Infrastructure.Data.PlayerProgress
             PendingInAppProducts.Remove(productId);
         }
 
-        public void RemoveResource(int resourceId)
-        {
-            var index = Resources.FindIndex(r => r.resourceId == resourceId);
-            if (index < 0) return;
-            
-            Resources.RemoveAt(index);
-        }
-
         public void ChangeResourceAmount(int resourceId, int resourceAmount)
         {
            var resource = Resources.Find(resourceData => resourceData.resourceId == resourceId);
-           if (resource == null)
-           {
-               resource = new ProgressResourceData
-               {
-                   resourceId = resourceId
-               };
-               Resources.Add(resource);
-           }
-           
            resource.amount = resourceAmount;
         }
     }

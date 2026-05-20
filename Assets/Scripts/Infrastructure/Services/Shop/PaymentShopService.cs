@@ -1,7 +1,7 @@
 ﻿using System;
 using Infrastructure.Constants;
+using Infrastructure.Data.Notifications;
 using Infrastructure.Models.GameEntities.Shop;
-using Infrastructure.Services.Ads;
 using Infrastructure.Services.Notification;
 using Infrastructure.Services.Resource;
 
@@ -11,13 +11,11 @@ namespace Infrastructure.Services.Shop
     {
         private readonly ResourcesService _resourcesService;
         private readonly INotificationService _notificationService;
-        private readonly IAdsService _adsService;
         
-        public PaymentShopService(ResourcesService resourcesService, INotificationService notificationService, IAdsService adsService)
+        public PaymentShopService(ResourcesService resourcesService, INotificationService notificationService)
         {
             _resourcesService = resourcesService;
             _notificationService = notificationService;
-            _adsService = adsService;
         }
 
         public void PaymentProduct(IShopProductModel iShopProduct)
@@ -41,13 +39,12 @@ namespace Infrastructure.Services.Shop
             var resource = _resourcesService.GetResourceById(cost.ResourceId);
             
             var needCurrencyAmount = Math.Abs(cost.Amount - resource.Amount);
-        }
-
-        private void ShowAdsToPaymentProduct(IShopProductModel iShopProduct)
-        {
-            // _adsService.OnShowCompleteAdsAction = () => OnCompletePaymentProduct?.Invoke(product);
-            _adsService.ShowAds(AdsId.Rewarded);
-            _notificationService.HideNotification();
+            
+            var notification = new NotificationWithTextModel
+            {
+                NotificationText = UIMessages.ShowResourcePurchaseErrorAlias + " " + needCurrencyAmount
+            };
+            _notificationService.ShowNotification(notification);
         }
 
         private bool CanPaymentProduct(IShopProductModel iShopProduct)

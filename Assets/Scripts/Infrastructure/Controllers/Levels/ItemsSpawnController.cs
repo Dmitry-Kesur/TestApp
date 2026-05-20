@@ -27,7 +27,7 @@ namespace Infrastructure.Controllers.Levels
         private float _itemsSpawnDelay;
         private float _currentDropItemsDuration;
 
-        private ILevelSession _levelModel;
+        private ILevelModel _levelModel;
 
         public ItemsSpawnController(IItemsSpawnService itemsSpawnService, IExceptionLoggerService exceptionLoggerService)
         {
@@ -36,7 +36,7 @@ namespace Infrastructure.Controllers.Levels
             _exceptionLoggerService = exceptionLoggerService;
         }
 
-        public void SetModel(ILevelSession levelModel)
+        public void SetModel(ILevelModel levelModel)
         {
             if (levelModel == null)
             {
@@ -72,19 +72,23 @@ namespace Infrastructure.Controllers.Levels
 
         public void Pause()
         {
-            _itemsSpawnService.DisableSpawn();
+            DisableSpawn();
 
             foreach (var item in _items)
                 item.Pause();
         }
 
-        public void OnResume()
+        public void Resume()
         {
-            _itemsSpawnService.EnableSpawn();
+            EnableSpawn();
 
             foreach (var item in _items)
                 item.Resume();
         }
+
+        private void EnableSpawn() => _itemsSpawnService.EnableSpawn();
+
+        public void DisableSpawn() => _itemsSpawnService.DisableSpawn();
 
         public float GetDropItemsDuration() =>
             _currentDropItemsDuration;

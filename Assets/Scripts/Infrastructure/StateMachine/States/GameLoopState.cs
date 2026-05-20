@@ -12,15 +12,12 @@ namespace Infrastructure.StateMachine.States
         private readonly ILevelsService _levelsService;
         private readonly IHudService _hudService;
         private readonly IWindowService _windowService;
-        private readonly IAnalyticsService _analyticsService;
         private readonly IAdsService _adsService;
 
-        public GameLoopState(ILevelsService levelsService, IHudService hudService, IWindowService windowService, IAnalyticsService analyticsService, IAdsService adsService)
+        public GameLoopState(IHudService hudService, IWindowService windowService, IAdsService adsService)
         {
-            _levelsService = levelsService;
             _hudService = hudService;
             _windowService = windowService;
-            _analyticsService = analyticsService;
             _adsService = adsService;
         }
 
@@ -32,8 +29,6 @@ namespace Infrastructure.StateMachine.States
             #if !UNITY_EDITOR
             _adsService.ShowAds(AdsId.Banner);
             #endif
-
-            _levelsService.OnEnterGameLoop();
         }
 
         public override void Exit()

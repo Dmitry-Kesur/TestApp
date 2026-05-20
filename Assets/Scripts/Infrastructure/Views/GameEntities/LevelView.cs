@@ -13,23 +13,23 @@ namespace Infrastructure.Views.GameEntities
         [SerializeField] private Image _levelBackground;
         [SerializeField] private RectTransform _containerRectTransform;
         
-        private LevelSession _levelSession;
+        private LevelModel _levelModel;
 
-        public void SetModel(LevelSession levelSession)
+        public void SetModel(LevelModel levelModel)
         {
-            _levelSession = levelSession;
+            _levelModel = levelModel;
             AfterSetModel();
         }
 
         public void BeforeDestroy()
         {
-            _levelSession.OnSpawnItemAction -= OnSpawnItem;
+            _levelModel.OnSpawnItemAction -= OnSpawnItem;
         }
 
         private void AfterSetModel()
         {
-            _levelSession.OnSpawnItemAction += OnSpawnItem;
-            _levelBackground.sprite = _levelSession.LevelBackground;
+            _levelModel.OnSpawnItemAction += OnSpawnItem;
+            _levelBackground.sprite = _levelModel.LevelBackground;
         }
 
         private void OnSpawnItem(ItemView itemView)
@@ -44,7 +44,7 @@ namespace Infrastructure.Views.GameEntities
             itemView.StartRotation();
             
             var finishPositionY = _containerRectTransform.rect.yMin - itemView.Height / 2;
-            var animateDuration = _levelSession.DropItemsDuration;
+            var animateDuration = _levelModel.DropItemsDuration;
             var animationTween = itemView.MoveToPosition(new Vector2(itemView.PositionX, finishPositionY),
                 animateDuration);
             animationTween.OnUpdate(() => OnUpdateItem(itemView));
@@ -67,7 +67,7 @@ namespace Infrastructure.Views.GameEntities
 
         private void OnUpdateItem(ItemView itemView)
         {
-            if (!_levelSession.Started)
+            if (!_levelModel.Started)
                 return;
             
             if (CheckReachCatchArea(itemView))

@@ -47,5 +47,9 @@ MonoBehaviour:
     StageText: Loading DailyBonus
   - LoadingStage: 8
     SortValue: 9
-    ProgressValue: 1
+    ProgressValue: 0.98
     StageText: Loading FortuneWheel
+  - LoadingStage: 9
+    SortValue: 10
+    ProgressValue: 1
+    StageText: Daily Ads Rewards

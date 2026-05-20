@@ -19,6 +19,11 @@ namespace Infrastructure.Services.Ads
         private readonly IExceptionLoggerService _exceptionLoggerService;
         private readonly IAnalyticsService _analyticsService;
 
+        private string _currentAdsId;
+        
+        private Action _onAdsShowCompleted;
+        private Action _onAdsShowFailed;
+
         public AdsService(IExceptionLoggerService exceptionLoggerService, IAnalyticsService analyticsService)
         {
             _exceptionLoggerService = exceptionLoggerService;
@@ -26,9 +31,21 @@ namespace Infrastructure.Services.Ads
             InitializeAds();
         }
 
-        public void ShowAds(string adsId)
+        public void ShowAds(string adsId, Action completeCallback = null, Action failedCallback = null)
         {
             var adsProvider = GetAdsProviderById(adsId);
+            
+            if (adsProvider is not { IsLoaded: true } || _currentAdsId != null)
+            {
+                failedCallback?.Invoke();
+                return;
+            }
+            
+            _currentAdsId = adsId;
+            
+            _onAdsShowCompleted = completeCallback;
+            _onAdsShowFailed = failedCallback;
+
             adsProvider.ShowAds();
         }
 
@@ -38,15 +55,15 @@ namespace Infrastructure.Services.Ads
             adsProvider?.Hide();
         }
 
-        public Action<string> OnAdsShowCompletedAction { get; set; }
-
         public void OnInitializationComplete()
         {
             foreach (var adsProvider in _adsProviders)
             {
                 adsProvider.Load();
                 adsProvider.OnAdsShowCompleted = OnAdsShowCompleted;
-                adsProvider.OnAdsShowStartAction = OnAdsShowStart;
+                adsProvider.OnAdsShowFailed = OnAdsShowFailed;
+                adsProvider.OnAdsShowStart = OnAdsShowStart;
+                adsProvider.OnAdsFailedToLoad = OnAdsFailedToLoad;
             }
 
             Debug.Log("[Ads-Service]: Ads initialized.");
@@ -57,7 +74,7 @@ namespace Infrastructure.Services.Ads
             var errorMessage = $"[Ads-Service]: Ads initialize error. {error.ToString()} - {message}";
             _exceptionLoggerService.LogError(errorMessage);
         }
-        
+
         private void InitializeAds()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -75,14 +92,41 @@ namespace Infrastructure.Services.Ads
             _adsProviders.Add(new RewardedAdsProvider());
             _adsProviders.Add(new BannerAdsProvider());
         }
-        
-        private void OnAdsShowCompleted(string adsId) =>
-            OnAdsShowCompletedAction?.Invoke(adsId);
+
+        private void OnAdsShowCompleted(string adsId)
+        {
+            if (_currentAdsId != adsId)
+            {
+                Clear();
+                return;
+            }
+            
+            _onAdsShowCompleted?.Invoke();
+            Clear();
+        }
 
         private void OnAdsShowStart(string placementId, string adsId) =>
             _analyticsService.LogAdsImpression(placementId, adsId);
 
+        private void OnAdsShowFailed(string placementId)
+        {
+            _onAdsShowFailed?.Invoke();
+            Clear();
+            _analyticsService.LogShowAdsFailed(placementId);
+        }
+        
+        private void OnAdsFailedToLoad(string placementId, string errorMessage) =>
+            _analyticsService.LogAdsFailedToLoad(placementId, errorMessage);
+
         private BaseAdsProvider GetAdsProviderById(string adsId) =>
             _adsProviders.Find(ads => ads.AdsId == adsId);
+
+        private void Clear()
+        {
+            _onAdsShowCompleted = null;
+            _onAdsShowFailed = null;
+
+            _currentAdsId = null;
+        }
     }
 }

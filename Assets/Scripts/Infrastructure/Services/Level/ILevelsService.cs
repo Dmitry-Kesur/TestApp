@@ -9,11 +9,13 @@ namespace Infrastructure.Services.Level
         bool ReachedMaxLevel { get; }
         LevelResult LevelResult { get; }
         List<LevelPreviewModel> GetPreviewsModels();
-        LevelSession GetCurrentLevel();
+        LevelModel GetCurrentLevel();
         void SelectLevel(int level);
         void Stop();
         void Pause();
-        void OnEnterGameLoop();
         void Revive();
+        void Restart();
+        void Resume();
+        void StartLevel();
     }
 }

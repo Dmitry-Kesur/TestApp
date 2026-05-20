@@ -18,9 +18,9 @@ namespace Infrastructure.Factories.Level
             _saveLoadProgressService = saveLoadProgressService;
         }
 
-        public LevelSession CreateLevelSession()
+        public LevelModel CreateLevelSession()
         {
-            var levelModel = _diContainer.Instantiate<LevelSession>();
+            var levelModel = _diContainer.Instantiate<LevelModel>();
             return levelModel;
         }
 

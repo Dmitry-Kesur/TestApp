@@ -1,65 +1,77 @@
+using System.Threading.Tasks;
 using Infrastructure.Constants;
+using Infrastructure.Data;
 using Infrastructure.Data.Notifications;
+using Infrastructure.Data.Preloader;
+using Infrastructure.Services.Addressable;
 using Infrastructure.Services.Ads;
 using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Notification;
+using Infrastructure.Services.Preloader;
 using Infrastructure.Services.Progress;
 using Infrastructure.Services.Resource;
 using Infrastructure.Utils;
 
 namespace Infrastructure.Services.Reward
 {
-    public class DailyAdRewardService : IBootstrapTarget
+    public class DailyAdsService : IBootstrapTarget, ILoadableService
     {
-        private const int RewardId = 1;
-        private const int RewardAmountPerDay = 5;
-        
         private readonly AdsService _adsService;
         private readonly ResourcesService _resourcesService;
         private readonly ISaveLoadProgressService _saveLoadProgressService;
         private readonly INotificationService _notificationService;
+        private readonly LocalAddressableService _localAddressableService;
 
         private bool _showDailyAd;
+        
+        private DailyAdsRewardData _dailyAdsRewardData;
 
-        public DailyAdRewardService(AdsService adsService, ResourcesService resourcesService, ISaveLoadProgressService saveLoadProgressService, INotificationService notificationService)
+        public DailyAdsService(AdsService adsService, ResourcesService resourcesService, ISaveLoadProgressService saveLoadProgressService, INotificationService notificationService, LocalAddressableService localAddressableService)
         {
             _adsService = adsService;
             _resourcesService = resourcesService;
             _saveLoadProgressService = saveLoadProgressService;
             _notificationService = notificationService;
+            _localAddressableService = localAddressableService;
+        }
+        
+        public async Task Load()
+        {
+            _dailyAdsRewardData = await _localAddressableService.LoadScriptableAsync<DailyAdsRewardData>(AddressableKeys.DailyAdsReward);
         }
 
-        public int InitializationOrder => 3;
+        public LoadingStage LoadingStage => LoadingStage.DailyAdsRewards;
         
         public void Initialize()
         {
             UpdateShowDailyAdStatus();
         }
+        
+        public int InitializationOrder => 3;
 
         public void ShowRewardedAds()
         {
             if (!_showDailyAd)
             {
-                var notification = new NotificationWithTextModel
-                {
-                    NotificationText = UIMessages.ShowDailyRewardAdErrorAlias
-                };
-                _notificationService.ShowNotification(notification);
-                
+                ShowErrorNotification();
                 return;
             }
             
-            _adsService.OnAdsShowCompletedAction += OnShowCompleteAds;
-            _adsService.ShowAds(AdsId.Rewarded);
+            _adsService.ShowAds(AdsId.Rewarded, completeCallback: OnShowCompleteAds);
         }
 
-        private void OnShowCompleteAds(string adsId)
+        private void ShowErrorNotification()
         {
-            if (adsId != AdsId.Rewarded)
-                return;
-            
-            _adsService.OnAdsShowCompletedAction -= OnShowCompleteAds;
-            _resourcesService.AddResource(RewardId, RewardAmountPerDay);
+            var notification = new NotificationWithTextModel
+            {
+                NotificationText = UIMessages.ShowDailyRewardAdErrorAlias
+            };
+            _notificationService.ShowNotification(notification);
+        }
+
+        private void OnShowCompleteAds()
+        {
+            _resourcesService.AddResource(_dailyAdsRewardData.ResourceId, _dailyAdsRewardData.Amount);
             MarkShowAdToday();
             
             ShowCompleteRewardNotification();
@@ -67,7 +79,7 @@ namespace Infrastructure.Services.Reward
 
         private void ShowCompleteRewardNotification()
         {
-            var rewardResource = _resourcesService.GetResourceById(RewardId);
+            var rewardResource = _resourcesService.GetResourceById(_dailyAdsRewardData.ResourceId);
             var notification = new NotificationWithIconModel
             {
                 NotificationIcon = rewardResource.Icon,

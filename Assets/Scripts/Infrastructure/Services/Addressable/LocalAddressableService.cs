@@ -53,6 +53,17 @@ namespace Infrastructure.Services.Addressable
 
             return await tcs.Task;
         }
+        
+        public async Task<T> LoadScriptableAsync<T>(string key) where T : class
+        {
+            var handle = Addressables.LoadAssetAsync<T>(key);
+            await handle.Task;
+
+            if (handle.Status != AsyncOperationStatus.Succeeded)
+                return null;
+
+            return handle.Result;
+        }
 
         public void Release(GameObject gameObject)
         {

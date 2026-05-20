@@ -20,9 +20,14 @@ namespace Infrastructure.Data.Ads
             {
                 loadCallback = () =>
                 {
+                    IsLoaded = true;
                     Debug.LogError("[Ads] Banner load successful");
                 },
-                errorCallback = (msg) => Debug.LogError("[Ads] Banner load error: " + msg)
+                errorCallback = msg =>
+                {
+                    IsLoaded = false;
+                    Debug.LogError("[Ads] Banner load error: " + msg);
+                }
             };
 
             Advertisement.Banner.Load(GetPlacementId(), loadOptions);
@@ -32,7 +37,7 @@ namespace Infrastructure.Data.Ads
         {
             var options = new BannerOptions
             {
-                showCallback = () => OnAdsShowStartAction?.Invoke(GetPlacementId(), AdsId),
+                showCallback = () => OnAdsShowStart?.Invoke(GetPlacementId(), AdsId),
                 hideCallback = () => {  }
             };
 

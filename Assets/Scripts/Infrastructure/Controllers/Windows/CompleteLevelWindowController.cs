@@ -1,7 +1,5 @@
-﻿using Infrastructure.Enums;
-using Infrastructure.Models.UI.Windows;
+﻿using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services.Level;
-using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.Windows;
 
 namespace Infrastructure.Controllers.Windows
@@ -9,15 +7,14 @@ namespace Infrastructure.Controllers.Windows
     public class CompleteLevelWindowController : BaseWindowController<WinLevelWindow>
     {
         private readonly ILevelsService _levelsService;
-        private readonly StateMachineService _stateMachineService;
+        private readonly LevelFlowService _levelFlowService;
 
         private CompleteLevelWindowModel _completeLevelWindowModel;
 
-        public CompleteLevelWindowController(ILevelsService levelsService,
-            StateMachineService stateMachineService)
+        public CompleteLevelWindowController(ILevelsService levelsService, LevelFlowService levelFlowService)
         {
             _levelsService = levelsService;
-            _stateMachineService = stateMachineService;
+            _levelFlowService = levelFlowService;
 
             CreateWindowModel();
         }
@@ -42,14 +39,8 @@ namespace Infrastructure.Controllers.Windows
             };
         }
 
-        private void OnMenuButtonClick()
-        {
-            _stateMachineService.TransitionTo(StateType.MenuState);
-        }
+        private void OnMenuButtonClick() => _levelFlowService.BackToMenu();
 
-        private void OnNextLevelButtonClick()
-        {
-            _stateMachineService.TransitionTo(StateType.GameLoopState);
-        }
+        private void OnNextLevelButtonClick() => _levelFlowService.StartLevel();
     }
 }

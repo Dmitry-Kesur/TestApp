@@ -124,7 +124,9 @@ namespace Infrastructure.Services.DailyBonus
             _activeDayIndex = _streak - 1;
 
             if (canClaim)
+            {
                 _dayModels[_activeDayIndex].CanTakeReward = true;
+            }
         }
 
         private void ResetDaysTakeRewardStatus()

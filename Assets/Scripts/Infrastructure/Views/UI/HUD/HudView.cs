@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using Infrastructure.Models.UI.HUD;
 using Infrastructure.Views.UI.Buttons;
 using TMPro;
@@ -19,7 +20,8 @@ namespace Infrastructure.Views.UI.HUD
         public void SetModel(HudModel hudModel)
         {
             _hudModel = hudModel;
-            
+
+            _pauseGameButton.OnButtonClickAction = null;
             _pauseGameButton.OnButtonClickAction = _hudModel.OnPauseGameButtonClick;
         }
 
@@ -66,7 +68,13 @@ namespace Infrastructure.Views.UI.HUD
 
         public void Draw()
         {
+            UpdateLevelProgress();
             UpdateActiveBooster();
+        }
+
+        private void OnDestroy()
+        {
+            Clear();
         }
     }
 }

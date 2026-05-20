@@ -25,18 +25,20 @@ namespace Infrastructure.Services.Hud
 
         public async Task ShowHud()
         {
-            _hudView = await _addressableService.InstantiatePrefab<HudView>("HudView");
-            _hudView.transform.SetParent(_uiProvider.HudLayer, false);
+            if (_hudView == null)
+            {
+                _hudView = await _addressableService.InstantiatePrefab<HudView>("HudView");
+                _hudView.transform.SetParent(_uiProvider.HudLayer, false);
+            }
 
+            _hudView.gameObject.SetActive(true);
             _hudController ??= GetHudController();
             _hudController.OnShowHud(_hudView);
         }
 
         public void HideHud()
         {
-            _hudView.Clear();
-            _addressableService.Release(_hudView.gameObject);
-            _hudView = null;
+            _hudView.gameObject.SetActive(false);
         }
 
         public void UpdateHud() =>

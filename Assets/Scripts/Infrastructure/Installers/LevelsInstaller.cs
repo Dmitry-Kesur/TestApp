@@ -32,6 +32,7 @@ namespace Infrastructure.Installers
 
         private void BindServices()
         {
+            BindLevelFlowService();
             BindLevelsService();
         }
 
@@ -45,6 +46,9 @@ namespace Infrastructure.Installers
 
         private void BindLevelsStaticDataProvider() =>
             Container.BindInterfacesAndSelfTo<LevelsStaticDataProvider>().AsSingle();
+
+        private void BindLevelFlowService() =>
+            Container.BindInterfacesAndSelfTo<LevelFlowService>().AsSingle();
 
         private void BindLevelsService() =>
             Container.BindInterfacesAndSelfTo<LevelService>().AsSingle();

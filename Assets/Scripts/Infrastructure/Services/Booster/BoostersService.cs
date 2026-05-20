@@ -72,8 +72,7 @@ namespace Infrastructure.Services.Booster
             LoadingStage.LoadingBoosters;
 
         public bool HasBoosterToActivate =>
-            _boosterModels.Any(model => model.IsEnough) &&
-            _activeBoosterModel == null;
+            _boosterModels.Any(model => model.IsEnough);
 
         private void CreateBoosterModels()
         {
@@ -100,6 +99,11 @@ namespace Infrastructure.Services.Booster
                 return;
             }
 
+            ActivateBooster(activeBoosterId, endUnixSeconds);
+        }
+
+        private void ActivateBooster(int activeBoosterId, long endUnixSeconds)
+        {
             var boosterModel = _boosterModels.Find(model => model.Id == activeBoosterId);
             _activeBoosterModel = boosterModel;
             OnBoosterActivatedAction?.Invoke();

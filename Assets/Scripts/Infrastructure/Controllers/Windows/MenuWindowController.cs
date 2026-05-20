@@ -14,14 +14,14 @@ namespace Infrastructure.Controllers.Windows
         private readonly MenuWindowModel _menuWindowModel;
         private readonly StateMachineService _stateMachineService;
         private readonly IAuthenticationService _authenticationService;
-        private readonly DailyAdRewardService _dailyAdRewardService;
+        private readonly DailyAdsService _dailyAdsService;
 
         public MenuWindowController(SaveLoadProgressService saveLoadProgressService,
-            StateMachineService stateMachineService, IAuthenticationService authenticationService, DailyAdRewardService dailyAdRewardService)
+            StateMachineService stateMachineService, IAuthenticationService authenticationService, DailyAdsService dailyAdsService)
         {
             _stateMachineService = stateMachineService;
             _authenticationService = authenticationService;
-            _dailyAdRewardService = dailyAdRewardService;
+            _dailyAdsService = dailyAdsService;
 
             _menuWindowModel = new MenuWindowModel(_authenticationService)
             {
@@ -51,7 +51,7 @@ namespace Infrastructure.Controllers.Windows
             _stateMachineService.TransitionTo(StateType.BoostersState);
 
         private void OnDailyRewardButtonClick() =>
-            _dailyAdRewardService.ShowRewardedAds();
+            _dailyAdsService.ShowRewardedAds();
 
         private void OnLuckySpinButtonClick() =>
             _stateMachineService.TransitionTo(StateType.LuckySpinState);

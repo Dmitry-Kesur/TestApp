@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
 using Firebase.Database;
 using Infrastructure.Data.PlayerProgress;
+using Infrastructure.Services.Bootstrap;
 using Newtonsoft.Json;
 
 namespace Infrastructure.Services.Progress
 {
-    public class FirebaseProgressRepository : IProgressRepository
+    public class FirebaseProgressRepository : IProgressRepository, IThirdPartyInitializable
     {
         private const string UsersTablePath = "users";
         

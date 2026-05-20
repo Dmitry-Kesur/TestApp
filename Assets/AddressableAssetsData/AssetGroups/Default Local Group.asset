@@ -34,11 +34,29 @@ MonoBehaviour:
     m_SerializedLabels:
     - inappproducts
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f29d0f81ae4a4603bf5bd4a3da937f8
+    m_Address: Assets/Scripts/ScriptableObjects/Rewards/StaticRewards/DailyAdsRewardData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - DailyAdsReward
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 344462451dc7c4b2597c1fd15fc45a06
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 9.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 455a029c3c86e4809a0e746433f4ca9a
     m_Address: Assets/Scripts/ScriptableObjects/InAppProducts/BigCoinsBag/InAppProductData.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - inappproducts
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 528d4ca4c8be147abad37ff3bdc6d25e
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 3.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5795f77f011e04805aecf9ce00d03fae
     m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 3.asset
@@ -70,6 +88,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - dailyBonus
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82c278879edb740f78c27d3f7300abd3
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8601742553b964c69a6ee0c27e281f81
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 87e1771cf83af458e97a531eefa8fa1f
     m_Address: Assets/Scripts/ScriptableObjects/Resource/BoosterX3.asset
     m_ReadOnly: 0
@@ -81,6 +111,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8eed2f474e16b47b8b6d7b850975ce5d
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 6.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9332e2373affc4be282e534884059dc9
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 4.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a01f1d90f5a374c97977983998cc1e72
     m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 6.asset
@@ -94,6 +136,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - resource
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a80dd6c99534a4ec7b881451822c2482
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: af1517e71f05e490994b4d60c0f493dd
     m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData.asset
     m_ReadOnly: 0
@@ -106,11 +154,23 @@ MonoBehaviour:
     m_SerializedLabels:
     - sounds
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cff8422b987f94eaf9ea7067fbaef330
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 8.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d0a72094ff0b97648881e9eb8b39120d
     m_Address: CatchSoundData
     m_ReadOnly: 0
     m_SerializedLabels:
     - sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da574d33aefd74231958675e23e975f1
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 7.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: de06b9b72d67240ae97b1972f3feb9e8
     m_Address: Assets/Scripts/ScriptableObjects/Resource/BoosterX2.asset
@@ -123,6 +183,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - dailyBonus
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f112e3d3b5f1a4a1585368aab5b5acc2
+    m_Address: Assets/Scripts/ScriptableObjects/LuckySpin/WheelSegmentData 5.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - luckySpinWheelSegments
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fce083cb55b954471935ef433c5faebe
     m_Address: Assets/Scripts/ScriptableObjects/DailyBonus/DailyBonusDayData 5.asset

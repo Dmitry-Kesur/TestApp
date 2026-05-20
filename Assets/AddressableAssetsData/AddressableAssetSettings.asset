@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 6042d327a9a5d1a4f8971da1965972bb
   m_currentHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: 699f88f3a539bc52eace8996b64cf6b6
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -101,6 +101,8 @@ MonoBehaviour:
     - resource
     - inappproducts
     - dailyBonus
+    - luckySpinWheelSegments
+    - DailyAdsReward
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: dc69f44bd8e8f1c4aa09b8aa8a032ae5, type: 2}

@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Segment1
   m_EditorClassIdentifier: 
   Index: 1
+  Weight: 20
   RewardId: 2
   RewardAmount: 1

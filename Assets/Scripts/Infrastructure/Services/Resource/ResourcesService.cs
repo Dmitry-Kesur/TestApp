@@ -47,6 +47,7 @@ namespace Infrastructure.Services.Resource
         public void Initialize()
         {
             CreateResourceModels();
+            EnsureResourcesProgress();
             UpdateResources();
         }
 
@@ -61,9 +62,6 @@ namespace Infrastructure.Services.Resource
             _saveLoadProgressService.Write(progress =>
             {
                 progress.ChangeResourceAmount(resourceId, resourceModel.Amount);
-                
-                if (resourceModel.Amount <= 0)
-                    progress.RemoveResource(resourceId);
             });
         }
 
@@ -112,6 +110,27 @@ namespace Infrastructure.Services.Resource
                 return;
             
             AddResource(purchaseReward.Id, purchaseReward.Amount);
+        }
+
+        private void EnsureResourcesProgress()
+        {
+            _saveLoadProgressService.Write(progress =>
+            {
+                foreach (var resourceData in _resourcesData)
+                {
+                    var exists = progress.Resources.Exists(resource =>
+                        resource.resourceId == resourceData.Id);
+
+                    if (exists)
+                        continue;
+
+                    progress.Resources.Add(new ProgressResourceData
+                    {
+                        resourceId = resourceData.Id,
+                        amount = 0
+                    });
+                }
+            });
         }
     }
 }

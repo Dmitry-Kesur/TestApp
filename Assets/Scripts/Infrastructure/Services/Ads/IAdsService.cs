@@ -4,8 +4,7 @@ namespace Infrastructure.Services.Ads
 {
     public interface IAdsService
     {
-        void ShowAds(string adsId);
+        void ShowAds(string adsId, Action completeCallback = null, Action failedCallback = null);
         void HideBanner();
-        Action<string> OnAdsShowCompletedAction { get; set; }
     }
 }

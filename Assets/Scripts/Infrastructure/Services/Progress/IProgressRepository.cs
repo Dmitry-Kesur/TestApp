@@ -7,6 +7,5 @@ namespace Infrastructure.Services.Progress
     {
         Task<ProgressData> Load(string userId);
         Task Save(string userId, ProgressData progressData);
-        void Initialize();
     }
 }

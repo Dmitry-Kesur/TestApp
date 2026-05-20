@@ -12,15 +12,17 @@ namespace Infrastructure.Controllers.Windows
     public class SelectLevelWindowController : BaseWindowController<SelectLevelWindow>
     {
         private readonly ILevelsService _levelsService;
+        private readonly LevelFlowService _levelFlowService;
         private readonly IBoostersService _boostersService;
         private readonly IWindowService _windowService;
         private readonly LevelsStaticDataProvider _levelsStaticDataProvider;
         private readonly StateMachineService _stateMachineService;
         private readonly SelectLevelWindowModel _selectLevelWindowModel;
 
-        public SelectLevelWindowController(StateMachineService stateMachineService, ILevelsService levelsService, IBoostersService boostersService, IWindowService windowService)
+        public SelectLevelWindowController(StateMachineService stateMachineService, ILevelsService levelsService, LevelFlowService levelFlowService, IBoostersService boostersService, IWindowService windowService)
         {
             _levelsService = levelsService;
+            _levelFlowService = levelFlowService;
             _boostersService = boostersService;
             _windowService = windowService;
             _stateMachineService = stateMachineService;
@@ -41,13 +43,13 @@ namespace Infrastructure.Controllers.Windows
         {
             _levelsService.SelectLevel(level);
             
-            if (_boostersService.HasBoosterToActivate)
+            if (_boostersService.HasBoosterToActivate && _boostersService.ActiveBooster == null)
             {
                 _windowService.ShowWindow(WindowId.BoosterActivationWindow);
                 return;
             }
-            
-            _stateMachineService.TransitionTo(StateType.GameLoopState);
+
+            _levelFlowService.StartLevel();
         }
 
         private void OnBackToMenu() =>

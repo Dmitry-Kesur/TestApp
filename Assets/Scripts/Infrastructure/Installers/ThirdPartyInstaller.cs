@@ -2,6 +2,7 @@
 using Infrastructure.Services.Ads;
 using Infrastructure.Services.Analytics;
 using Infrastructure.Services.Authentication;
+using Infrastructure.Services.Bootstrap;
 using Infrastructure.Services.Log;
 using Infrastructure.Services.Reward;
 using Zenject;
@@ -17,11 +18,27 @@ namespace Infrastructure.Installers
 
         private void BindServices()
         {
+            BindUnityCoreInitializer();
+            BindFirebaseCoreInitializer();
             BindAnalyticsService();
             BindExceptionLoggerService();
             BindAdsService();
             BindAuthenticationService();
             BindDailyAdRewardService();
+        }
+
+        private void BindUnityCoreInitializer()
+        {
+            Container.Bind<ICoreThirdPartyInitializable>()
+                .To<UnityCoreInitializer>()
+                .AsSingle();
+        }
+
+        private void BindFirebaseCoreInitializer()
+        {
+            Container.Bind<ICoreThirdPartyInitializable>()
+                .To<FirebaseCoreInitializer>()
+                .AsSingle();
         }
 
         private void BindAnalyticsService() =>
@@ -49,6 +66,6 @@ namespace Infrastructure.Installers
         }
 
         private void BindDailyAdRewardService() =>
-            Container.BindInterfacesAndSelfTo<DailyAdRewardService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<DailyAdsService>().AsSingle();
     }
 }

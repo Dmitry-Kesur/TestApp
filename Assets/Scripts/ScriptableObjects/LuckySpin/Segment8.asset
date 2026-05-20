@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cca3cd5d4c84ce1b2755643c1b0d099, type: 3}
   m_Name: Segment8
   m_EditorClassIdentifier: 
-  Index: 9
+  Index: 8
+  Weight: 50
   RewardId: 3
   RewardAmount: 3

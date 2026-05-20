@@ -35,6 +35,7 @@ namespace Infrastructure.Data.Preloader
         LoadingBoosters,
         LoadingResources,
         LoadingDailyBonus,
-        LoadingLuckySpin
+        LoadingLuckySpin,
+        DailyAdsRewards
     }
 }

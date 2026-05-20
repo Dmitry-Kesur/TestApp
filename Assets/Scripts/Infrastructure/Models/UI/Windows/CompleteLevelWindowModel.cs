@@ -5,7 +5,7 @@ namespace Infrastructure.Models.UI.Windows
 {
     public class CompleteLevelWindowModel : BaseWindowModel
     {
-        private LevelSession _winLevel;
+        private LevelModel _winLevel;
 
         public Action OnNextLevelButtonClickAction;
         public Action OnMenuButtonClickAction;

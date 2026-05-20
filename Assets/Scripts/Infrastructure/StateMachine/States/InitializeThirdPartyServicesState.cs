@@ -1,28 +1,30 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Firebase;
 using Infrastructure.Enums;
 using Infrastructure.Services.Bootstrap;
-using Unity.Services.Core;
 using UnityEngine;
 
 namespace Infrastructure.StateMachine.States
 {
     public class InitializeThirdPartyServicesState : State
     {
-        private readonly List<IThirdPartyInitializable> _firebaseInitializeServices;
+        private readonly List<ICoreThirdPartyInitializable> _coreThirdPartyServices;
+        private readonly List<IThirdPartyInitializable> _thirdPartyServices;
 
-        public InitializeThirdPartyServicesState(List<IThirdPartyInitializable> firebaseInitializeServices)
+        public InitializeThirdPartyServicesState(List<ICoreThirdPartyInitializable> coreThirdPartyServices, List<IThirdPartyInitializable> thirdPartyServices)
         {
-            _firebaseInitializeServices = firebaseInitializeServices;
+            _coreThirdPartyServices = coreThirdPartyServices;
+            _thirdPartyServices = thirdPartyServices;
         }
 
         public override async void Enter()
         {
             try
             {
-                await InitializeServices();
+                await InitializeCoreAsync();
+                InitializeServices();
 
                 StateMachineService.TransitionTo(StateType.AuthenticationState);
             }
@@ -31,44 +33,25 @@ namespace Infrastructure.StateMachine.States
                 Debug.LogError($"[InitializeThirdPartyServicesState] Exception: {e.Message}\n{e.StackTrace}");
             }
         }
-
-        private async Task InitializeServices()
+        
+        private async Task InitializeCoreAsync()
         {
-            await InitAsyncServices();
-            InitializeFirebaseServices();
+            await Task.WhenAll(
+                _coreThirdPartyServices.Select(x => x.InitializeAsync())
+            );
         }
 
-        private async Task InitAsyncServices()
+        private void InitializeServices()
         {
-            await UnityServices.InitializeAsync();
-            await CheckAndFixFirebaseDependencies();
-        }
-
-        private async Task CheckAndFixFirebaseDependencies()
-        {
-            var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
-            if (dependencyStatus == DependencyStatus.Available)
-            {
-                Debug.Log("Firebase dependencies are available.");
-            }
-            else
-            {
-                Debug.LogError($"Firebase dependencies error: {dependencyStatus}");
-                throw new InvalidOperationException("Firebase dependencies are not available.");
-            }
-        }
-
-        private void InitializeFirebaseServices()
-        {
-            foreach (var firebaseInitializeService in _firebaseInitializeServices)
+            foreach (var thirdPartyService in _thirdPartyServices)
             {
                 try
                 {
-                    firebaseInitializeService.Initialize();
+                    thirdPartyService.Initialize();
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"Failed to initialize Firebase service {firebaseInitializeService.GetType().Name}: {e.Message}");
+                    Debug.LogError($"Failed to initialize service {thirdPartyService.GetType().Name}: {e.Message}");
                 }
             }
         }

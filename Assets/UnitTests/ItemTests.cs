@@ -18,7 +18,7 @@ using Zenject;
 public class ItemTests : ZenjectUnitTestFixture
 {
     private ItemsSpawnService _itemsSpawnService;
-    private ILevelSession _levelSession;
+    private ILevelModel _levelSession;
     private ItemsSpawnController _itemsSpawnController;
     private IItemViewsFactory _itemViewsFactory;
     private IItemsStrategyFactory _itemsStrategyFactory;
@@ -29,12 +29,12 @@ public class ItemTests : ZenjectUnitTestFixture
     public override void Setup()
     {
         base.Setup();
-        _levelSession = Substitute.For<ILevelSession>();
+        _levelSession = Substitute.For<ILevelModel>();
         _itemViewsFactory = Substitute.For<IItemViewsFactory>();
         _itemsService = Substitute.For<IItemsService>();
 
         Container.BindInterfacesAndSelfTo<ItemsSpawnService>().AsSingle();
-        Container.Bind<ILevelSession>().FromInstance(_levelSession);
+        Container.Bind<ILevelModel>().FromInstance(_levelSession);
         Container.Bind<ItemsSpawnController>().AsSingle();
         Container.Bind<IExceptionLoggerService>().To<EditorExceptionLoggerService>().AsSingle();
         Container.Bind<IItemViewsFactory>().FromInstance(_itemViewsFactory);
@@ -152,7 +152,7 @@ public class ItemTests : ZenjectUnitTestFixture
         _itemsSpawnService.OnSpawnItemAction?.Invoke(_itemView);
         _itemsSpawnController.Pause();
 
-        _itemsSpawnController.OnResume();
+        _itemsSpawnController.Resume();
 
         // Assert
         Assert.IsFalse(_itemView.Paused);

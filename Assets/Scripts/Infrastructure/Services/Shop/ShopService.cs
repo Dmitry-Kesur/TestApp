@@ -27,7 +27,6 @@ namespace Infrastructure.Services.Shop
         private readonly ISaveLoadProgressService _saveLoadProgressService;
         private readonly INotificationService _notificationService;
         private readonly ShopProductFactory _productFactory;
-        private readonly ResourcesService _resourcesService;
         private readonly ShopProductRewardResolver _productRewardResolver;
 
         public Action OnPurchaseCompleted;
@@ -37,7 +36,7 @@ namespace Infrastructure.Services.Shop
         public ShopService(LocalAddressableService localAddressableService,
             IPaymentShopService paymentProductService, IAnalyticsService analyticsService,
             ISaveLoadProgressService saveLoadProgressService, INotificationService notificationService,
-            ShopProductFactory productFactory, ResourcesService resourcesService, ShopProductRewardResolver productRewardResolver)
+            ShopProductFactory productFactory, ShopProductRewardResolver productRewardResolver)
         {
             _localAddressableService = localAddressableService;
             _paymentProductService = paymentProductService;
@@ -45,7 +44,6 @@ namespace Infrastructure.Services.Shop
             _saveLoadProgressService = saveLoadProgressService;
             _notificationService = notificationService;
             _productFactory = productFactory;
-            _resourcesService = resourcesService;
             _productRewardResolver = productRewardResolver;
         }
 

@@ -1,9 +1,6 @@
-﻿using Infrastructure.Enums;
-using Infrastructure.Models.UI.HUD;
-using Infrastructure.Services;
+﻿using Infrastructure.Models.UI.HUD;
 using Infrastructure.Services.Booster;
 using Infrastructure.Services.Level;
-using Infrastructure.StateMachine;
 using Infrastructure.Views.UI.HUD;
 
 namespace Infrastructure.Controllers.Hud
@@ -13,15 +10,16 @@ namespace Infrastructure.Controllers.Hud
         private readonly HudModel _hudModel;
         private readonly ILevelsService _levelsService;
         private readonly IBoostersService _boostersService;
-        private readonly StateMachineService _stateMachineService;
+        private readonly LevelFlowService _levelFlowService;
 
         private HudView _hudView;
 
-        public HudController(StateMachineService stateMachineService, ILevelsService levelsService, IBoostersService boostersService)
+        public HudController(ILevelsService levelsService, IBoostersService boostersService,
+            LevelFlowService levelFlowService)
         {
-            _stateMachineService = stateMachineService;
             _levelsService = levelsService;
             _boostersService = boostersService;
+            _levelFlowService = levelFlowService;
             _boostersService.OnBoosterDeactivatedAction += OnBoosterDeactivated;
 
             _hudModel = new HudModel(_levelsService)
@@ -52,16 +50,13 @@ namespace Infrastructure.Controllers.Hud
         {
             _hudView.UpdateLevelProgress();
         }
-        
+
         private void OnBoosterDeactivated()
         {
             _hudModel.ActiveBoosterModel = null;
             UpdateActiveBooster();
         }
 
-        private void OnPauseGameButtonClickHandler()
-        {
-            _stateMachineService.TransitionTo(StateType.PauseGameLoopState);
-        }
+        private void OnPauseGameButtonClickHandler() => _levelFlowService.PauseLevel();
     }
 }

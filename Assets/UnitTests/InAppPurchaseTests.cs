@@ -52,7 +52,7 @@ namespace UnitTests
         }
 
         [UnityTest]
-        public IEnumerator PurchaseProduct_WhenPurchaseSuccess()
+        public IEnumerator PurchaseProduct_WhenSuccess()
         {
             // Arrange
             _inAppProductsSource.GetProducts().Returns(new List<InAppProductData> { CreateFakeProductData() });

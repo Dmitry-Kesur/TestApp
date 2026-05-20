@@ -18,7 +18,7 @@ namespace Infrastructure.Controllers.Levels
         private int _totalFailItems;
         private int _totalLevelScore;
 
-        private LevelSession _levelSession;
+        private LevelModel _levelModel;
 
         public LevelProgressController(IHudService hudService, IBoostersService boostersService,
             SaveLoadProgressService saveLoadProgressService)
@@ -40,7 +40,7 @@ namespace Infrastructure.Controllers.Levels
 
             _hudService.UpdateHud();
 
-            if (_totalFailItems == _levelSession.MaximumFailItems)
+            if (_totalFailItems == _levelModel.MaximumFailItems)
             {
                 UpdateBestScore();
                 OnReachedMaximumFailItems?.Invoke();
@@ -53,8 +53,8 @@ namespace Infrastructure.Controllers.Levels
             ClearFailedProgress();
         }
 
-        public void SetModel(LevelSession levelSession) =>
-            _levelSession = levelSession;
+        public void SetModel(LevelModel levelModel) =>
+            _levelModel = levelModel;
 
         public void Refresh()
         {
@@ -67,7 +67,7 @@ namespace Infrastructure.Controllers.Levels
 
             _hudService.UpdateHud();
 
-            if (TotalLevelScore >= _levelSession.ScorePointsToWin)
+            if (TotalLevelScore >= _levelModel.ScorePointsToWin)
             {
                 UpdateBestScore();
                 OnReachScoreToWin?.Invoke();

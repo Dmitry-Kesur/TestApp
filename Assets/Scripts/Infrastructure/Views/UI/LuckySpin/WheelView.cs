@@ -8,10 +8,16 @@ namespace Infrastructure.Views.UI
 {
     public class WheelView : MonoBehaviour
     {
+        private const int FakeSpinCount = 6;
+        private const int FullSpinValue = 360;
+        private const float SpinDuration = 2.2f;
+
+        private Tween _spinTween;
+        
         public event Action<int> OnCompleteSpinAction; 
         
         [SerializeField] private List<WheelSegmentView> _wheelSegments;
-
+        
         public void DrawSegments(List<WheelSegmentModel> segmentModels)
         {
             for (int i = 0; i < segmentModels.Count; i++)
@@ -25,19 +31,27 @@ namespace Infrastructure.Views.UI
 
         public void StartSpin(int segmentIndex)
         {
-            float seg = 360f / _wheelSegments.Count;
-            float center = seg * segmentIndex;
-
-            int spins = 6;
-            float duration = 2.2f;
+            int segmentStep = FullSpinValue / _wheelSegments.Count;
+            float center = segmentStep * segmentIndex;
             
-            float final = center - 360f * spins;
+            float finalSpinValue = center - FullSpinValue * FakeSpinCount;
 
-            transform.DOLocalRotate(new Vector3(0, 0, final), duration, RotateMode.FastBeyond360)
+            _spinTween = transform.DOLocalRotate(new Vector3(0, 0, finalSpinValue), SpinDuration, RotateMode.FastBeyond360)
                 .SetEase(Ease.OutCubic).OnComplete(() =>
                 {
                     OnCompleteSpinAction?.Invoke(segmentIndex); 
                 });
+        }
+
+        private void KillTween()
+        {
+            _spinTween?.Kill();
+            _spinTween = null;
+        }
+
+        private void OnDisable()
+        {
+            KillTween();
         }
     }
 }

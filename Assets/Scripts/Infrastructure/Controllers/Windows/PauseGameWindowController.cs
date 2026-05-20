@@ -1,10 +1,6 @@
-﻿using Infrastructure.Enums;
-using Infrastructure.Models.UI.Windows;
-using Infrastructure.Services;
+﻿using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services.Level;
 using Infrastructure.Services.Sound;
-using Infrastructure.StateMachine;
-using Infrastructure.StateMachine.States;
 using Infrastructure.Views.UI.Windows;
 
 namespace Infrastructure.Controllers.Windows
@@ -12,17 +8,16 @@ namespace Infrastructure.Controllers.Windows
     public class PauseGameWindowController : BaseWindowController<PauseGameWindow>
     {
         private readonly PauseGameWindowModel _pauseGameWindowModel;
-        private readonly StateMachineService _stateMachineService;
-        private readonly ILevelsService _levelsService;
+        private readonly LevelFlowService _levelFlowService;
         private readonly ISoundService _soundService;
 
-        public PauseGameWindowController(StateMachineService stateMachineService, ILevelsService levelsService, ISoundService soundService)
+        public PauseGameWindowController(LevelFlowService levelFlowService,
+            ISoundService soundService)
         {
-            _stateMachineService = stateMachineService;
-            _levelsService = levelsService;
+            _levelFlowService = levelFlowService;
             _soundService = soundService;
             _soundService.OnChangeMuteSoundsAction += OnChangeMuteSounds;
-            
+
             _pauseGameWindowModel = new PauseGameWindowModel
             {
                 OnBackToMenuButtonClickAction = OnBackToMenuButtonClick,
@@ -34,16 +29,9 @@ namespace Infrastructure.Controllers.Windows
         protected override BaseWindowModel GetModel() =>
             _pauseGameWindowModel;
 
-        private void OnResumeGameButtonClick()
-        {
-            _stateMachineService.TransitionTo(StateType.GameLoopState);
-        }
+        private void OnResumeGameButtonClick() => _levelFlowService.ResumeLevel();
 
-        private void OnBackToMenuButtonClick()
-        {
-            _levelsService.Stop();
-            _stateMachineService.TransitionTo(StateType.MenuState);
-        }
+        private void OnBackToMenuButtonClick() => _levelFlowService.BackToMenu();
 
         private void OnMuteSoundsStateChange(bool muteSounds)
         {

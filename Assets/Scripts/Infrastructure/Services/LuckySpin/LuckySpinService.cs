@@ -82,18 +82,8 @@ namespace Infrastructure.Services.LuckySpin
         {
             if (_canFreeSpin)
                 return;
-
-            void OnAdsShowCompleted(string adsId)
-            {
-                if (adsId != AdsId.Rewarded)
-                    return;
-
-                _adsService.OnAdsShowCompletedAction -= OnAdsShowCompleted;
-                StartSpin();
-            }
-
-            _adsService.OnAdsShowCompletedAction += OnAdsShowCompleted;
-            _adsService.ShowAds(AdsId.Rewarded);
+            
+            _adsService.ShowAds(AdsId.Rewarded, completeCallback: StartSpin);
         }
 
         private void StartSpin()

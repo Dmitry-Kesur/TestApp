@@ -1,7 +1,6 @@
-using Infrastructure.Enums;
 using Infrastructure.Models.UI.Windows;
 using Infrastructure.Services.Booster;
-using Infrastructure.StateMachine;
+using Infrastructure.Services.Level;
 using Infrastructure.Views.UI.Windows;
 
 namespace Infrastructure.Controllers.Windows
@@ -9,13 +8,13 @@ namespace Infrastructure.Controllers.Windows
     public class BoosterActivationWindowController : BaseWindowController<BoosterActivationWindow>
     {
         private readonly IBoostersService _boostersService;
-        private readonly StateMachineService _stateMachineService;
-        private BoosterActivationWindowModel _windowModel;
+        private readonly LevelFlowService _levelFlowService;
+        private readonly BoosterActivationWindowModel _windowModel;
 
-        public BoosterActivationWindowController(IBoostersService boostersService, StateMachineService stateMachineService)
+        public BoosterActivationWindowController(IBoostersService boostersService, LevelFlowService levelFlowService)
         {
             _boostersService = boostersService;
-            _stateMachineService = stateMachineService;
+            _levelFlowService = levelFlowService;
             _windowModel = new BoosterActivationWindowModel();
             _windowModel.CancelAction += OnCancel;
             _boostersService.OnBoosterActivatedAction += OnBoosterActivated;
@@ -30,9 +29,9 @@ namespace Infrastructure.Controllers.Windows
         protected override BaseWindowModel GetModel() => _windowModel;
 
         private void OnCancel() =>
-            _stateMachineService.TransitionTo(StateType.GameLoopState);
+            _levelFlowService.StartLevel();
 
         private void OnBoosterActivated() =>
-            _stateMachineService.TransitionTo(StateType.GameLoopState);
+            _levelFlowService.StartLevel();
     }
 }

@@ -30,7 +30,7 @@ namespace Infrastructure.Services.Level
         private readonly LevelViewsFactory _levelViewsFactory;
 
         private LevelStaticData _selectedLevelData;
-        private LevelSession _currentLevelSession;
+        private LevelModel _currentLevelModel;
         private LevelResult _levelResult;
 
         private LevelView _levelView;
@@ -52,18 +52,17 @@ namespace Infrastructure.Services.Level
             _levelViewsFactory = levelViewsFactory;
         }
 
-        public void OnEnterGameLoop()
+        public void StartLevel()
         {
             EnsureLevelSession();
-
-            if (_currentLevelSession.CanResume)
+            if (_currentLevelModel == null)
             {
-                _currentLevelSession.Resume();
+                _exceptionLoggerService.LogError("Level session is null");
                 return;
             }
             
-            _currentLevelSession.SetData(_selectedLevelData);
-            _currentLevelSession.Start();
+            _currentLevelModel.SetData(_selectedLevelData);
+            _currentLevelModel.Start();
         }
 
         public void SelectLevel(int level)
@@ -81,10 +80,20 @@ namespace Infrastructure.Services.Level
         }
 
         public void Pause() =>
-            _currentLevelSession.Pause();
+            _currentLevelModel.Pause();
 
-        public void Revive() =>
-            _currentLevelSession.Revive();
+        public void Revive()
+        {
+            _currentLevelModel.Revive();
+        }
+
+        public void Resume() => _currentLevelModel.Resume();
+
+        public void Restart()
+        {
+            _currentLevelModel.Stop();
+            StartLevel();
+        }
 
         public int InitializationOrder => 4;
 
@@ -94,14 +103,14 @@ namespace Infrastructure.Services.Level
         }
 
         public void Stop() =>
-            _currentLevelSession.Stop();
+            _currentLevelModel.Stop();
 
-        public LevelSession GetCurrentLevel() =>
-            _currentLevelSession;
+        public LevelModel GetCurrentLevel() =>
+            _currentLevelModel;
 
         public bool ReachedMaxLevel =>
-            _currentLevelSession != null && _currentLevelSession.Level == _levelsStaticDataProvider.MaxLevel;
-        
+            _currentLevelModel != null && _currentLevelModel.Level == _levelsStaticDataProvider.MaxLevel;
+
         public LevelResult LevelResult => _levelResult;
 
         public List<LevelPreviewModel> GetPreviewsModels() =>
@@ -117,17 +126,17 @@ namespace Infrastructure.Services.Level
             _previewsController.MarkPreviewAsActive(nextLevel);
         }
 
-        private void SubscribeListeners(LevelSession levelSession)
+        private void SubscribeListeners(LevelModel levelModel)
         {
-            levelSession.OnLoseAction += OnLose;
-            levelSession.OnWinAction += OnWin;
-            levelSession.OnStartedAction += OnStarted;
-            levelSession.OnStoppedAction += OnStopped;
+            levelModel.OnLoseAction += OnLose;
+            levelModel.OnWinAction += OnWin;
+            levelModel.OnStartedAction += OnStarted;
+            levelModel.OnStoppedAction += OnStopped;
         }
 
         private void OnStarted()
         {
-            _levelView = _levelViewsFactory.CreateLevelView(_currentLevelSession);
+            _levelView = _levelViewsFactory.CreateLevelView(_currentLevelModel);
         }
 
         private void OnStopped()
@@ -142,7 +151,7 @@ namespace Infrastructure.Services.Level
 
         private void OnWin()
         {
-            _receiveRewardsService.ReceiveRewards(_currentLevelSession.GetRewards());
+            _receiveRewardsService.ReceiveRewards(_currentLevelModel.GetRewards());
 
             var currentLevel = _selectedLevelData.Level;
 
@@ -151,7 +160,7 @@ namespace Infrastructure.Services.Level
 
             _previewsController.MarkPreviewAsComplete(currentLevel);
 
-            _levelResult = new LevelResult(_currentLevelSession.TotalLevelScore);
+            _levelResult = new LevelResult(_currentLevelModel.TotalLevelScore);
             
             _stateMachine.TransitionTo(StateType.WinLevelState);
             
@@ -163,15 +172,15 @@ namespace Infrastructure.Services.Level
             _analyticsService.LogLoseLevel(_selectedLevelData.Level);
             _stateMachine.TransitionTo(StateType.LoseLevelState);
         }
-        
+
         private void EnsureLevelSession()
         {
-            if (_currentLevelSession != null)
+            if (_currentLevelModel != null)
                 return;
 
             var levelSession = _levelFactory.CreateLevelSession();
             SubscribeListeners(levelSession);
-            _currentLevelSession = levelSession;
+            _currentLevelModel = levelSession;
         }
     }
 }

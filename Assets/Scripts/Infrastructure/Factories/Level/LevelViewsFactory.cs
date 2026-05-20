@@ -14,11 +14,11 @@ namespace Infrastructure.Factories.Level
             _sceneProvider = sceneProvider;
         }
 
-        public LevelView CreateLevelView(LevelSession levelSession)
+        public LevelView CreateLevelView(LevelModel levelModel)
         {
             var levelPrefab = Resources.Load<LevelView>("Prefabs/Level/LevelView");
             var levelView = Object.Instantiate(levelPrefab, _sceneProvider.GameLevelLayer, false);
-            levelView.SetModel(levelSession);
+            levelView.SetModel(levelModel);
             return levelView;
         }
     }

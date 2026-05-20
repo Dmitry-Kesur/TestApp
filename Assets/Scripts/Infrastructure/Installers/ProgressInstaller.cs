@@ -19,7 +19,7 @@ namespace Infrastructure.Installers
         }
 
         private void BindFirebaseProgressRepository() =>
-            Container.Bind<IProgressRepository>().To<FirebaseProgressRepository>().AsSingle();
+            Container.BindInterfacesAndSelfTo<FirebaseProgressRepository>().AsSingle();
 
         private void BindProgressFactory() =>
             Container.BindInterfacesAndSelfTo<ProgressFactory>().AsSingle();

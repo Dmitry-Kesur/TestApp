@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Infrastructure.Models.GameEntities.Level
 {
-    public class LevelSession : ILevelSession
+    public class LevelModel : ILevelModel
     {
         private readonly LevelProgressController _levelProgressController;
         private readonly IItemsStrategyFactory _itemsStrategyFactory;
@@ -26,7 +26,7 @@ namespace Infrastructure.Models.GameEntities.Level
 
         private LevelStaticData _levelStaticData;
 
-        public LevelSession(ItemsSpawnController itemsSpawnController, ItemsInteractionController itemsInteractionController, LevelProgressController levelProgressController, IItemsStrategyFactory itemsStrategyFactory)
+        public LevelModel(ItemsSpawnController itemsSpawnController, ItemsInteractionController itemsInteractionController, LevelProgressController levelProgressController, IItemsStrategyFactory itemsStrategyFactory)
         {
             _itemsSpawnController = itemsSpawnController;
             _itemsInteractionController = itemsInteractionController;
@@ -78,7 +78,6 @@ namespace Infrastructure.Models.GameEntities.Level
 
         public bool Started =>
             _started;
-        public bool CanResume { get; private set; }
 
         public List<RewardReceiveData> GetRewards() =>
             _levelStaticData.LevelRewards;
@@ -103,27 +102,26 @@ namespace Infrastructure.Models.GameEntities.Level
 
         public void Pause()
         {
-            CanResume = true;
             _itemsSpawnController.Pause();
         }
-
+        
         public void Resume()
         {
-            CanResume = false;
-            _levelProgressController.Refresh();
-            _itemsSpawnController.OnResume();
+            _itemsSpawnController.Resume();
         }
 
         public void Stop()
         {
             _started = false;
-            CanResume = false;
             _itemsSpawnController.Clear();
             OnStoppedAction?.Invoke();
         }
 
-        public void Revive() =>
+        public void Revive()
+        {
             _levelProgressController.ClearFailedProgress();
+            _itemsSpawnController.Resume();
+        }
 
         private void ClearAllControllers()
         {
@@ -134,7 +132,7 @@ namespace Infrastructure.Models.GameEntities.Level
 
         private void OnLose()
         {
-            Pause();
+            _itemsSpawnController.Pause();
             OnLoseAction?.Invoke();
         }
 

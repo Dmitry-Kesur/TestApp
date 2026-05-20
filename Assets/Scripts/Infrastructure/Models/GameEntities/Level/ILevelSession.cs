@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Models.GameEntities.Level
 {
-    public interface ILevelSession
+    public interface ILevelModel
     {
         public int CatchItemsToDecreaseSpawnDelay { get; }
         public float DefaultItemsSpawnDelay { get; }

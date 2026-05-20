@@ -8,7 +8,7 @@ using Infrastructure.Services.Log;
 
 namespace Infrastructure.Services.Progress
 {
-    public class SaveLoadProgressService : ISaveLoadProgressService, IThirdPartyInitializable
+    public class SaveLoadProgressService : ISaveLoadProgressService
     {
         private readonly IProgressFactory _factory;
         private readonly IExceptionLoggerService _exceptionLoggerService;
@@ -27,11 +27,6 @@ namespace Infrastructure.Services.Progress
             
             lifecycleWatcher.OnFocusOutAction = SaveProgress;
             lifecycleWatcher.OnQuitAction = SaveProgress;
-        }
-
-        public void Initialize()
-        {
-            _progressRepository.Initialize();
         }
 
         public TResult Read<TResult>(Func<ProgressData, TResult> read) =>

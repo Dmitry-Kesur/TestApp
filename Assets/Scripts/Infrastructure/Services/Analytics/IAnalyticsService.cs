@@ -1,6 +1,4 @@
-﻿using Infrastructure.Enums;
-
-namespace Infrastructure.Services.Analytics
+﻿namespace Infrastructure.Services.Analytics
 {
     public interface IAnalyticsService
     {
@@ -12,5 +10,7 @@ namespace Infrastructure.Services.Analytics
         void LogInAppPurchaseProductRestore(string productId);
         void LogReceiveReward(int rewardId);
         void LogAdsImpression(string placementId, string adsId);
+        void LogShowAdsFailed(string placementId);
+        void LogAdsFailedToLoad(string placementId, string errorMessage);
     }
 }
